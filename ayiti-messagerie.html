@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messagerie — AYITI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0a0603;--rouge:#C8102E;--bleu:#00209F;--or:#F5A623;
+  --creme:#F9F3E8;--blanc:#fff;--gris:#8a8170;
+  --surface:#141008;--surface2:#1c1610;--surface3:#221c12;
+  --border:rgba(245,166,35,.13);--border2:rgba(255,255,255,.06);
+  --success:#81c784;--error:#e57373;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif;overflow:hidden}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 40% 60% at 0% 50%,rgba(200,16,46,.06),transparent 60%)}
+
+/* NAV */
+nav{position:relative;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:.88rem 2rem;background:rgba(10,6,3,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border2);height:56px}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--blanc);text-decoration:none}
+.nav-logo span{color:var(--or)}
+.nav-back{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s}
+.nav-back:hover{color:var(--or)}
+
+/* LAYOUT — 3 panels */
+.layout{position:relative;z-index:1;display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 56px)}
+
+/* ── CONVERSATIONS LIST ── */
+.conv-panel{background:var(--surface);border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden}
+.conv-header{padding:1.1rem 1.2rem;border-bottom:1px solid var(--border2);flex-shrink:0}
+.conv-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.conv-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--blanc)}
+.new-conv-btn{width:28px;height:28px;border-radius:50%;background:var(--rouge);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--blanc);transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.new-conv-btn:hover{transform:scale(1.15) rotate(90deg);background:#a50d25}
+.conv-search{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:.5rem .8rem .5rem 2rem;font-size:.82rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;transition:all .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8170' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");background-repeat:no-repeat;background-position:.65rem center}
+.conv-search:focus{border-color:rgba(245,166,35,.3);background-color:#221c12}
+.conv-search::placeholder{color:rgba(138,129,112,.5)}
+.conv-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+
+/* CONVERSATION ITEM */
+.conv-item{display:flex;align-items:center;gap:.75rem;padding:.9rem 1.2rem;cursor:pointer;transition:all .2s;position:relative;border-bottom:1px solid rgba(255,255,255,.03)}
+.conv-item:hover{background:var(--surface2)}
+.conv-item.active{background:var(--surface3);border-left:2px solid var(--or)}
+.conv-item.unread .conv-last{color:var(--creme);font-weight:500}
+.conv-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;position:relative;border:2px solid var(--border2);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.conv-item:hover .conv-av{transform:scale(1.08)}
+.conv-item.active .conv-av{border-color:rgba(245,166,35,.35)}
+.online-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:var(--success);border:2px solid var(--surface);box-shadow:0 0 6px rgba(129,199,132,.5)}
+.conv-info{flex:1;min-width:0}
+.conv-name{font-size:.86rem;font-weight:600;color:var(--blanc);margin-bottom:.18rem;display:flex;align-items:center;gap:.5rem}
+.conv-role{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .38rem;border-radius:3px;background:rgba(200,16,46,.15);color:var(--rouge);border:1px solid rgba(200,16,46,.2)}
+.conv-role.visitor{background:rgba(0,32,159,.15);color:#7986cb;border-color:rgba(0,32,159,.25)}
+.conv-last{font-size:.76rem;color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.conv-meta{display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;flex-shrink:0}
+.conv-time{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.04em;color:var(--gris)}
+.conv-unread-cnt{width:18px;height:18px;border-radius:50%;background:var(--rouge);font-family:'Space Mono',monospace;font-size:.48rem;color:var(--blanc);display:flex;align-items:center;justify-content:center;animation:subtle-bounce 2s ease-in-out infinite}
+@keyframes subtle-bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+/* ── CHAT PANEL ── */
+.chat-panel{display:flex;flex-direction:column;overflow:hidden}
+
+/* CHAT HEADER */
+.chat-header{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.5rem;border-bottom:1px solid var(--border2);background:rgba(10,6,3,.5);backdrop-filter:blur(8px);flex-shrink:0}
+.chat-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;border:2px solid var(--border2);flex-shrink:0}
+.chat-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--blanc)}
+.chat-status{font-size:.73rem;color:var(--success);display:flex;align-items:center;gap:.3rem;margin-top:.1rem}
+.chat-status.offline{color:var(--gris)}
+.chat-status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.chat-header-actions{margin-left:auto;display:flex;gap:.5rem}
+.ch-btn{width:30px;height:30px;border-radius:6px;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .2s;color:var(--gris)}
+.ch-btn:hover{border-color:rgba(245,166,35,.3);color:var(--or);transform:scale(1.1)}
+
+/* CHAT LIEU PREVIEW */
+.lieu-preview{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.5rem;background:rgba(245,166,35,.04);border-bottom:1px solid rgba(245,166,35,.08);cursor:pointer;transition:background .2s;flex-shrink:0}
+.lieu-preview:hover{background:rgba(245,166,35,.08)}
+.lieu-preview-img{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.lieu-preview-name{font-size:.82rem;font-weight:600;color:var(--creme)}
+.lieu-preview-sub{font-size:.7rem;color:var(--gris)}
+.lieu-preview-arrow{margin-left:auto;color:var(--or);font-size:.75rem}
+
+/* MESSAGES */
+.messages{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:.8rem;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+
+/* DATE SEPARATOR */
+.msg-date-sep{text-align:center;font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);margin:.5rem 0;display:flex;align-items:center;gap:.6rem}
+.msg-date-sep::before,.msg-date-sep::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* MESSAGE BUBBLE */
+.msg-row{display:flex;align-items:flex-end;gap:.6rem}
+.msg-row.mine{flex-direction:row-reverse}
+.msg-av-sm{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;border:1.5px solid var(--border2)}
+.bubble{max-width:68%;padding:.7rem .95rem;border-radius:14px;font-size:.85rem;line-height:1.55;position:relative;word-wrap:break-word}
+.bubble.theirs{background:var(--surface2);border:1px solid var(--border2);color:var(--creme);border-bottom-left-radius:4px}
+.bubble.mine{background:linear-gradient(135deg,var(--rouge),#a50d25);color:var(--blanc);border-bottom-right-radius:4px}
+.bubble-time{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.04em;margin-top:.35rem;opacity:.55;display:block;text-align:right}
+.bubble.theirs .bubble-time{text-align:left}
+
+/* STATUS TICKS */
+.ticks{font-size:.65rem;margin-left:.3rem;vertical-align:middle}
+.ticks.sent{color:rgba(255,255,255,.4)}
+.ticks.read{color:#81c784}
+
+/* IMAGE IN BUBBLE */
+.bubble-img{width:100%;max-width:200px;border-radius:8px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:center;height:100px;font-size:2rem;opacity:.35}
+
+/* TYPING INDICATOR */
+.typing-indicator{display:flex;align-items:center;gap:.6rem;padding:0 0 .3rem}
+.typing-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7a0d1f,#C8102E);display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.typing-bubble{background:var(--surface2);border:1px solid var(--border2);border-radius:14px;border-bottom-left-radius:4px;padding:.6rem .9rem;display:flex;gap:.3rem;align-items:center}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--gris);animation:typingAnim 1.4s ease-in-out infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingAnim{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+
+/* INPUT AREA */
+.input-area{padding:1rem 1.5rem;border-top:1px solid var(--border2);background:rgba(10,6,3,.4);backdrop-filter:blur(8px);flex-shrink:0}
+.input-row{display:flex;align-items:flex-end;gap:.7rem}
+.msg-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:.65rem 1.1rem;font-size:.86rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;transition:all .25s;resize:none;max-height:120px;line-height:1.5}
+.msg-input:focus{border-color:rgba(245,166,35,.35);background:var(--surface3);box-shadow:0 0 0 3px rgba(245,166,35,.07)}
+.msg-input::placeholder{color:rgba(138,129,112,.5)}
+.input-actions{display:flex;align-items:center;gap:.4rem}
+.ia-btn{width:34px;height:34px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .25s cubic-bezier(.34,1.56,.64,1);color:var(--gris);flex-shrink:0}
+.ia-btn:hover{border-color:rgba(245,166,35,.3);color:var(--or);transform:scale(1.12)}
+.send-btn{width:38px;height:38px;border-radius:50%;background:var(--rouge);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .3s cubic-bezier(.34,1.56,.64,1);flex-shrink:0}
+.send-btn:hover{background:#a50d25;transform:scale(1.12);box-shadow:0 6px 20px rgba(200,16,46,.4)}
+.send-btn:active{transform:scale(.95)}
+
+/* EMPTY CHAT */
+.empty-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem;gap:1rem}
+.empty-chat-icon{font-size:3rem;opacity:.25}
+.empty-chat-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--blanc)}
+.empty-chat-sub{font-size:.83rem;color:var(--gris);line-height:1.6;max-width:300px}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;z-index:999;transform:translateY(80px);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.23,1,.32,1);box-shadow:0 16px 48px rgba(0,0,0,.5);max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+.t-icon{font-size:1rem}.t-msg{font-size:.82rem;color:var(--blanc)}
+
+@media(max-width:768px){.layout{grid-template-columns:1fr}.conv-panel{display:none}.conv-panel.mobile-open{display:flex;position:fixed;inset:0;z-index:100}}
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+<div class="bg"></div>
+
+<nav>
+  <a href="javascript:history.back()" class="nav-back">← Retour</a>
+  <a href="ayiti-platform-landing.html" class="nav-logo">AY<span>I</span>TI</a>
+  <div style="width:80px"></div>
+</nav>
+
+<div class="layout">
+
+  <!-- ══ CONVERSATIONS LIST ══ -->
+  <div class="conv-panel">
+    <div class="conv-header">
+      <div class="conv-header-top">
+        <div class="conv-title">Messages</div>
+        <button class="new-conv-btn" onclick="showToast('✉️ Nouvelle conversation')">＋</button>
+      </div>
+      <input class="conv-search" placeholder="Rechercher une conversation..." oninput="searchConvs(this)">
+    </div>
+    <div class="conv-list" id="convList">
+
+      <div class="conv-item unread active" onclick="openConv(this,'lakay')">
+        <div class="conv-av" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️<div class="online-dot"></div></div>
+        <div class="conv-info">
+          <div class="conv-name">Lakay Lakay <span class="conv-role">Propriétaire</span></div>
+          <div class="conv-last">Mèsi anpil ! Venez nous voir bientôt 🇭🇹</div>
+        </div>
+        <div class="conv-meta">
+          <div class="conv-time">14 min</div>
+          <div class="conv-unread-cnt">2</div>
+        </div>
+      </div>
+
+      <div class="conv-item" onclick="openConv(this,'ayiti')">
+        <div class="conv-av" style="background:linear-gradient(135deg,#001260,#00209F)">🎵<div class="online-dot" style="background:var(--gris);box-shadow:none"></div></div>
+        <div class="conv-info">
+          <div class="conv-name">Nuit Kompa Vibes <span class="conv-role">Propriétaire</span></div>
+          <div class="conv-last">Oui les billets sont encore disponibles !</div>
+        </div>
+        <div class="conv-meta"><div class="conv-time">2h</div></div>
+      </div>
+
+      <div class="conv-item unread" onclick="openConv(this,'belay')">
+        <div class="conv-av" style="background:linear-gradient(135deg,#3d2700,#c47e00)">🛍️<div class="online-dot"></div></div>
+        <div class="conv-info">
+          <div class="conv-name">Bèl Ayiti Shop <span class="conv-role">Propriétaire</span></div>
+          <div class="conv-last">La commande sera expédiée demain 📦</div>
+        </div>
+        <div class="conv-meta">
+          <div class="conv-time">Hier</div>
+          <div class="conv-unread-cnt">1</div>
+        </div>
+      </div>
+
+      <div class="conv-item" onclick="openConv(this,'marie')">
+        <div class="conv-av" style="background:linear-gradient(135deg,#0a2a1a,#2e7d32)">😊</div>
+        <div class="conv-info">
+          <div class="conv-name">Marie-Claire D. <span class="conv-role visitor">Visiteur</span></div>
+          <div class="conv-last">Merci pour votre réponse rapide !</div>
+        </div>
+        <div class="conv-meta"><div class="conv-time">Lun</div></div>
+      </div>
+
+      <div class="conv-item" onclick="openConv(this,'support')">
+        <div class="conv-av" style="background:linear-gradient(135deg,#0a0603,#1a1208);border-color:rgba(245,166,35,.3)">🇭🇹</div>
+        <div class="conv-info">
+          <div class="conv-name">Support AYITI</div>
+          <div class="conv-last">Bienvenue sur AYITI ! Comment pouvons-nous vous aider ?</div>
+        </div>
+        <div class="conv-meta"><div class="conv-time">12 Mai</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ CHAT PANEL ══ -->
+  <div class="chat-panel" id="chatPanel">
+
+    <!-- HEADER -->
+    <div class="chat-header">
+      <div class="chat-av" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+      <div>
+        <div class="chat-name" id="chatName">Lakay Lakay Restaurant</div>
+        <div class="chat-status" id="chatStatus">En ligne</div>
+      </div>
+      <div class="chat-header-actions">
+        <button class="ch-btn" title="Voir la fiche" onclick="showToast('👁️ Fiche du lieu')">👁</button>
+        <button class="ch-btn" title="Appeler" onclick="showToast('📞 Appel en cours...')">📞</button>
+        <button class="ch-btn" title="Signaler" onclick="showToast('🚩 Signalement envoyé à l\'admin')">🚩</button>
+      </div>
+    </div>
+
+    <!-- LIEU PREVIEW -->
+    <div class="lieu-preview" onclick="showToast('📍 Fiche de Lakay Lakay →')">
+      <div class="lieu-preview-img" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+      <div>
+        <div class="lieu-preview-name">Lakay Lakay Restaurant</div>
+        <div class="lieu-preview-sub">📍 Pétionville · ⭐ 4.9 · Ouvert maintenant</div>
+      </div>
+      <div class="lieu-preview-arrow">→</div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="messages" id="messagesContainer">
+
+      <div class="msg-date-sep">Aujourd'hui</div>
+
+      <!-- THEIRS -->
+      <div class="msg-row">
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+        <div class="bubble theirs">
+          Bonjour ! Merci pour votre beau commentaire 😊 C'est très encourageant pour toute notre équipe.
+          <span class="bubble-time">09:14</span>
+        </div>
+      </div>
+
+      <!-- MINE -->
+      <div class="msg-row mine">
+        <div class="bubble mine">
+          Avec plaisir ! Le griot était vraiment exceptionnel. Est-ce que vous faites des réservations pour les grands groupes ?
+          <span class="bubble-time">09:18 <span class="ticks read">✓✓</span></span>
+        </div>
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>
+      </div>
+
+      <!-- THEIRS -->
+      <div class="msg-row">
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+        <div class="bubble theirs">
+          Oui bien sûr ! On peut accueillir jusqu'à 80 personnes. Pour les groupes de plus de 10 personnes, nous recommandons de réserver au moins 3 jours à l'avance 🙂
+          <span class="bubble-time">09:21</span>
+        </div>
+      </div>
+
+      <!-- IMAGE MESSAGE -->
+      <div class="msg-row">
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+        <div class="bubble theirs">
+          <div class="bubble-img" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍖</div>
+          Voici notre menu groupe spécial ! Griot, diri kole, pikliz, tasso et desserts pour 25€ par personne.
+          <span class="bubble-time">09:23</span>
+        </div>
+      </div>
+
+      <!-- MINE -->
+      <div class="msg-row mine">
+        <div class="bubble mine">
+          C'est parfait ! On sera 15 personnes le samedi 7 juin. Je peux confirmer la réservation ?
+          <span class="bubble-time">09:31 <span class="ticks read">✓✓</span></span>
+        </div>
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>
+      </div>
+
+      <!-- THEIRS -->
+      <div class="msg-row">
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+        <div class="bubble theirs">
+          Oui parfaitement ! Je vous confirme la table pour 15 personnes le samedi 7 juin. Puis-je avoir votre nom complet pour la réservation ?
+          <span class="bubble-time">09:35</span>
+        </div>
+      </div>
+
+      <!-- MINE -->
+      <div class="msg-row mine">
+        <div class="bubble mine">
+          Marie-Claire Duvivier. Merci beaucoup !
+          <span class="bubble-time">09:37 <span class="ticks sent">✓✓</span></span>
+        </div>
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>
+      </div>
+
+      <!-- UNREAD SEPARATOR -->
+      <div class="msg-date-sep" style="color:var(--rouge)">── 2 nouveaux messages ──</div>
+
+      <!-- THEIRS UNREAD -->
+      <div class="msg-row">
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+        <div class="bubble theirs">
+          C'est noté Marie-Claire ! La réservation est confirmée ✅ Nous vous attendons le 7 juin !
+          <span class="bubble-time">09:42</span>
+        </div>
+      </div>
+      <div class="msg-row">
+        <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+        <div class="bubble theirs">
+          Mèsi anpil ! Venez nous voir bientôt 🇭🇹
+          <span class="bubble-time">09:43</span>
+        </div>
+      </div>
+
+      <!-- TYPING -->
+      <div class="typing-indicator" id="typingIndicator" style="display:none">
+        <div class="typing-av">🍽️</div>
+        <div class="typing-bubble">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-area">
+      <div class="input-row">
+        <div class="input-actions">
+          <button class="ia-btn" title="Photo" onclick="showToast('📷 Ajout d\'image')">📷</button>
+          <button class="ia-btn" title="Emoji" onclick="showToast('😊 Emojis')">😊</button>
+        </div>
+        <textarea class="msg-input" id="msgInput" placeholder="Écrire un message..." rows="1" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+        <button class="send-btn" onclick="sendMessage()" id="sendBtn">➤</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"><div class="t-icon" id="ti"></div><div class="t-msg" id="tm"></div></div>
+
+<script>
+// ── OPEN CONVERSATION ──
+const CONVS = {
+  lakay: {
+    name:'Lakay Lakay Restaurant',
+    status:'En ligne',
+    online:true,
+    av:'🍽️',
+    color:'linear-gradient(135deg,#7a0d1f,#C8102E)',
+    lieu:{name:'Lakay Lakay Restaurant',sub:'📍 Pétionville · ⭐ 4.9 · Ouvert maintenant'}
+  },
+  ayiti: {
+    name:'Nuit Kompa Vibes',
+    status:'Hors ligne · vu il y a 2h',
+    online:false,
+    av:'🎵',
+    color:'linear-gradient(135deg,#001260,#00209F)',
+    lieu:{name:'Nuit Kompa Vibes',sub:'📍 Paris · 🎵 Soirée · Ven 23 Mai'}
+  },
+  belay: {
+    name:'Bèl Ayiti Shop',
+    status:'En ligne',
+    online:true,
+    av:'🛍️',
+    color:'linear-gradient(135deg,#3d2700,#c47e00)',
+    lieu:{name:'Bèl Ayiti Shop',sub:'📍 Miami · 🛍️ Boutique · ⭐ 4.7'}
+  },
+  marie: {
+    name:'Marie-Claire D.',
+    status:'Hors ligne · vu il y a 3j',
+    online:false,
+    av:'😊',
+    color:'linear-gradient(135deg,#0a2a1a,#2e7d32)',
+    lieu:null
+  },
+  support: {
+    name:'Support AYITI',
+    status:'Toujours disponible',
+    online:true,
+    av:'🇭🇹',
+    color:'linear-gradient(135deg,#0a0603,#1a1208)',
+    lieu:null
+  }
+};
+
+function openConv(el, id){
+  document.querySelectorAll('.conv-item').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  el.classList.remove('unread');
+  const cnt=el.querySelector('.conv-unread-cnt');if(cnt)cnt.remove();
+
+  const conv=CONVS[id];if(!conv)return;
+  document.getElementById('chatName').textContent=conv.name;
+  const s=document.getElementById('chatStatus');
+  s.textContent=conv.status;
+  s.className='chat-status'+(conv.online?'':' offline');
+
+  const header=document.querySelector('.chat-header');
+  const av=header.querySelector('.chat-av');
+  av.style.background=conv.color;
+  av.textContent=conv.av;
+
+  const lp=document.querySelector('.lieu-preview');
+  if(conv.lieu){
+    lp.style.display='flex';
+    lp.querySelector('.lieu-preview-img').style.background=conv.color;
+    lp.querySelector('.lieu-preview-img').textContent=conv.av;
+    lp.querySelector('.lieu-preview-name').textContent=conv.lieu.name;
+    lp.querySelector('.lieu-preview-sub').textContent=conv.lieu.sub;
+  } else {
+    lp.style.display='none';
+  }
+}
+
+// ── SEND MESSAGE ──
+function sendMessage(){
+  const input=document.getElementById('msgInput');
+  const text=input.value.trim();
+  if(!text)return;
+
+  const container=document.getElementById('messagesContainer');
+
+  // Remove typing & unread sep if present
+  const sep=container.querySelector('.msg-date-sep[style*="rouge"]');
+  if(sep)sep.remove();
+
+  // Create bubble
+  const row=document.createElement('div');
+  row.className='msg-row mine';
+  row.innerHTML=`
+    <div class="bubble mine">
+      ${escapeHtml(text)}
+      <span class="bubble-time">${getTime()} <span class="ticks sent">✓✓</span></span>
+    </div>
+    <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>`;
+  container.insertBefore(row, document.getElementById('typingIndicator'));
+
+  input.value='';
+  input.style.height='auto';
+  scrollToBottom();
+
+  // Simulate reply
+  setTimeout(()=>{
+    document.getElementById('typingIndicator').style.display='flex';
+    scrollToBottom();
+  },800);
+  setTimeout(()=>{
+    document.getElementById('typingIndicator').style.display='none';
+    const replies=[
+      'Merci pour votre message ! Nous vous répondons dans les plus brefs délais 😊',
+      'Bien reçu ! On revient vers vous rapidement 🇭🇹',
+      'Parfait, merci ! On s\'occupe de ça tout de suite.',
+      'Message bien reçu ! À très bientôt 🍽️'
+    ];
+    const reply=document.createElement('div');
+    reply.className='msg-row';
+    reply.innerHTML=`
+      <div class="msg-av-sm" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+      <div class="bubble theirs">
+        ${replies[Math.floor(Math.random()*replies.length)]}
+        <span class="bubble-time">${getTime()}</span>
+      </div>`;
+    container.insertBefore(reply, document.getElementById('typingIndicator'));
+    scrollToBottom();
+  },2200);
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function getTime(){const n=new Date();return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')}
+function scrollToBottom(){const c=document.getElementById('messagesContainer');c.scrollTop=c.scrollHeight}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
+
+// ── SEARCH CONVS ──
+function searchConvs(input){
+  const q=input.value.toLowerCase();
+  document.querySelectorAll('.conv-item').forEach(c=>{
+    c.style.display=c.querySelector('.conv-name').textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+
+// ── TOAST ──
+let _tt;
+function showToast(msg){
+  const parts=msg.split(' ');
+  document.getElementById('ti').textContent=parts[0];
+  document.getElementById('tm').textContent=parts.slice(1).join(' ');
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// Init scroll
+setTimeout(scrollToBottom,100);
+</script>
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

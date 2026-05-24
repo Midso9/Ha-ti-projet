@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — AYITI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0a0603;--rouge:#C8102E;--bleu:#00209F;--or:#F5A623;
+  --creme:#F9F3E8;--blanc:#fff;--gris:#8a8170;
+  --surface:#141008;--surface2:#1c1610;
+  --border:rgba(245,166,35,.13);--border2:rgba(255,255,255,.06);
+  --success:#81c784;--error:#e57373;--warn:#FFB74D;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif;min-height:100vh}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 50% 60% at 80% 20%,rgba(245,166,35,.05),transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(200,16,46,.05),transparent 60%)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2.5rem;background:rgba(10,6,3,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border2)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--blanc);text-decoration:none}
+.nav-logo span{color:var(--or)}
+.nav-back{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s}
+.nav-back:hover{color:var(--or)}
+
+/* LAYOUT */
+.page{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:2rem 1.5rem}
+
+/* HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
+.page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--blanc)}
+.page-title em{color:var(--or);font-style:italic}
+.header-actions{display:flex;gap:.6rem}
+.hdr-btn{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:.45rem .9rem;border-radius:5px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--gris);transition:all .22s}
+.hdr-btn:hover{border-color:var(--border);color:var(--creme);transform:translateY(-1px)}
+.hdr-btn.primary{background:rgba(200,16,46,.15);border-color:rgba(200,16,46,.3);color:var(--rouge)}
+.hdr-btn.primary:hover{background:rgba(200,16,46,.25)}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:.4rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.ftab{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:.38rem .85rem;border-radius:20px;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gris);transition:all .22s;display:flex;align-items:center;gap:.4rem}
+.ftab:hover{border-color:rgba(245,166,35,.3);color:var(--creme);transform:translateY(-1px)}
+.ftab.on{background:var(--rouge);border-color:var(--rouge);color:var(--blanc)}
+.ftab .cnt{background:rgba(255,255,255,.25);border-radius:10px;padding:.05rem .35rem;font-size:.48rem}
+
+/* DATE GROUP */
+.date-group{margin-bottom:1.5rem}
+.date-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.date-label::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* NOTIF CARD */
+.notif-card{display:flex;align-items:flex-start;gap:.9rem;padding:1rem 1.1rem;background:var(--surface);border:1px solid var(--border2);border-radius:8px;margin-bottom:.5rem;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.notif-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;transition:background .2s}
+.notif-card.unread{background:var(--surface2);border-color:rgba(245,166,35,.12)}
+.notif-card.unread::before{background:var(--or)}
+.notif-card:hover{border-color:rgba(245,166,35,.22);transform:translateX(3px);box-shadow:4px 4px 24px rgba(0,0,0,.3)}
+.notif-card.unread:hover::before{background:var(--rouge)}
+
+/* UNREAD DOT */
+.unread-dot{position:absolute;top:.9rem;right:.9rem;width:7px;height:7px;border-radius:50%;background:var(--or);box-shadow:0 0 6px rgba(245,166,35,.5);animation:glow 2s ease-in-out infinite;flex-shrink:0}
+@keyframes glow{0%,100%{box-shadow:0 0 6px rgba(245,166,35,.5)}50%{box-shadow:0 0 12px rgba(245,166,35,.8)}}
+
+.notif-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.notif-card:hover .notif-icon{transform:scale(1.1) rotate(-5deg)}
+.ni-annonce{background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.2)}
+.ni-avis{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.18)}
+.ni-favori{background:rgba(229,115,115,.12);border:1px solid rgba(229,115,115,.18)}
+.ni-event{background:rgba(0,32,159,.15);border:1px solid rgba(0,32,159,.2)}
+.ni-badge{background:rgba(129,199,132,.12);border:1px solid rgba(129,199,132,.18)}
+.ni-system{background:rgba(138,129,112,.1);border:1px solid rgba(138,129,112,.15)}
+.ni-reply{background:rgba(123,31,162,.12);border:1px solid rgba(123,31,162,.18)}
+
+.notif-body{flex:1;min-width:0}
+.notif-title{font-size:.86rem;font-weight:500;color:var(--blanc);margin-bottom:.2rem;line-height:1.4}
+.notif-title strong{color:var(--or)}
+.notif-title.read{color:var(--gris);font-weight:400}
+.notif-sub{font-size:.78rem;color:rgba(249,243,232,.45);line-height:1.5;margin-bottom:.35rem}
+.notif-time{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.07em;color:rgba(138,129,112,.6)}
+
+/* NOTIF IMAGE PREVIEW */
+.notif-preview{width:48px;height:48px;border-radius:7px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;opacity:.5}
+
+/* ACTIONS ON HOVER */
+.notif-actions{position:absolute;right:1rem;bottom:.7rem;display:flex;gap:.35rem;opacity:0;transition:opacity .2s}
+.notif-card:hover .notif-actions{opacity:1}
+.n-act{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.06em;text-transform:uppercase;padding:.22rem .55rem;border-radius:3px;cursor:pointer;background:var(--surface2);border:1px solid var(--border2);color:var(--gris);transition:all .2s}
+.n-act:hover{border-color:var(--border);color:var(--creme)}
+.n-act.dismiss:hover{border-color:rgba(229,115,115,.3);color:var(--error)}
+
+
+/* ── GEO BANNER ── */
+.geo-banner{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.8rem 1.1rem;
+  background:rgba(245,166,35,.06);
+  border:1px solid rgba(245,166,35,.18);
+  border-radius:8px;
+  margin-bottom:1.2rem;
+  cursor:pointer;
+  transition:all .25s;
+  position:relative;overflow:hidden;
+}
+.geo-banner:hover{background:rgba(245,166,35,.1);transform:translateY(-1px)}
+.geo-banner.detecting{border-color:rgba(255,183,77,.3);background:rgba(255,183,77,.06)}
+.geo-banner.granted{border-color:rgba(129,199,132,.25);background:rgba(129,199,132,.05);cursor:default}
+.geo-banner.granted:hover{transform:none}
+.geo-banner.denied{border-color:rgba(229,115,115,.25);background:rgba(229,115,115,.05);cursor:default}
+.geo-banner::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(245,166,35,.04),transparent);
+  transform:translateX(-100%);
+}
+.geo-banner.detecting::before{animation:shimmer 1.5s infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.geo-icon{font-size:1.3rem;flex-shrink:0;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.geo-banner:hover .geo-icon{transform:scale(1.15)}
+.geo-text{}
+.geo-title{font-size:.84rem;font-weight:600;color:var(--blanc);margin-bottom:.1rem}
+.geo-sub{font-size:.73rem;color:var(--gris);line-height:1.4}
+.geo-sub.ok{color:var(--success)}
+.geo-sub.err{color:var(--error)}
+.geo-action{margin-left:auto;font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;padding:.32rem .75rem;border-radius:4px;border:1px solid rgba(245,166,35,.3);background:transparent;color:var(--or);cursor:pointer;transition:all .2s;flex-shrink:0;white-space:nowrap}
+.geo-action:hover{background:rgba(245,166,35,.12)}
+.geo-action.hide{display:none}
+
+/* NEAR ME BADGE on notif */
+.near-badge{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.07em;text-transform:uppercase;
+  padding:.15rem .5rem;border-radius:20px;
+  background:rgba(129,199,132,.12);color:var(--success);
+  border:1px solid rgba(129,199,132,.22);
+  margin-left:.4rem;vertical-align:middle;
+}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:5rem 2rem}
+.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.35}
+.empty-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--blanc);margin-bottom:.5rem}
+.empty-sub{font-size:.84rem;color:var(--gris);line-height:1.6}
+
+/* LOAD MORE */
+.load-more{width:100%;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.8rem;border-radius:6px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--gris);transition:all .25s;margin-top:.5rem}
+.load-more:hover{border-color:var(--border);color:var(--or);transform:translateY(-1px)}
+
+/* NOTIF SETTINGS PANEL */
+.settings-panel{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:1.2rem;margin-bottom:1.5rem;display:none}
+.settings-panel.open{display:block;animation:fadeUp .3s ease forwards}
+@keyframes fadeUp{from{opacity:.3;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.sp-title{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--or);margin-bottom:1rem}
+.sp-row{display:flex;align-items:center;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--border2);font-size:.82rem}
+.sp-row:last-child{border:none}
+.sp-lbl{color:var(--creme)}
+.sp-sub{font-size:.72rem;color:var(--gris);margin-top:.1rem}
+.tog{width:34px;height:20px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;position:relative;transition:background .25s;flex-shrink:0}
+.tog.on{background:rgba(129,199,132,.2);border-color:rgba(129,199,132,.4)}
+.tog::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:var(--gris);top:2px;left:2px;transition:all .25s}
+.tog.on::after{background:var(--success);left:16px}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;z-index:999;transform:translateY(80px);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.23,1,.32,1);box-shadow:0 16px 48px rgba(0,0,0,.5);max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+.t-icon{font-size:1rem}.t-msg{font-size:.82rem;color:var(--blanc)}
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+<div class="bg"></div>
+
+<nav>
+  <a href="javascript:history.back()" class="nav-back">← Retour</a>
+  <a href="ayiti-platform-landing.html" class="nav-logo">AY<span>I</span>TI</a>
+  <div style="width:80px"></div>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1 class="page-title">Notific<em>ations</em></h1>
+    <div class="header-actions">
+      <button class="hdr-btn" onclick="toggleSettings()">⚙️ Réglages</button>
+      <button class="hdr-btn primary" onclick="markAllRead()">✓ Tout lire</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS PANEL -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="sp-title">Préférences de notifications</div>
+    <div class="sp-row"><div><div class="sp-lbl">📢 Annonces des favoris</div><div class="sp-sub">Quand un lieu que tu suis poste quelque chose</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="sp-row"><div><div class="sp-lbl">⭐ Réponses à mes avis</div><div class="sp-sub">Quand un propriétaire répond à ton avis</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="sp-row"><div><div class="sp-lbl">🎉 Nouveaux événements</div><div class="sp-sub">Événements près de toi ou dans tes villes suivies</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="sp-row"><div><div class="sp-lbl">🏅 Badges & récompenses</div><div class="sp-sub">Quand tu débloque un nouveau badge</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="sp-row"><div><div class="sp-lbl">💬 Likes sur mes avis</div><div class="sp-sub">Quand quelqu'un like ton commentaire</div></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+    <div class="sp-row"><div><div class="sp-lbl">📧 Email hebdomadaire</div><div class="sp-sub">Résumé des meilleures découvertes de la semaine</div></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+
+
+  <!-- GEO BANNER -->
+  <div class="geo-banner" id="geoBanner" onclick="requestGeo()">
+    <div class="geo-icon" id="geoIcon">📍</div>
+    <div class="geo-text">
+      <div class="geo-title" id="geoTitle">Activer les événements près de toi</div>
+      <div class="geo-sub" id="geoSub">On détecte ta ville pour te montrer les événements à proximité</div>
+    </div>
+    <button class="geo-action" id="geoAction">Activer</button>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-tabs">
+    <button class="ftab on" onclick="filterNotifs('all',this)">Toutes <span class="cnt">12</span></button>
+    <button class="ftab" onclick="filterNotifs('annonce',this)">📢 Annonces <span class="cnt">4</span></button>
+    <button class="ftab" onclick="filterNotifs('avis',this)">⭐ Avis <span class="cnt">3</span></button>
+    <button class="ftab" onclick="filterNotifs('event',this)">🎉 Événements <span class="cnt">2</span></button>
+    <button class="ftab" onclick="filterNotifs('badge',this)">🏅 Badges <span class="cnt">1</span></button>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="notifList">
+
+    <!-- AUJOURD'HUI -->
+    <div class="date-group" data-group="today">
+      <div class="date-label">Aujourd'hui</div>
+
+      <div class="notif-card unread" data-type="annonce" onclick="readNotif(this)">
+        <div class="unread-dot"></div>
+        <div class="notif-icon ni-annonce">📢</div>
+        <div class="notif-body">
+          <div class="notif-title"><strong>Lakay Lakay</strong> a posté une nouvelle annonce</div>
+          <div class="notif-sub">🍖 Menu spécial dimanche ! Griot géant + pikliz maison. Réservez vite !</div>
+          <div class="notif-time">Il y a 14 min</div>
+        </div>
+        <div class="notif-preview" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('👁️ Annonce ouverte')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+
+      <div class="notif-card unread" data-type="avis" onclick="readNotif(this)">
+        <div class="unread-dot"></div>
+        <div class="notif-icon ni-reply">💬</div>
+        <div class="notif-body">
+          <div class="notif-title"><strong>Lakay Lakay</strong> a répondu à ton avis</div>
+          <div class="notif-sub">"Mèsi anpil Marie-Claire ! C'est toujours un plaisir de vous accueillir 🇭🇹"</div>
+          <div class="notif-time">Il y a 2h</div>
+        </div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('⭐ Avis ouvert')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+
+      <div class="notif-card unread" data-type="badge" onclick="readNotif(this)">
+        <div class="unread-dot"></div>
+        <div class="notif-icon ni-badge">🏅</div>
+        <div class="notif-body">
+          <div class="notif-title">Tu as débloqué le badge <strong>Top Reviewer</strong> !</div>
+          <div class="notif-sub">Félicitations ! Ton 48ème avis t'a permis d'atteindre ce niveau. Continue comme ça !</div>
+          <div class="notif-time">Il y a 3h</div>
+        </div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('🏅 Badge affiché sur ton profil')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+
+      <div class="notif-card unread" data-type="event" onclick="readNotif(this)">
+        <div class="unread-dot"></div>
+        <div class="notif-icon ni-event">🎉</div>
+        <div class="notif-body">
+          <div class="notif-title">Nouvel événement près de toi — <strong>Paris</strong></div>
+          <div class="notif-sub">🎶 Nuit Kompa Vibes · Vendredi 23 Mai · à partir de 21h</div>
+          <div class="notif-time">Il y a 4h</div>
+        </div>
+        <div class="notif-preview" style="background:linear-gradient(135deg,#2d0a3a,#7b1fa2)">🎵</div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('🎉 Événement ouvert')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HIER -->
+    <div class="date-group" data-group="yesterday">
+      <div class="date-label">Hier</div>
+
+      <div class="notif-card" data-type="annonce" onclick="readNotif(this)">
+        <div class="notif-icon ni-annonce">📢</div>
+        <div class="notif-body">
+          <div class="notif-title read"><strong>Bèl Ayiti Shop</strong> a posté une promotion</div>
+          <div class="notif-sub">🏷️ -20% sur toute la collection été. Offre valable jusqu'au 31 mai.</div>
+          <div class="notif-time">Hier à 15h30</div>
+        </div>
+        <div class="notif-preview" style="background:linear-gradient(135deg,#3d2700,#c47e00)">🛍️</div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('🛍️ Annonce ouverte')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+
+      <div class="notif-card" data-type="avis" onclick="readNotif(this)">
+        <div class="notif-icon ni-avis">⭐</div>
+        <div class="notif-body">
+          <div class="notif-title read">24 personnes ont aimé ton avis sur <strong>Lakay Lakay</strong></div>
+          <div class="notif-sub">Ton avis aide la communauté AYITI à découvrir les meilleurs lieux.</div>
+          <div class="notif-time">Hier à 11h</div>
+        </div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('⭐ Avis ouvert')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+
+      <div class="notif-card" data-type="event" onclick="readNotif(this)">
+        <div class="notif-icon ni-event">🎉</div>
+        <div class="notif-body">
+          <div class="notif-title read">Rappel — <strong>Festival Rara 2026</strong> dans 2 jours</div>
+          <div class="notif-sub">📍 Port-au-Prince · Sam 24 Mai · Ne rate pas cet événement !</div>
+          <div class="notif-time">Hier à 09h</div>
+        </div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('🎉 Événement ouvert')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CETTE SEMAINE -->
+    <div class="date-group" data-group="week">
+      <div class="date-label">Cette semaine</div>
+
+      <div class="notif-card" data-type="annonce" onclick="readNotif(this)">
+        <div class="notif-icon ni-annonce">📢</div>
+        <div class="notif-body">
+          <div class="notif-title read"><strong>Lakay Lakay</strong> — Soirée Kompa live vendredi</div>
+          <div class="notif-sub">🎶 Le groupe Symphonie des Antilles sur scène. Entrée libre pour les clients.</div>
+          <div class="notif-time">Il y a 3 jours</div>
+        </div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('📢 Annonce ouverte')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+
+      <div class="notif-card" data-type="avis" onclick="readNotif(this)">
+        <div class="notif-icon ni-avis">⭐</div>
+        <div class="notif-body">
+          <div class="notif-title read"><strong>Galerie Nan Zile</strong> a répondu à ton avis</div>
+          <div class="notif-sub">"Merci infiniment pour ce retour ! Nous espérons vous revoir bientôt 🎨"</div>
+          <div class="notif-time">Il y a 4 jours</div>
+        </div>
+        <div class="notif-actions">
+          <button class="n-act" onclick="event.stopPropagation();showToast('⭐ Avis ouvert')">Voir</button>
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+
+      <div class="notif-card" data-type="annonce" onclick="readNotif(this)">
+        <div class="notif-icon ni-system">ℹ️</div>
+        <div class="notif-body">
+          <div class="notif-title read">Bienvenue sur <strong>AYITI</strong> !</div>
+          <div class="notif-sub">Ta plateforme culturelle haïtienne est prête. Explore, note, partage 🇭🇹</div>
+          <div class="notif-time">Il y a 5 jours</div>
+        </div>
+        <div class="notif-actions">
+          <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="load-more" onclick="showToast('📋 Chargement des anciennes notifications...')">
+    Voir les notifications plus anciennes →
+  </button>
+
+</div>
+
+<div class="toast" id="toast"><div class="t-icon" id="ti"></div><div class="t-msg" id="tm"></div></div>
+
+<script>
+
+// ══ GÉOLOCALISATION RÉELLE ══
+let userCity = null;
+let userLat = null;
+let userLon = null;
+
+function requestGeo(){
+  if(!navigator.geolocation){
+    setGeoBanner('denied','❌','Géolocalisation non supportée','Ton navigateur ne supporte pas la géolocalisation.','');
+    return;
+  }
+  setGeoBanner('detecting','📡','Détection en cours...','Localisation de ta position...','');
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      userLat = pos.coords.latitude;
+      userLon = pos.coords.longitude;
+      reverseGeocode(userLat, userLon);
+    },
+    err => {
+      setGeoBanner('denied','📍','Position non disponible','Active la géolocalisation dans les réglages de ton navigateur.','Réessayer');
+      document.getElementById('geoBanner').onclick = requestGeo;
+    },
+    { timeout: 8000, enableHighAccuracy: false }
+  );
+}
+
+function reverseGeocode(lat, lon){
+  // Nominatim — Open Street Map, gratuit, pas de clé API requise
+  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=fr`)
+    .then(r => r.json())
+    .then(data => {
+      const city = data.address.city
+                || data.address.town
+                || data.address.village
+                || data.address.county
+                || 'Ta ville';
+      const country = data.address.country || '';
+      userCity = city;
+      onGeoSuccess(city, country, lat, lon);
+    })
+    .catch(() => {
+      // Fallback si fetch bloqué (iframe)
+      userCity = 'Ta position';
+      onGeoSuccess('Ta position', '', lat, lon);
+    });
+}
+
+function onGeoSuccess(city, country, lat, lon){
+  setGeoBanner('granted','✅', city + (country ? ' · ' + country : ''),
+    `📍 Lat ${lat.toFixed(3)} · Lon ${lon.toFixed(3)} · Événements à proximité activés`, '');
+
+  document.getElementById('geoBanner').onclick = null;
+
+  // Update event notifications with real city
+  injectNearNotifs(city, lat, lon);
+  showToast('📍 Position détectée : ' + city);
+}
+
+function setGeoBanner(state, icon, title, sub, actionLabel){
+  const b = document.getElementById('geoBanner');
+  b.className = 'geo-banner ' + state;
+  document.getElementById('geoIcon').textContent = icon;
+  document.getElementById('geoTitle').textContent = title;
+  const s = document.getElementById('geoSub');
+  s.textContent = sub;
+  s.className = 'geo-sub' + (state==='granted'?' ok':state==='denied'?' err':'');
+  const a = document.getElementById('geoAction');
+  a.textContent = actionLabel;
+  a.className = 'geo-action' + (actionLabel?'':' hide');
+}
+
+function injectNearNotifs(city, lat, lon){
+  // Update existing event notif with real city
+  const eventNotifs = document.querySelectorAll('.notif-card[data-type="event"]');
+  eventNotifs.forEach(card => {
+    const title = card.querySelector('.notif-title');
+    if(title && title.innerHTML.includes('Paris')){
+      title.innerHTML = title.innerHTML.replace('Paris', `<strong>${city}</strong>`);
+    }
+    if(title && title.innerHTML.includes('près de toi')){
+      const badge = document.createElement('span');
+      badge.className = 'near-badge';
+      badge.innerHTML = '📍 ' + city;
+      title.appendChild(badge);
+    }
+    // If place near user (demo — in real app we'd compute distance)
+    const sub = card.querySelector('.notif-sub');
+    if(sub) sub.innerHTML = sub.innerHTML.replace('Paris', city);
+  });
+
+  // Inject a new "near you" notification at top
+  const container = document.querySelector('.date-group[data-group="today"] .date-label');
+  if(container && !document.getElementById('geoInjected')){
+    const newNotif = document.createElement('div');
+    newNotif.id = 'geoInjected';
+    newNotif.className = 'notif-card unread';
+    newNotif.dataset.type = 'event';
+    newNotif.innerHTML = `
+      <div class="unread-dot"></div>
+      <div class="notif-icon ni-event">🎉</div>
+      <div class="notif-body">
+        <div class="notif-title">
+          3 nouveaux lieux haïtiens près de toi
+          <span class="near-badge">📍 ${city}</span>
+        </div>
+        <div class="notif-sub">Des restos, boutiques et soirées haïtiennes à moins de 25 km de ta position actuelle.</div>
+        <div class="notif-time">Maintenant</div>
+      </div>
+      <div class="notif-actions">
+        <button class="n-act" onclick="event.stopPropagation();showToast('🗺️ Ouverture de la carte...')">Explorer</button>
+        <button class="n-act dismiss" onclick="event.stopPropagation();dismissNotif(this)">✕</button>
+      </div>`;
+    newNotif.onclick = function(){ readNotif(this); showToast('🗺️ Lieux près de toi →'); };
+    container.insertAdjacentElement('afterend', newNotif);
+  }
+}
+
+// FILTER
+function filterNotifs(type, btn){
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.notif-card').forEach(card=>{
+    if(type==='all' || card.dataset.type===type){
+      card.style.display='';
+    } else {
+      card.style.display='none';
+    }
+  });
+  // Hide empty groups
+  document.querySelectorAll('.date-group').forEach(g=>{
+    const visible = [...g.querySelectorAll('.notif-card')].some(c=>c.style.display!=='none');
+    g.style.display = visible ? '' : 'none';
+  });
+}
+
+// READ
+function readNotif(card){
+  card.classList.remove('unread');
+  const dot = card.querySelector('.unread-dot');
+  if(dot) dot.remove();
+  const title = card.querySelector('.notif-title');
+  if(title) title.classList.add('read');
+  updateCount();
+}
+
+// MARK ALL
+function markAllRead(){
+  document.querySelectorAll('.notif-card.unread').forEach(c=>{
+    c.classList.remove('unread');
+    const dot=c.querySelector('.unread-dot');if(dot)dot.remove();
+    const t=c.querySelector('.notif-title');if(t)t.classList.add('read');
+  });
+  updateCount();
+  showToast('✅ Toutes les notifications lues');
+}
+
+// DISMISS
+function dismissNotif(btn){
+  const card=btn.closest('.notif-card');
+  card.style.transition='all .35s ease';
+  card.style.opacity='0';
+  card.style.transform='translateX(20px)';
+  card.style.maxHeight=card.offsetHeight+'px';
+  setTimeout(()=>{
+    card.style.maxHeight='0';
+    card.style.marginBottom='0';
+    card.style.padding='0';
+    setTimeout(()=>card.remove(),300);
+  },300);
+  updateCount();
+  showToast('🗑️ Notification supprimée');
+}
+
+// UPDATE COUNT
+function updateCount(){
+  const unread=document.querySelectorAll('.notif-card.unread').length;
+  document.querySelector('.ftab.on .cnt').textContent=
+    document.querySelectorAll('.notif-card:not([style*="none"])').length;
+}
+
+// SETTINGS TOGGLE
+function toggleSettings(){
+  document.getElementById('settingsPanel').classList.toggle('open');
+}
+
+// TOAST
+let _tt;
+function showToast(msg){
+  const parts=msg.split(' ');
+  document.getElementById('ti').textContent=parts[0];
+  document.getElementById('tm').textContent=parts.slice(1).join(' ');
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

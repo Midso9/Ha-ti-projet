@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYITI — La culture haïtienne, répertoriée</title>
+<meta name="description" content="Restaurants, soirées, boutiques, événements — tout ce qui est 100% Haïti, réuni pour toi.">
+<meta property="og:title" content="AYITI — La culture haïtienne, répertoriée">
+<meta property="og:description" content="Découvrez les meilleurs lieux haïtiens partout dans le monde.">
+<meta property="og:image" content="https://ayiti-app.vercel.app/og-image.png">
+<meta name="theme-color" content="#C8102E">
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0a0603;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'DM Sans',sans-serif;overflow:hidden}
+  .splash{text-align:center;animation:fadeIn .8s ease both}
+  @keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+  .logo{font-family:Georgia,serif;font-size:4rem;font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:.5rem}
+  .logo span{color:#F5A623}
+  .flag{display:flex;width:48px;height:30px;border-radius:4px;overflow:hidden;margin:.8rem auto}
+  .fb{flex:1;background:#00209F}.fr{flex:1;background:#C8102E}
+  .tagline{color:rgba(249,243,232,.5);font-size:.9rem;margin-bottom:2rem}
+  .bar{width:48px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin:0 auto}
+  .bar-fill{height:100%;background:linear-gradient(90deg,#C8102E,#F5A623);border-radius:2px;animation:load 1.8s ease forwards}
+  @keyframes load{from{width:0}to{width:100%}}
+</style>
+</head>
+<body>
+<div class="splash">
+  <div class="logo">AY<span>I</span>TI</div>
+  <div class="flag"><div class="fb"></div><div class="fr"></div></div>
+  <div class="tagline">La culture haïtienne, répertoriée.</div>
+  <div class="bar"><div class="bar-fill"></div></div>
+</div>
+<script>
+  // First visit → onboarding, return → landing
+  const visited = localStorage.getItem('ayiti_visited');
+  setTimeout(() => {
+    if(!visited){
+      localStorage.setItem('ayiti_visited','1');
+      window.location.href = 'ayiti-onboarding.html';
+    } else {
+      window.location.href = 'ayiti-platform-landing.html';
+    }
+  }, 2000);
+</script>
+</body>
+</html>

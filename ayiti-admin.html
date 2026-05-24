@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin — AYITI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0a0603;--rouge:#C8102E;--bleu:#00209F;--or:#F5A623;
+  --creme:#F9F3E8;--blanc:#ffffff;--gris:#8a8170;
+  --surface:#111009;--surface2:#191410;--surface3:#201a10;
+  --border:rgba(245,166,35,.12);--border2:rgba(255,255,255,.06);
+  --success:#81c784;--error:#e57373;--warn:#FFB74D;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-logo{padding:1.6rem 1.4rem 1.2rem;border-bottom:1px solid var(--border2)}
+.sb-logo-text{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--blanc)}
+.sb-logo-text span{color:var(--or)}
+.sb-badge{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(200,16,46,.2);color:var(--rouge);border:1px solid rgba(200,16,46,.3);padding:.15rem .5rem;border-radius:3px;margin-top:.3rem;display:inline-block}
+
+.sb-section{padding:.8rem .8rem .3rem;font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(138,129,112,.5)}
+.sb-item{display:flex;align-items:center;gap:.7rem;padding:.65rem 1rem;margin:0 .4rem .1rem;border-radius:6px;cursor:pointer;transition:all .2s;font-size:.84rem;color:var(--gris);border:1px solid transparent;position:relative}
+.sb-item:hover{background:var(--surface2);color:var(--creme)}
+.sb-item.active{background:rgba(245,166,35,.08);color:var(--or);border-color:rgba(245,166,35,.15)}
+.sb-item-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.sb-badge-count{margin-left:auto;font-family:'Space Mono',monospace;font-size:.5rem;background:var(--rouge);color:var(--blanc);padding:.1rem .4rem;border-radius:10px;min-width:18px;text-align:center}
+.sb-badge-count.warn{background:var(--warn);color:var(--noir)}
+.sb-badge-count.ok{background:rgba(129,199,132,.2);color:var(--success);border:1px solid rgba(129,199,132,.3)}
+
+.sb-admin-info{padding:1rem;margin:.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:8px}
+.sb-admin-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--rouge),#6d0a17);display:flex;align-items:center;justify-content:center;font-size:.95rem;margin-bottom:.6rem}
+.sb-admin-name{font-size:.84rem;font-weight:600;color:var(--blanc)}
+.sb-admin-role{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--rouge);margin-top:.1rem}
+
+/* ── MAIN ── */
+.main{display:flex;flex-direction:column;overflow-x:hidden}
+
+/* ── TOP BAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border2);background:rgba(10,6,3,.7);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.page-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--blanc)}
+.page-title span{color:var(--or);font-style:italic}
+.topbar-right{display:flex;align-items:center;gap:.8rem}
+.tb-btn{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:.5rem 1rem;border-radius:5px;cursor:pointer;transition:all .2s;border:1px solid var(--border2);background:transparent;color:var(--gris);display:flex;align-items:center;gap:.4rem}
+.tb-btn:hover{border-color:var(--border);color:var(--creme)}
+.tb-btn.primary{background:var(--rouge);border-color:var(--rouge);color:var(--blanc)}
+.tb-btn.primary:hover{background:#a50d25}
+.notif-dot{position:relative}
+.notif-dot::after{content:'3';position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:var(--rouge);font-family:'Space Mono',monospace;font-size:.45rem;color:var(--blanc);display:flex;align-items:center;justify-content:center;border:1.5px solid var(--noir)}
+
+/* ── CONTENT AREA ── */
+.content{padding:2rem;flex:1}
+.tab-page{display:none}.tab-page.active{display:block;animation:fadeUp .35s ease forwards}
+@keyframes fadeUp{from{opacity:.3;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.2rem;position:relative;overflow:hidden;transition:border-color .2s;cursor:default}
+.stat-card:hover{border-color:var(--border)}
+.stat-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.stat-card:hover::before{opacity:1}
+.stat-rouge::before{background:radial-gradient(ellipse at 0% 0%,rgba(200,16,46,.08),transparent 70%)}
+.stat-or::before{background:radial-gradient(ellipse at 0% 0%,rgba(245,166,35,.08),transparent 70%)}
+.stat-bleu::before{background:radial-gradient(ellipse at 0% 0%,rgba(0,32,159,.08),transparent 70%)}
+.stat-vert::before{background:radial-gradient(ellipse at 0% 0%,rgba(129,199,132,.08),transparent 70%)}
+.stat-icon{font-size:1.4rem;margin-bottom:.6rem}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--blanc);line-height:1}
+.stat-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);margin-top:.3rem}
+.stat-delta{font-size:.75rem;margin-top:.4rem}
+.delta-up{color:var(--success)}.delta-down{color:var(--error)}
+
+/* ── SECTION TITLE ── */
+.section-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--blanc);margin-bottom:1rem;display:flex;align-items:center;gap:.7rem}
+.section-title span{color:var(--or);font-style:italic}
+.section-title-actions{margin-left:auto;display:flex;gap:.5rem}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-bottom:2rem}
+.table-header{padding:.9rem 1.2rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.table-search{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border2);border-radius:5px;padding:.45rem .8rem .45rem 2rem;font-size:.82rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238a8170' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");background-repeat:no-repeat;background-position:.6rem center}
+.table-search:focus{border-color:rgba(245,166,35,.3)}
+.table-search::placeholder{color:rgba(138,129,112,.5)}
+.tbl-filter-btn{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;padding:.4rem .8rem;border-radius:4px;cursor:pointer;background:var(--surface);border:1px solid var(--border2);color:var(--gris);transition:all .2s}
+.tbl-filter-btn:hover,.tbl-filter-btn.on{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.25);color:var(--or)}
+
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--border2)}
+th{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);padding:.75rem 1rem;text-align:left;font-weight:400;white-space:nowrap;cursor:pointer;transition:color .2s}
+th:hover{color:var(--or)}
+th.sorted{color:var(--or)}
+td{padding:.75rem 1rem;font-size:.83rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+.td-name{font-weight:500;color:var(--blanc);display:flex;align-items:center;gap:.6rem}
+.td-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.td-cat{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.07em;text-transform:uppercase;padding:.18rem .5rem;border-radius:3px}
+.cat-resto{background:rgba(200,16,46,.15);color:var(--rouge);border:1px solid rgba(200,16,46,.25)}
+.cat-boutique{background:rgba(245,166,35,.12);color:var(--or);border:1px solid rgba(245,166,35,.2)}
+.cat-evt{background:rgba(0,32,159,.2);color:#7986cb;border:1px solid rgba(0,32,159,.3)}
+.cat-soiree{background:rgba(123,31,162,.2);color:#ce93d8;border:1px solid rgba(123,31,162,.3)}
+.cat-art{background:rgba(46,125,50,.2);color:#a5d6a7;border:1px solid rgba(46,125,50,.3)}
+
+.status-pill{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .55rem;border-radius:20px}
+.st-active{background:rgba(129,199,132,.12);color:var(--success);border:1px solid rgba(129,199,132,.25)}
+.st-pending{background:rgba(255,183,77,.12);color:var(--warn);border:1px solid rgba(255,183,77,.25)}
+.st-banned{background:rgba(229,115,115,.12);color:var(--error);border:1px solid rgba(229,115,115,.25)}
+.st-review{background:rgba(0,32,159,.15);color:#7986cb;border:1px solid rgba(0,32,159,.25)}
+
+.stars-sm{color:var(--or);font-size:.7rem}
+.td-actions{display:flex;gap:.3rem;align-items:center}
+.act-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s;color:var(--gris)}
+.act-btn:hover{border-color:rgba(245,166,35,.3);color:var(--or)}
+.act-btn.danger:hover{border-color:rgba(229,115,115,.3);color:var(--error)}
+.act-btn.success:hover{border-color:rgba(129,199,132,.3);color:var(--success)}
+
+/* ── SIGNALEMENTS ── */
+.report-list{display:flex;flex-direction:column;gap:.8rem;margin-bottom:2rem}
+.report-card{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.1rem;transition:border-color .2s;position:relative;overflow:hidden}
+.report-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.report-card.high::before{background:var(--rouge)}
+.report-card.medium::before{background:var(--warn)}
+.report-card.low::before{background:var(--gris)}
+.report-header{display:flex;align-items:flex-start;gap:.8rem;margin-bottom:.7rem}
+.report-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.report-info{flex:1}
+.report-title{font-size:.86rem;font-weight:600;color:var(--blanc);margin-bottom:.15rem}
+.report-meta{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.05em;color:var(--gris)}
+.report-body{font-size:.82rem;color:rgba(249,243,232,.6);line-height:1.6;margin-bottom:.8rem;padding:.6rem;background:rgba(255,255,255,.03);border-radius:5px;border-left:2px solid var(--border2);font-style:italic}
+.report-footer{display:flex;gap:.5rem;align-items:center}
+.report-priority{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .55rem;border-radius:20px}
+.pri-high{background:rgba(229,115,115,.12);color:var(--error);border:1px solid rgba(229,115,115,.25)}
+.pri-med{background:rgba(255,183,77,.1);color:var(--warn);border:1px solid rgba(255,183,77,.2)}
+.pri-low{background:rgba(138,129,112,.1);color:var(--gris);border:1px solid rgba(138,129,112,.2)}
+.report-actions{margin-left:auto;display:flex;gap:.4rem}
+.r-act{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .7rem;border-radius:4px;cursor:pointer;transition:all .2s;border:1px solid;background:transparent}
+.r-act.approve{color:var(--success);border-color:rgba(129,199,132,.3)}.r-act.approve:hover{background:rgba(129,199,132,.08)}
+.r-act.ban{color:var(--error);border-color:rgba(229,115,115,.3)}.r-act.ban:hover{background:rgba(229,115,115,.08)}
+.r-act.dismiss{color:var(--gris);border-color:var(--border2)}.r-act.dismiss:hover{color:var(--creme)}
+
+/* ── ACTIVITÉ ── */
+.activity-feed{display:flex;flex-direction:column;gap:0}
+.act-item{display:flex;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--border2);position:relative}
+.act-item:last-child{border-bottom:none}
+.act-line{position:absolute;left:15px;top:44px;bottom:-8px;width:1px;background:var(--border2)}
+.act-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;border:2px solid var(--border2);background:var(--surface)}
+.act-text{flex:1;padding-top:.25rem}
+.act-main{font-size:.83rem;color:var(--creme);line-height:1.5}
+.act-main strong{color:var(--blanc)}
+.act-time{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.06em;color:var(--gris);margin-top:.2rem}
+
+/* ── CHART BARS ── */
+.chart-wrap{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.2rem;margin-bottom:1.5rem}
+.chart-title{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--or);margin-bottom:1.2rem}
+.bar-chart{display:flex;align-items:flex-end;gap:.4rem;height:100px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:.3rem;flex:1}
+.bar-fill-wrap{flex:1;width:100%;display:flex;align-items:flex-end}
+.bar-fill-el{width:100%;border-radius:3px 3px 0 0;transition:height .6s ease;min-height:3px}
+.bar-fill-el.rouge{background:linear-gradient(to top,rgba(200,16,46,.4),var(--rouge))}
+.bar-fill-el.or{background:linear-gradient(to top,rgba(245,166,35,.4),var(--or))}
+.bar-lbl-top{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--blanc)}
+.bar-lbl-bot{font-family:'Space Mono',monospace;font-size:.48rem;color:var(--gris);text-transform:uppercase}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#1c1610;border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:540px;width:100%;animation:modalIn .3s cubic-bezier(.23,1,.32,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--blanc);margin-bottom:.3rem}
+.modal-sub{font-size:.82rem;color:var(--gris);margin-bottom:1.4rem;line-height:1.6}
+.modal-field{margin-bottom:.9rem}
+.modal-label{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);margin-bottom:.35rem;display:block}
+.modal-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:.7rem .9rem;font-size:.86rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.modal-input:focus{border-color:rgba(245,166,35,.35)}
+.modal-input::placeholder{color:rgba(138,129,112,.5)}
+select.modal-input{cursor:pointer}
+textarea.modal-input{resize:none}
+.modal-btns{display:flex;gap:.7rem;justify-content:flex-end;margin-top:1.4rem}
+.modal-cancel{font-family:'Space Mono',monospace;font-size:.63rem;letter-spacing:.08em;text-transform:uppercase;padding:.65rem 1.2rem;cursor:pointer;background:transparent;color:var(--gris);border:1px solid var(--border2);border-radius:5px;transition:all .2s}
+.modal-cancel:hover{color:var(--creme)}
+.modal-confirm{font-family:'Space Mono',monospace;font-size:.63rem;letter-spacing:.08em;text-transform:uppercase;padding:.65rem 1.4rem;cursor:pointer;background:var(--rouge);color:var(--blanc);border:none;border-radius:5px;transition:background .2s}
+.modal-confirm:hover{background:#a50d25}
+.modal-confirm.safe{background:#2e7d32}.modal-confirm.safe:hover{background:#1b5e20}
+.modal-warn{background:rgba(229,115,115,.08);border:1px solid rgba(229,115,115,.2);border-radius:6px;padding:.8rem;font-size:.8rem;color:var(--error);line-height:1.6;margin-bottom:1rem}
+.modal-warn strong{display:block;margin-bottom:.2rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:#1c1610;border:1px solid var(--border);border-radius:8px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;z-index:999;box-shadow:0 16px 48px rgba(0,0,0,.6);max-width:280px
+  transform:translateY(90px);opacity:0;pointer-events:none;
+  transition:all .38s cubic-bezier(.23,1,.32,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.t-icon{font-size:1.05rem}.t-msg{font-size:.83rem;color:var(--blanc)}
+
+/* PAGINATION */
+.tbl-pagination{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1.2rem;border-top:1px solid var(--border2)}
+.tbl-pag-info{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.06em;color:var(--gris)}
+.tbl-pag-btns{display:flex;gap:.3rem}
+.pag-btn{width:28px;height:28px;border-radius:4px;background:var(--surface);border:1px solid var(--border2);color:var(--gris);font-family:'Space Mono',monospace;font-size:.6rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.pag-btn:hover{border-color:rgba(245,166,35,.3);color:var(--or)}
+.pag-btn.on{background:var(--rouge);border-color:var(--rouge);color:var(--blanc)}
+
+/* GRID 2 */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+@media(max-width:1100px){.two-col{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ══════════════════════════════════════
+   AYITI — MICRO-INTERACTIONS GLOBALES
+══════════════════════════════════════ */
+
+/* Base: toutes les transitions plus fluides */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── BOUTONS PRINCIPAUX ── */
+button, .btn-solid, .btn-outline,
+.hero-btn-primary, .hero-btn-secondary,
+.btn-next, .btn-back, .action-btn,
+.action-primary, .action-fav, .action-notif, .action-share,
+.modal-confirm, .modal-cancel,
+.submit-review, .reply-send,
+.tb-btn, .ann-btn, .r-act,
+.success-cta, .cta-btn-white, .cta-btn-ghost,
+.cat-pill, .tbl-filter-btn, .chart-tab,
+.gerant-edit, .pag-btn, .page-btn {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1),
+              background .2s ease,
+              border-color .2s ease,
+              color .2s ease,
+              box-shadow .2s ease !important;
+  cursor: pointer;
+}
+
+/* Boutons primaires — grossissent et brillent */
+.btn-next:not(:disabled):hover,
+.action-primary:hover,
+.hero-btn-primary:hover,
+.modal-confirm:hover,
+.submit-review:hover,
+.reply-send:hover,
+.tb-btn.primary:hover,
+.success-cta:hover,
+.cta-btn-white:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 8px 24px rgba(200,16,46,.35) !important;
+}
+
+/* Boutons secondaires — légère montée */
+.btn-back:hover,
+.action-fav:hover,
+.action-notif:hover,
+.action-share:hover,
+.modal-cancel:hover,
+.btn-outline:hover,
+.hero-btn-secondary:hover,
+.cta-btn-ghost:hover,
+.gerant-edit:hover,
+.ann-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+/* Boutons icônes / ronds — grossissement */
+.act-btn:hover,
+.card-fav-btn:hover,
+.three-dot-btn:hover,
+.theme-toggle:hover,
+.pw-eye:hover,
+.nav-av:hover,
+.sb-etab-arrow,
+.pag-btn:hover,
+.page-btn:hover {
+  transform: scale(1.12) !important;
+}
+
+/* Pills et filtres */
+.cat-pill:hover,
+.tbl-filter-btn:hover,
+.chart-tab:hover,
+.km-preset:hover,
+.droit-pill {
+  transform: translateY(-1px) scale(1.04) !important;
+}
+
+/* Active — enfoncement */
+button:active,
+.btn-next:active,
+.action-btn:active,
+.modal-confirm:active,
+.cat-pill:active,
+.act-btn:active {
+  transform: scale(.96) !important;
+  box-shadow: none !important;
+}
+
+/* ── CARTES / LIENS ── */
+.place-card,
+.feat-card,
+.cat-card,
+.feat-mini,
+.annonce-card,
+.avis-item,
+.report-card,
+.gerant-card,
+.role-card,
+.stat-card,
+.sidebar-card,
+.info-card,
+.app-card,
+.app-card-sm {
+  transition: transform .3s cubic-bezier(.23,1,.32,1),
+              border-color .25s ease,
+              box-shadow .3s ease !important;
+}
+
+.place-card:hover    { transform: translateY(-5px) scale(1.01) !important; box-shadow: 0 20px 50px rgba(0,0,0,.45) !important; }
+.feat-card:hover     { transform: translateY(-4px) !important; box-shadow: 0 16px 40px rgba(0,0,0,.35) !important; }
+.cat-card:hover      { transform: translateY(-7px) scale(1.02) !important; }
+.feat-mini:hover     { transform: translateY(-4px) scale(1.02) !important; }
+.annonce-card:hover  { transform: translateX(3px) !important; }
+.avis-item:hover     { transform: translateX(3px) !important; }
+.gerant-card:hover   { transform: translateX(4px) !important; }
+.role-card:hover     { transform: translateY(-3px) scale(1.01) !important; }
+.stat-card:hover     { transform: translateY(-3px) !important; box-shadow: 0 12px 32px rgba(0,0,0,.3) !important; }
+.link-card:hover     { transform: translateX(5px) !important; }
+.sb-item:hover       { transform: translateX(3px) !important; }
+.sb-etablissement:hover { transform: translateY(-1px) !important; }
+
+/* ── INPUTS — FOCUS GLOW ── */
+.field-input:focus,
+.modal-input:focus,
+.review-input:focus,
+.reply-input:focus,
+.table-search:focus,
+.city-select:focus,
+.sort-select:focus,
+.settings-input:focus,
+.t-inp:focus,
+.t-input:focus,
+.time-input:focus {
+  transform: scale(1.01) !important;
+  box-shadow: 0 0 0 3px rgba(245,166,35,.12), 0 2px 8px rgba(0,0,0,.2) !important;
+}
+
+/* ── NAV LINKS — UNDERLINE SLIDE ── */
+.nav-links a {
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 50%; right: 50%;
+  height: 1.5px;
+  background: var(--or, #F5A623);
+  transition: left .25s ease, right .25s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  left: 0; right: 0;
+}
+
+/* ── SEE-ALL / FEAT-ACTION — FLÈCHE SLIDE ── */
+.see-all, .feat-action {
+  display: inline-flex; align-items: center; gap: .4rem;
+  transition: gap .25s ease, color .2s ease !important;
+}
+.see-all:hover { gap: .9rem !important; }
+.feat-action:hover { gap: .7rem !important; }
+
+/* ── AVATARS ── */
+.comment-avatar:hover,
+.owner-avatar:hover,
+.nav-avatar:hover,
+.nav-av:hover,
+.avis-av:hover,
+.gerant-av:hover {
+  transform: scale(1.1) rotate(-3deg) !important;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+}
+
+/* ── STAR RATING ── */
+.star-btn {
+  transition: transform .15s cubic-bezier(.34,1.56,.64,1), opacity .15s ease !important;
+}
+.star-btn:hover, .star-btn.active {
+  transform: scale(1.25) !important;
+  opacity: 1 !important;
+}
+
+/* ── TOGGLES ── */
+.toggle-sw,
+.h-tog,
+.h-toggle,
+.horaire-toggle {
+  transition: background .25s ease, border-color .25s ease !important;
+  cursor: pointer;
+}
+.toggle-sw:hover, .h-tog:hover, .h-toggle:hover {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+
+/* ── DROIT CHECKBOXES ── */
+.droit-check {
+  transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
+}
+.droit-check:hover { transform: scale(1.03) !important; }
+.droit-check.on { transform: scale(1.02) !important; }
+
+/* ── PHOTO SLOTS ── */
+.photo-slot {
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), 
+              border-color .2s ease, opacity .2s ease !important;
+}
+.photo-slot:hover { transform: scale(1.05) !important; z-index: 2; }
+
+/* ── BADGE COUNTS (pulse si nb > 0) ── */
+.sb-badge-count:not(.ok),
+.stat-delta.d-down {
+  animation: subtle-pulse 2.5s ease-in-out infinite;
+}
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .65; }
+}
+
+/* ── MAP PIN ── */
+.map-pin-item {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1) !important;
+  cursor: pointer;
+}
+.map-pin-item:hover { transform: scale(1.4) translateY(-4px) !important; }
+
+/* ── GALLERY ── */
+.hero-gallery > div {
+  transition: filter .3s ease !important;
+  cursor: pointer;
+}
+.hero-gallery > div:hover { filter: brightness(1.1); }
+
+/* ── CHIP REMOVE ── */
+.chip-x {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), color .15s ease !important;
+}
+.chip-x:hover { transform: scale(1.3) rotate(90deg) !important; }
+
+/* ── ANNONCE ACTIONS ── */
+.annonce-action:hover {
+  transform: translateY(-1px) scale(1.05) !important;
+}
+
+/* ── MODAL IN ── */
+.modal-overlay.open .modal {
+  animation: modalPop .35s cubic-bezier(.34,1.3,.64,1) forwards !important;
+}
+@keyframes modalPop {
+  from { opacity:0; transform: scale(.9) translateY(16px); }
+  to   { opacity:1; transform: scale(1)  translateY(0); }
+}
+
+/* ── SCROLL APPEAR ── */
+@keyframes slideInLeft {
+  from { opacity:0; transform: translateX(-20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity:0; transform: translateX(20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+.how-step:nth-child(odd)  { animation: slideInLeft  .6s ease forwards; }
+.how-step:nth-child(even) { animation: slideInRight .6s ease forwards; }
+.how-step:nth-child(2) { animation-delay: .1s; }
+.how-step:nth-child(3) { animation-delay: .2s; }
+.how-step:nth-child(4) { animation-delay: .3s; }
+
+/* ── RESPONSIVE BASE ── */
+@media (max-width: 768px) {
+  .place-card:hover    { transform: translateY(-3px) !important; }
+  .cat-card:hover      { transform: translateY(-4px) !important; }
+  .btn-next:hover      { transform: translateY(-1px) scale(1.02) !important; }
+}
+/* ════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-text">AY<span>I</span>TI</div>
+    <div class="sb-badge">Panel Admin</div>
+  </div>
+
+  <div class="sb-section">Tableau de bord</div>
+  <div class="sb-item active" onclick="goPage('dashboard',this)"><span class="sb-item-icon">📊</span> Vue d'ensemble</div>
+  <div class="sb-item" onclick="goPage('activity',this)"><span class="sb-item-icon">⚡</span> Activité récente <span class="sb-badge-count ok">12</span></div>
+
+  <div class="sb-section">Modération</div>
+  <div class="sb-item" onclick="goPage('reports',this)"><span class="sb-item-icon">🚩</span> Signalements <span class="sb-badge-count">7</span></div>
+  <div class="sb-item" onclick="goPage('comments',this)"><span class="sb-item-icon">💬</span> Commentaires <span class="sb-badge-count warn">3</span></div>
+
+  <div class="sb-section">Gestion</div>
+  <div class="sb-item" onclick="goPage('lieux',this)"><span class="sb-item-icon">📍</span> Lieux</div>
+  <div class="sb-item" onclick="goPage('users',this)"><span class="sb-item-icon">👥</span> Utilisateurs</div>
+  <div class="sb-item" onclick="goPage('pending',this)"><span class="sb-item-icon">⏳</span> En attente <span class="sb-badge-count">4</span></div>
+
+  <div class="sb-section">Contenu</div>
+  <div class="sb-item" onclick="goPage('annonces',this)"><span class="sb-item-icon">📢</span> Annonces</div>
+
+  <div style="flex:1"></div>
+  <div style="padding:.8rem">
+    <div class="sb-admin-info">
+      <div class="sb-admin-av">👑</div>
+      <div class="sb-admin-name">Super Admin</div>
+      <div class="sb-admin-role">Accès complet</div>
+    </div>
+    <div class="sb-item" onclick="window.location.href='ayiti-connexion.html'"><span class="sb-item-icon">🚪</span> Déconnexion</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Vue d'<span>ensemble</span></div>
+    <div class="topbar-right">
+      <button class="tb-btn notif-dot" onclick="showToast('🔔 3 nouvelles notifications')">🔔 Notifs</button>
+      <button class="tb-btn primary" onclick="openModal('addLieu')">＋ Ajouter un lieu</button>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: DASHBOARD ═══ -->
+  <div class="content tab-page active" id="page-dashboard">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card stat-rouge">
+        <div class="stat-icon">📍</div>
+        <div class="stat-num">342</div>
+        <div class="stat-label">Lieux actifs</div>
+        <div class="stat-delta delta-up">↑ +12 ce mois</div>
+      </div>
+      <div class="stat-card stat-or">
+        <div class="stat-icon">👥</div>
+        <div class="stat-num">12.4k</div>
+        <div class="stat-label">Utilisateurs</div>
+        <div class="stat-delta delta-up">↑ +847 ce mois</div>
+      </div>
+      <div class="stat-card stat-bleu">
+        <div class="stat-icon">💬</div>
+        <div class="stat-num">8.9k</div>
+        <div class="stat-label">Avis publiés</div>
+        <div class="stat-delta delta-up">↑ +312 cette semaine</div>
+      </div>
+      <div class="stat-card stat-vert">
+        <div class="stat-icon">🚩</div>
+        <div class="stat-num">7</div>
+        <div class="stat-label">Signalements</div>
+        <div class="stat-delta delta-down">↑ +3 aujourd'hui</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="two-col">
+      <div class="chart-wrap">
+        <div class="chart-title">Inscriptions — 7 derniers jours</div>
+        <div class="bar-chart" id="chartInscrip"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">Avis publiés — 7 derniers jours</div>
+        <div class="bar-chart" id="chartAvis"></div>
+      </div>
+    </div>
+
+    <!-- LAST SIGNALEMENTS -->
+    <div class="section-title">
+      Signalements récents <span>urgents</span>
+      <div class="section-title-actions">
+        <button class="tb-btn" onclick="goPage('reports',document.querySelector('[onclick*=reports]'))">Voir tout →</button>
+      </div>
+    </div>
+    <div class="report-list">
+      <div class="report-card high">
+        <div class="report-header">
+          <div class="report-av" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">👤</div>
+          <div class="report-info">
+            <div class="report-title">Resto Soleil — Contenu inapproprié</div>
+            <div class="report-meta">Signalé par Marie C. · Il y a 14 min · Pétionville</div>
+          </div>
+          <span class="report-priority pri-high">🔴 Urgent</span>
+        </div>
+        <div class="report-body">"Des photos inappropriées ont été postées dans les annonces de cet établissement."</div>
+        <div class="report-footer">
+          <div class="report-actions">
+            <button class="r-act approve" onclick="resolveReport(this,'✅ Contenu supprimé')">Supprimer contenu</button>
+            <button class="r-act ban" onclick="openModal('ban')">Bannir le lieu</button>
+            <button class="r-act dismiss" onclick="resolveReport(this,'🙈 Signalement ignoré')">Ignorer</button>
+          </div>
+        </div>
+      </div>
+      <div class="report-card medium">
+        <div class="report-header">
+          <div class="report-av" style="background:linear-gradient(135deg,#001260,#00209F)">👤</div>
+          <div class="report-info">
+            <div class="report-title">Boutique Kreyòl — Informations incorrectes</div>
+            <div class="report-meta">Signalé par Jean-R. M. · Il y a 2h · Miami</div>
+          </div>
+          <span class="report-priority pri-med">🟡 Moyen</span>
+        </div>
+        <div class="report-body">"Les horaires indiqués ne correspondent pas à la réalité, la boutique est fermée le lundi."</div>
+        <div class="report-footer">
+          <div class="report-actions">
+            <button class="r-act approve" onclick="resolveReport(this,'✅ Infos corrigées')">Corriger les infos</button>
+            <button class="r-act dismiss" onclick="resolveReport(this,'🙈 Ignoré')">Ignorer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIEUX EN ATTENTE -->
+    <div class="section-title">Lieux en attente de validation <span>(4)</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Établissement</th><th>Type</th><th>Propriétaire</th><th>Ville</th><th>Soumis</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>Maison Créole</div></td>
+            <td><span class="td-cat cat-resto">Restaurant</span></td>
+            <td>Fabiola T.</td><td>Cap-Haïtien</td><td>Il y a 2h</td>
+            <td><div class="td-actions">
+              <button class="act-btn success" title="Approuver" onclick="showToast('✅ Lieu approuvé !')">✓</button>
+              <button class="act-btn" title="Voir" onclick="showToast('👁️ Aperçu du lieu')">👁</button>
+              <button class="act-btn danger" title="Refuser" onclick="openModal('refuse')">✕</button>
+            </div></td>
+          </tr>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#3d2700,#c47e00)">🛍️</div>Kreyòl Fab</div></td>
+            <td><span class="td-cat cat-boutique">Boutique</span></td>
+            <td>Marc D.</td><td>Paris</td><td>Il y a 5h</td>
+            <td><div class="td-actions">
+              <button class="act-btn success" title="Approuver" onclick="showToast('✅ Lieu approuvé !')">✓</button>
+              <button class="act-btn" title="Voir" onclick="showToast('👁️ Aperçu du lieu')">👁</button>
+              <button class="act-btn danger" title="Refuser" onclick="openModal('refuse')">✕</button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ═══ PAGE: SIGNALEMENTS ═══ -->
+  <div class="content tab-page" id="page-reports">
+    <div class="section-title">Tous les <span>signalements</span></div>
+    <div class="report-list">
+      <div class="report-card high">
+        <div class="report-header">
+          <div class="report-av" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">👤</div>
+          <div class="report-info">
+            <div class="report-title">Resto Soleil — Contenu inapproprié</div>
+            <div class="report-meta">Par Marie C. · Il y a 14 min · Pétionville</div>
+          </div>
+          <span class="report-priority pri-high">🔴 Urgent</span>
+        </div>
+        <div class="report-body">"Des photos inappropriées ont été postées dans les annonces de cet établissement."</div>
+        <div class="report-footer">
+          <div class="report-actions">
+            <button class="r-act approve" onclick="resolveReport(this,'✅ Supprimé')">Supprimer</button>
+            <button class="r-act ban" onclick="openModal('ban')">Bannir</button>
+            <button class="r-act dismiss" onclick="resolveReport(this,'🙈 Ignoré')">Ignorer</button>
+          </div>
+        </div>
+      </div>
+      <div class="report-card medium">
+        <div class="report-header">
+          <div class="report-av" style="background:linear-gradient(135deg,#001260,#00209F)">👤</div>
+          <div class="report-info">
+            <div class="report-title">Boutique Kreyòl — Informations incorrectes</div>
+            <div class="report-meta">Par Jean-R. M. · Il y a 2h · Miami</div>
+          </div>
+          <span class="report-priority pri-med">🟡 Moyen</span>
+        </div>
+        <div class="report-body">"Les horaires indiqués ne correspondent pas à la réalité."</div>
+        <div class="report-footer">
+          <div class="report-actions">
+            <button class="r-act approve" onclick="resolveReport(this,'✅ Corrigé')">Corriger</button>
+            <button class="r-act dismiss" onclick="resolveReport(this,'🙈 Ignoré')">Ignorer</button>
+          </div>
+        </div>
+      </div>
+      <div class="report-card low">
+        <div class="report-header">
+          <div class="report-av" style="background:linear-gradient(135deg,#2d0a3a,#7b1fa2)">👤</div>
+          <div class="report-info">
+            <div class="report-title">Soirée Kompa Paris — Faux événement</div>
+            <div class="report-meta">Par Stephanie L. · Il y a 1 jour · Paris</div>
+          </div>
+          <span class="report-priority pri-low">⚪ Faible</span>
+        </div>
+        <div class="report-body">"Cet événement a été annulé mais est toujours affiché comme actif sur la plateforme."</div>
+        <div class="report-footer">
+          <div class="report-actions">
+            <button class="r-act approve" onclick="resolveReport(this,'✅ Événement archivé')">Archiver</button>
+            <button class="r-act dismiss" onclick="resolveReport(this,'🙈 Ignoré')">Ignorer</button>
+          </div>
+        </div>
+      </div>
+      <div class="report-card medium">
+        <div class="report-header">
+          <div class="report-av" style="background:linear-gradient(135deg,#0a2a1a,#2e7d32)">👤</div>
+          <div class="report-info">
+            <div class="report-title">Utilisateur @troll99 — Spam de commentaires</div>
+            <div class="report-meta">Par 3 utilisateurs · Il y a 3h</div>
+          </div>
+          <span class="report-priority pri-med">🟡 Moyen</span>
+        </div>
+        <div class="report-body">"Cet utilisateur publie des commentaires haineux en série sur plusieurs restaurants."</div>
+        <div class="report-footer">
+          <div class="report-actions">
+            <button class="r-act ban" onclick="openModal('banUser')">Bannir l'utilisateur</button>
+            <button class="r-act approve" onclick="resolveReport(this,'🗑️ Commentaires supprimés')">Supprimer les cmts</button>
+            <button class="r-act dismiss" onclick="resolveReport(this,'🙈 Ignoré')">Ignorer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: COMMENTAIRES ═══ -->
+  <div class="content tab-page" id="page-comments">
+    <div class="section-title">Modération des <span>commentaires</span></div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <input class="table-search" placeholder="Rechercher un commentaire..." oninput="filterTable(this,'tbl-comments')">
+        <button class="tbl-filter-btn on">Tous</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">Signalés</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">Récents</button>
+      </div>
+      <table id="tbl-comments">
+        <thead><tr>
+          <th onclick="sortTable(this)">Utilisateur ↕</th>
+          <th>Lieu</th><th>Commentaire</th>
+          <th onclick="sortTable(this)">Note ↕</th>
+          <th onclick="sortTable(this)">Date ↕</th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>Marie C.</div></td>
+            <td>Lakay Lakay</td>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(249,243,232,.65)">Meilleur griot de Pétionville, sans hésiter...</td>
+            <td><span class="stars-sm">★★★★★</span></td>
+            <td style="color:var(--gris);font-size:.78rem">Il y a 2j</td>
+            <td><div class="td-actions">
+              <button class="act-btn" title="Voir" onclick="showToast('👁️ Lecture du commentaire')">👁</button>
+              <button class="act-btn danger" title="Supprimer" onclick="showToast('🗑️ Commentaire supprimé');this.closest('tr').style.opacity='0.3'">🗑</button>
+              <button class="act-btn danger" title="Bannir" onclick="openModal('banUser')">🚫</button>
+            </div></td>
+          </tr>
+          <tr style="background:rgba(229,115,115,.04)">
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#3d1a00,#c47e00)">😠</div>troll99 <span class="sb-badge-count" style="font-size:.45rem;padding:.1rem .35rem">🚩 3</span></div></td>
+            <td>Resto Soleil</td>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--error)">Ce resto est une arnaque totale, n'allez...</td>
+            <td><span class="stars-sm" style="color:var(--error)">★☆☆☆☆</span></td>
+            <td style="color:var(--gris);font-size:.78rem">Il y a 3h</td>
+            <td><div class="td-actions">
+              <button class="act-btn" title="Voir" onclick="showToast('👁️ Lecture du commentaire')">👁</button>
+              <button class="act-btn danger" title="Supprimer" onclick="showToast('🗑️ Commentaire supprimé');this.closest('tr').style.opacity='0.3'">🗑</button>
+              <button class="act-btn danger" title="Bannir" onclick="openModal('banUser')">🚫</button>
+            </div></td>
+          </tr>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#001260,#00209F)">🧑</div>Jean-R. M.</div></td>
+            <td>Galerie Nan Zile</td>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(249,243,232,.65)">Une expérience artistique incroyable...</td>
+            <td><span class="stars-sm">★★★★★</span></td>
+            <td style="color:var(--gris);font-size:.78rem">Il y a 5j</td>
+            <td><div class="td-actions">
+              <button class="act-btn" title="Voir" onclick="showToast('👁️ Lecture du commentaire')">👁</button>
+              <button class="act-btn danger" title="Supprimer" onclick="showToast('🗑️ Commentaire supprimé');this.closest('tr').style.opacity='0.3'">🗑</button>
+              <button class="act-btn danger" title="Bannir" onclick="openModal('banUser')">🚫</button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tbl-pagination">
+        <div class="tbl-pag-info">3 commentaires · page 1/1</div>
+        <div class="tbl-pag-btns">
+          <button class="pag-btn">◀</button>
+          <button class="pag-btn on">1</button>
+          <button class="pag-btn">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: LIEUX ═══ -->
+  <div class="content tab-page" id="page-lieux">
+    <div class="section-title">Gestion des <span>lieux</span>
+      <div class="section-title-actions">
+        <button class="tb-btn primary" onclick="openModal('addLieu')">＋ Ajouter manuellement</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <input class="table-search" placeholder="Rechercher un lieu..." oninput="filterTable(this,'tbl-lieux')">
+        <button class="tbl-filter-btn on">Tous</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">Actifs</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">En attente</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">Bannis</button>
+      </div>
+      <table id="tbl-lieux">
+        <thead><tr>
+          <th>Nom</th><th>Type</th><th>Propriétaire</th><th>Ville</th><th>Note</th><th>Statut</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>Lakay Lakay</div></td>
+            <td><span class="td-cat cat-resto">Restaurant</span></td>
+            <td>Famille Duvivier</td><td>Pétionville</td>
+            <td><span class="stars-sm">★★★★★</span> 4.9</td>
+            <td><span class="status-pill st-active">● Actif</span></td>
+            <td><div class="td-actions">
+              <button class="act-btn" title="Voir la fiche" onclick="showToast('👁️ Fiche du lieu')">👁</button>
+              <button class="act-btn" title="Modifier" onclick="openModal('editLieu')">✏️</button>
+              <button class="act-btn danger" title="Bannir" onclick="openModal('ban')">🚫</button>
+            </div></td>
+          </tr>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#3d2700,#c47e00)">🛍️</div>Bèl Ayiti Shop</div></td>
+            <td><span class="td-cat cat-boutique">Boutique</span></td>
+            <td>Josiane M.</td><td>Miami</td>
+            <td><span class="stars-sm">★★★★☆</span> 4.7</td>
+            <td><span class="status-pill st-active">● Actif</span></td>
+            <td><div class="td-actions">
+              <button class="act-btn" onclick="showToast('👁️ Fiche du lieu')">👁</button>
+              <button class="act-btn" onclick="openModal('editLieu')">✏️</button>
+              <button class="act-btn danger" onclick="openModal('ban')">🚫</button>
+            </div></td>
+          </tr>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#2d0a3a,#7b1fa2)">🎶</div>Nuit Kompa Vibes</div></td>
+            <td><span class="td-cat cat-soiree">Soirée</span></td>
+            <td>DJ Pascal</td><td>Paris</td>
+            <td><span class="stars-sm">★★★★★</span> 4.8</td>
+            <td><span class="status-pill st-pending">⏳ En attente</span></td>
+            <td><div class="td-actions">
+              <button class="act-btn success" title="Approuver" onclick="showToast('✅ Lieu approuvé !')">✓</button>
+              <button class="act-btn" onclick="showToast('👁️ Fiche du lieu')">👁</button>
+              <button class="act-btn danger" onclick="openModal('refuse')">✕</button>
+            </div></td>
+          </tr>
+          <tr style="opacity:.5">
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#1a0408,#6d0a17)">🍽️</div>Resto Soleil</div></td>
+            <td><span class="td-cat cat-resto">Restaurant</span></td>
+            <td>Pierre L.</td><td>Port-au-Prince</td>
+            <td><span class="stars-sm">★★☆☆☆</span> 2.1</td>
+            <td><span class="status-pill st-banned">🚫 Banni</span></td>
+            <td><div class="td-actions">
+              <button class="act-btn success" title="Réactiver" onclick="showToast('🔄 Lieu réactivé');this.closest('tr').style.opacity='1'">🔄</button>
+              <button class="act-btn danger" title="Supprimer définitivement" onclick="showToast('🗑️ Lieu supprimé');this.closest('tr').remove()">🗑</button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tbl-pagination">
+        <div class="tbl-pag-info">342 lieux · page 1/29</div>
+        <div class="tbl-pag-btns">
+          <button class="pag-btn">◀</button>
+          <button class="pag-btn on">1</button>
+          <button class="pag-btn" onclick="this.parentElement.querySelectorAll('.pag-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">2</button>
+          <button class="pag-btn" onclick="this.parentElement.querySelectorAll('.pag-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">3</button>
+          <button class="pag-btn">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: UTILISATEURS ═══ -->
+  <div class="content tab-page" id="page-users">
+    <div class="section-title">Gestion des <span>utilisateurs</span></div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <input class="table-search" placeholder="Rechercher un utilisateur..." oninput="filterTable(this,'tbl-users')">
+        <button class="tbl-filter-btn on">Tous</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">Visiteurs</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">Pros</button>
+        <button class="tbl-filter-btn" onclick="this.parentElement.querySelectorAll('.tbl-filter-btn').forEach(b=>b.classList.remove('on'));this.classList.add('on')">Bannis</button>
+      </div>
+      <table id="tbl-users">
+        <thead><tr>
+          <th>Utilisateur</th><th>Type</th><th>Pays</th><th>Inscrit le</th><th>Avis</th><th>Statut</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>Marie C.</div></td>
+            <td><span class="status-pill st-review" style="font-size:.48rem">Visiteur</span></td>
+            <td>🇫🇷 France</td><td style="font-size:.78rem;color:var(--gris)">12 Jan 2026</td>
+            <td style="color:var(--or);font-weight:600">48</td>
+            <td><span class="status-pill st-active">● Actif</span></td>
+            <td><div class="td-actions">
+              <button class="act-btn" onclick="showToast('👁️ Profil de Marie C.')">👁</button>
+              <button class="act-btn danger" onclick="openModal('banUser')">🚫</button>
+            </div></td>
+          </tr>
+          <tr>
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#001260,#00209F)">👨‍🍳</div>Famille Duvivier</div></td>
+            <td><span class="status-pill" style="font-size:.48rem;background:rgba(200,16,46,.12);color:var(--rouge);border:1px solid rgba(200,16,46,.25)">Pro</span></td>
+            <td>🇭🇹 Haïti</td><td style="font-size:.78rem;color:var(--gris)">3 Mar 2024</td>
+            <td style="color:var(--or);font-weight:600">—</td>
+            <td><span class="status-pill st-active">● Actif</span></td>
+            <td><div class="td-actions">
+              <button class="act-btn" onclick="showToast('👁️ Profil propriétaire')">👁</button>
+              <button class="act-btn danger" onclick="openModal('banUser')">🚫</button>
+            </div></td>
+          </tr>
+          <tr style="opacity:.5">
+            <td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#1a0408,#3d0a0f)">😠</div>troll99</div></td>
+            <td><span class="status-pill st-review" style="font-size:.48rem">Visiteur</span></td>
+            <td>🇺🇸 USA</td><td style="font-size:.78rem;color:var(--gris)">18 Mai 2026</td>
+            <td style="color:var(--error)">12 🚩</td>
+            <td><span class="status-pill st-banned">🚫 Banni</span></td>
+            <td><div class="td-actions">
+              <button class="act-btn success" onclick="showToast('🔄 Utilisateur réactivé');this.closest('tr').style.opacity='1'">🔄</button>
+              <button class="act-btn danger" onclick="showToast('🗑️ Compte supprimé');this.closest('tr').remove()">🗑</button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tbl-pagination">
+        <div class="tbl-pag-info">12 417 utilisateurs · page 1/621</div>
+        <div class="tbl-pag-btns">
+          <button class="pag-btn">◀</button>
+          <button class="pag-btn on">1</button>
+          <button class="pag-btn">2</button>
+          <button class="pag-btn">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: ACTIVITÉ ═══ -->
+  <div class="content tab-page" id="page-activity">
+    <div class="section-title">Activité <span>récente</span></div>
+    <div class="table-wrap" style="padding:1.2rem">
+      <div class="activity-feed">
+        <div class="act-item"><div class="act-line"></div><div class="act-dot">🆕</div><div class="act-text"><div class="act-main"><strong>Maison Créole</strong> a été soumis pour validation — Cap-Haïtien</div><div class="act-time">Il y a 14 min</div></div></div>
+        <div class="act-item"><div class="act-line"></div><div class="act-dot">🚩</div><div class="act-text"><div class="act-main"><strong>Marie C.</strong> a signalé <strong>Resto Soleil</strong> pour contenu inapproprié</div><div class="act-time">Il y a 22 min</div></div></div>
+        <div class="act-item"><div class="act-line"></div><div class="act-dot">⭐</div><div class="act-text"><div class="act-main"><strong>Jean-R. M.</strong> a posté un avis 5 étoiles sur <strong>Galerie Nan Zile</strong></div><div class="act-time">Il y a 1h</div></div></div>
+        <div class="act-item"><div class="act-line"></div><div class="act-dot">👤</div><div class="act-text"><div class="act-main">Nouvel utilisateur inscrit · <strong>Fabiola T.</strong> depuis Paris 🇫🇷</div><div class="act-time">Il y a 1h 20min</div></div></div>
+        <div class="act-item"><div class="act-line"></div><div class="act-dot">✅</div><div class="act-text"><div class="act-main"><strong>Bèl Ayiti Shop</strong> a été approuvé et mis en ligne</div><div class="act-time">Il y a 3h</div></div></div>
+        <div class="act-item"><div class="act-line"></div><div class="act-dot">🚫</div><div class="act-text"><div class="act-main"><strong>troll99</strong> a été banni après 3 signalements</div><div class="act-time">Il y a 5h</div></div></div>
+        <div class="act-item"><div class="act-line"></div><div class="act-dot">📢</div><div class="act-text"><div class="act-main"><strong>Lakay Lakay</strong> a posté une nouvelle annonce</div><div class="act-time">Il y a 6h</div></div></div>
+        <div class="act-item"><div class="act-dot">👤</div><div class="act-text"><div class="act-main">12 nouveaux utilisateurs inscrits aujourd'hui</div><div class="act-time">Résumé journalier</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: ANNONCES ═══ -->
+  <div class="content tab-page" id="page-annonces">
+    <div class="section-title">Gestion des <span>annonces</span>
+      <div class="section-title-actions">
+        <button class="tb-btn primary" onclick="openModal('addAnnonce')">＋ Créer une annonce</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Titre</th><th>Lieu</th><th>Type</th><th>Publié le</th><th>Vues</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:500;color:var(--blanc)">Menu spécial dimanche 🍖</td>
+            <td>Lakay Lakay</td>
+            <td><span class="td-cat cat-resto">Annonce</span></td>
+            <td style="font-size:.78rem;color:var(--gris)">Aujourd'hui 09h</td>
+            <td style="color:var(--or)">847</td>
+            <td><div class="td-actions">
+              <button class="act-btn" onclick="showToast('👁️ Aperçu de l\'annonce')">👁</button>
+              <button class="act-btn danger" onclick="showToast('🗑️ Annonce supprimée');this.closest('tr').remove()">🗑</button>
+            </div></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--blanc)">Soirée Kompa live vendredi 🎵</td>
+            <td>Lakay Lakay</td>
+            <td><span class="td-cat cat-evt">Événement</span></td>
+            <td style="font-size:.78rem;color:var(--gris)">Il y a 3 jours</td>
+            <td style="color:var(--or)">2 341</td>
+            <td><div class="td-actions">
+              <button class="act-btn" onclick="showToast('👁️ Aperçu')">👁</button>
+              <button class="act-btn danger" onclick="showToast('🗑️ Supprimée');this.closest('tr').remove()">🗑</button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: PENDING ═══ -->
+  <div class="content tab-page" id="page-pending">
+    <div class="section-title">Lieux en attente de <span>validation</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Établissement</th><th>Type</th><th>Propriétaire</th><th>Ville</th><th>Soumis</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">🍽️</div>Maison Créole</div></td><td><span class="td-cat cat-resto">Restaurant</span></td><td>Fabiola T.</td><td>Cap-Haïtien</td><td style="font-size:.78rem;color:var(--gris)">Il y a 2h</td><td><div class="td-actions"><button class="act-btn success" onclick="showToast('✅ Approuvé !')">✓</button><button class="act-btn" onclick="showToast('👁️ Aperçu')">👁</button><button class="act-btn danger" onclick="openModal('refuse')">✕</button></div></td></tr>
+          <tr><td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#3d2700,#c47e00)">🛍️</div>Kreyòl Fab</div></td><td><span class="td-cat cat-boutique">Boutique</span></td><td>Marc D.</td><td>Paris</td><td style="font-size:.78rem;color:var(--gris)">Il y a 5h</td><td><div class="td-actions"><button class="act-btn success" onclick="showToast('✅ Approuvé !')">✓</button><button class="act-btn" onclick="showToast('👁️ Aperçu')">👁</button><button class="act-btn danger" onclick="openModal('refuse')">✕</button></div></td></tr>
+          <tr><td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#0a2a1a,#2e7d32)">🎨</div>Studio Ayiti Art</div></td><td><span class="td-cat cat-art">Art</span></td><td>Clara N.</td><td>Montréal</td><td style="font-size:.78rem;color:var(--gris)">Il y a 1 jour</td><td><div class="td-actions"><button class="act-btn success" onclick="showToast('✅ Approuvé !')">✓</button><button class="act-btn" onclick="showToast('👁️ Aperçu')">👁</button><button class="act-btn danger" onclick="openModal('refuse')">✕</button></div></td></tr>
+          <tr><td><div class="td-name"><div class="td-avatar" style="background:linear-gradient(135deg,#001260,#00209F)">🎵</div>Kompa Bar NYC</div></td><td><span class="td-cat cat-soiree">Soirée</span></td><td>Andre J.</td><td>New York</td><td style="font-size:.78rem;color:var(--gris)">Il y a 2 jours</td><td><div class="td-actions"><button class="act-btn success" onclick="showToast('✅ Approuvé !')">✓</button><button class="act-btn" onclick="showToast('👁️ Aperçu')">👁</button><button class="act-btn danger" onclick="openModal('refuse')">✕</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- main -->
+</div><!-- layout -->
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- BAN LIEU -->
+<div class="modal-overlay" id="modal-ban">
+  <div class="modal">
+    <div class="modal-title">Bannir un lieu</div>
+    <p class="modal-sub">Cette action suspendra immédiatement la visibilité de cet établissement sur la plateforme.</p>
+    <div class="modal-warn"><strong>⚠️ Action irréversible sans confirmation</strong>Le propriétaire recevra une notification par email avec le motif du bannissement.</div>
+    <div class="modal-field"><label class="modal-label">Motif du bannissement <span style="color:var(--rouge)">*</span></label>
+      <select class="modal-input"><option disabled selected>Choisir un motif...</option><option>Contenu inapproprié</option><option>Informations frauduleuses</option><option>Signalements répétés</option><option>Violation des conditions</option><option>Autre</option></select>
+    </div>
+    <div class="modal-field"><label class="modal-label">Message au propriétaire</label>
+      <textarea class="modal-input" rows="3" placeholder="Expliquez la raison du bannissement..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-ban')">Annuler</button>
+      <button class="modal-confirm" onclick="closeModal('modal-ban');showToast('🚫 Lieu banni avec succès')">Confirmer le bannissement</button>
+    </div>
+  </div>
+</div>
+
+<!-- BAN USER -->
+<div class="modal-overlay" id="modal-banUser">
+  <div class="modal">
+    <div class="modal-title">Bannir un utilisateur</div>
+    <p class="modal-sub">L'utilisateur ne pourra plus accéder à la plateforme ni publier de contenu.</p>
+    <div class="modal-warn"><strong>⚠️ Compte suspendu immédiatement</strong>Tous ses commentaires resteront visibles sauf suppression manuelle.</div>
+    <div class="modal-field"><label class="modal-label">Motif <span style="color:var(--rouge)">*</span></label>
+      <select class="modal-input"><option disabled selected>Choisir...</option><option>Spam / Contenu abusif</option><option>Harcèlement</option><option>Faux compte</option><option>Violation des CGU</option></select>
+    </div>
+    <div class="modal-field"><label class="modal-label">Durée du ban</label>
+      <select class="modal-input"><option>7 jours</option><option>30 jours</option><option>90 jours</option><option selected>Permanent</option></select>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-banUser')">Annuler</button>
+      <button class="modal-confirm" onclick="closeModal('modal-banUser');showToast('🚫 Utilisateur banni')">Bannir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD LIEU -->
+<div class="modal-overlay" id="modal-addLieu">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-title">Ajouter un lieu</div>
+    <p class="modal-sub">Créez manuellement un établissement. Vous pourrez ensuite lui assigner un propriétaire.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+      <div class="modal-field" style="grid-column:1/-1"><label class="modal-label">Nom de l'établissement *</label><input type="text" class="modal-input" placeholder="Lakay Lakay Restaurant"></div>
+      <div class="modal-field"><label class="modal-label">Type *</label><select class="modal-input"><option disabled selected>Choisir...</option><option>🍽️ Restaurant</option><option>🛍️ Boutique</option><option>🎉 Événement</option><option>🎶 Soirée</option><option>🎨 Art</option></select></div>
+      <div class="modal-field"><label class="modal-label">Ville *</label><select class="modal-input"><option disabled selected>Choisir...</option><option>Pétionville</option><option>Port-au-Prince</option><option>Cap-Haïtien</option><option>Miami</option><option>Paris</option><option>Montréal</option></select></div>
+      <div class="modal-field" style="grid-column:1/-1"><label class="modal-label">Adresse</label><input type="text" class="modal-input" placeholder="Rue Grégoire, Pétionville"></div>
+      <div class="modal-field"><label class="modal-label">Assigner un propriétaire</label><input type="text" class="modal-input" placeholder="Email du propriétaire..."></div>
+      <div class="modal-field"><label class="modal-label">Téléphone</label><input type="tel" class="modal-input" placeholder="+509 3700 0000"></div>
+      <div class="modal-field" style="grid-column:1/-1"><label class="modal-label">Description</label><textarea class="modal-input" rows="2" placeholder="Description de l'établissement..."></textarea></div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-addLieu')">Annuler</button>
+      <button class="modal-confirm safe" onclick="closeModal('modal-addLieu');showToast('✅ Lieu créé et publié !')">Créer le lieu</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT LIEU -->
+<div class="modal-overlay" id="modal-editLieu">
+  <div class="modal">
+    <div class="modal-title">Modifier un lieu</div>
+    <p class="modal-sub">Modifiez les informations de cet établissement.</p>
+    <div class="modal-field"><label class="modal-label">Nom</label><input type="text" class="modal-input" value="Lakay Lakay Restaurant"></div>
+    <div class="modal-field"><label class="modal-label">Statut</label><select class="modal-input"><option selected>Actif</option><option>En attente</option><option>Suspendu</option></select></div>
+    <div class="modal-field"><label class="modal-label">Propriétaire assigné</label><input type="text" class="modal-input" value="famille.duvivier@email.com"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-editLieu')">Annuler</button>
+      <button class="modal-confirm safe" onclick="closeModal('modal-editLieu');showToast('✅ Lieu mis à jour !')">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- REFUSE -->
+<div class="modal-overlay" id="modal-refuse">
+  <div class="modal">
+    <div class="modal-title">Refuser un lieu</div>
+    <p class="modal-sub">Le propriétaire sera informé du refus avec votre message.</p>
+    <div class="modal-field"><label class="modal-label">Motif du refus *</label><select class="modal-input"><option disabled selected>Choisir...</option><option>Informations incomplètes</option><option>Lieu non haïtien</option><option>Photos insuffisantes</option><option>Doublon existant</option><option>Autre</option></select></div>
+    <div class="modal-field"><label class="modal-label">Message au propriétaire</label><textarea class="modal-input" rows="3" placeholder="Expliquez ce qui doit être corrigé..."></textarea></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-refuse')">Annuler</button>
+      <button class="modal-confirm" onclick="closeModal('modal-refuse');showToast('📩 Refus envoyé au propriétaire')">Envoyer le refus</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ANNONCE -->
+<div class="modal-overlay" id="modal-addAnnonce">
+  <div class="modal">
+    <div class="modal-title">Créer une annonce</div>
+    <p class="modal-sub">Publiez une annonce officielle visible sur la plateforme.</p>
+    <div class="modal-field"><label class="modal-label">Titre *</label><input type="text" class="modal-input" placeholder="Titre de l'annonce..."></div>
+    <div class="modal-field"><label class="modal-label">Lieu concerné</label><input type="text" class="modal-input" placeholder="Nom de l'établissement..."></div>
+    <div class="modal-field"><label class="modal-label">Contenu *</label><textarea class="modal-input" rows="4" placeholder="Rédigez votre annonce..."></textarea></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-addAnnonce')">Annuler</button>
+      <button class="modal-confirm safe" onclick="closeModal('modal-addAnnonce');showToast('📢 Annonce publiée !')">Publier</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="t-icon" id="ti"></div><div class="t-msg" id="tm"></div><button class="toast-close-btn" onclick="this.closest('.toast').classList.remove('show')" title="Fermer">✕</button>
+</div>
+
+<script>
+// ── NAVIGATION ──
+const PAGE_TITLES={dashboard:"Vue d'<span>ensemble</span>",reports:"Signale<span>ments</span>",comments:"Commenta<span>ires</span>",lieux:"Gestion des <span>lieux</span>",users:"Utilisat<span>eurs</span>",activity:"Activité <span>récente</span>",annonces:"Gestion des <span>annonces</span>",pending:"En att<span>ente</span>"};
+
+function goPage(id,el){
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+  document.getElementById('pageTitle').innerHTML=PAGE_TITLES[id]||id;
+}
+
+// ── CHARTS ──
+function buildChart(id,data,colorClass){
+  const el=document.getElementById(id);if(!el)return;
+  const max=Math.max(...data.map(d=>d.v));
+  el.innerHTML=data.map(d=>`
+    <div class="bar-col">
+      <div class="bar-lbl-top">${d.v}</div>
+      <div class="bar-fill-wrap" style="height:80px">
+        <div class="bar-fill-el ${colorClass}" style="height:${Math.round(d.v/max*80)}px"></div>
+      </div>
+      <div class="bar-lbl-bot">${d.l}</div>
+    </div>`).join('');
+}
+
+const days=[{l:'L',v:34},{l:'M',v:28},{l:'M',v:45},{l:'J',v:52},{l:'V',v:61},{l:'S',v:89},{l:'D',v:47}];
+const avis=[{l:'L',v:82},{l:'M',v:65},{l:'M',v:94},{l:'J',v:110},{l:'V',v:143},{l:'S',v:198},{l:'D',v:87}];
+setTimeout(()=>{buildChart('chartInscrip',days,'rouge');buildChart('chartAvis',avis,'or');},100);
+
+// ── MODALS ──
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
+});
+
+// ── REPORTS ──
+function resolveReport(btn,msg){
+  const card=btn.closest('.report-card');
+  card.style.transition='all .4s ease';
+  card.style.opacity='0';card.style.transform='translateX(20px)';
+  setTimeout(()=>card.remove(),400);
+  showToast(msg);
+}
+
+// ── TABLE SEARCH ──
+function filterTable(input,tableId){
+  const q=input.value.toLowerCase();
+  document.querySelectorAll('#'+tableId+' tbody tr').forEach(tr=>{
+    tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+
+// ── SORT ──
+function sortTable(th){
+  th.classList.toggle('sorted');
+  showToast('↕️ Tri appliqué');
+}
+
+// ── TOAST ──
+let tt;
+let _tt;
+function showToast(msg){
+  const parts=msg.split(' ');
+  document.getElementById('ti').textContent=parts[0];
+  document.getElementById('tm').textContent=parts.slice(1).join(' ');
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(tt);
+  tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

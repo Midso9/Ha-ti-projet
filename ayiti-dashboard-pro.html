@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Propriétaire — AYITI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0a0603;--rouge:#C8102E;--bleu:#00209F;--or:#F5A623;
+  --creme:#F9F3E8;--blanc:#ffffff;--gris:#8a8170;
+  --surface:#111009;--surface2:#191410;--surface3:#221c12;
+  --border:rgba(245,166,35,.12);--border2:rgba(255,255,255,.06);
+  --success:#81c784;--error:#e57373;--warn:#FFB74D;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+
+.sb-top{padding:1.5rem 1.2rem;border-bottom:1px solid var(--border2)}
+.sb-brand{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;color:var(--blanc);margin-bottom:1rem}
+.sb-brand span{color:var(--or)}
+
+.sb-etablissement{display:flex;align-items:center;gap:.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.8rem;cursor:pointer;transition:border-color .2s}
+.sb-etablissement:hover{border-color:rgba(245,166,35,.25)}
+.sb-etab-img{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--rouge),#6d0a17);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.sb-etab-name{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:var(--blanc);margin-bottom:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.sb-etab-status{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--success)}
+.sb-etab-arrow{margin-left:auto;color:var(--gris);font-size:.75rem}
+
+.sb-section{padding:.7rem .9rem .25rem;font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(138,129,112,.45)}
+.sb-item{display:flex;align-items:center;gap:.65rem;padding:.6rem .9rem;margin:.05rem .4rem;border-radius:6px;cursor:pointer;transition:all .2s;font-size:.83rem;color:var(--gris);border:1px solid transparent;position:relative}
+.sb-item:hover{background:var(--surface2);color:var(--creme)}
+.sb-item.active{background:rgba(245,166,35,.08);color:var(--or);border-color:rgba(245,166,35,.15)}
+.sb-item-icon{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}
+.sb-count{margin-left:auto;font-family:'Space Mono',monospace;font-size:.48rem;background:var(--rouge);color:var(--blanc);padding:.1rem .38rem;border-radius:10px;min-width:16px;text-align:center}
+.sb-count.warn{background:var(--warn);color:var(--noir)}
+.sb-count.ok{background:rgba(129,199,132,.15);color:var(--success);border:1px solid rgba(129,199,132,.25)}
+
+.sb-bottom{padding:.8rem;margin-top:auto}
+.sb-owner-card{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:.9rem;margin-bottom:.4rem}
+.sb-ow-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rouge),#6d0a17);display:flex;align-items:center;justify-content:center;font-size:.9rem;margin-bottom:.5rem}
+.sb-ow-name{font-size:.83rem;font-weight:600;color:var(--blanc)}
+.sb-ow-role{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--or);margin-top:.1rem}
+
+/* ── MAIN ── */
+.main{display:flex;flex-direction:column;overflow-x:hidden}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;border-bottom:1px solid var(--border2);background:rgba(10,6,3,.85);backdrop-filter:blur(14px);position:sticky;top:0;z-index:100}
+.page-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--blanc)}
+.page-title em{color:var(--or);font-style:italic}
+.topbar-right{display:flex;align-items:center;gap:.7rem}
+.tb-btn{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;padding:.5rem 1rem;border-radius:5px;cursor:pointer;transition:all .2s;border:1px solid var(--border2);background:transparent;color:var(--gris);display:flex;align-items:center;gap:.4rem}
+.tb-btn:hover{border-color:var(--border);color:var(--creme)}
+.tb-btn.primary{background:var(--rouge);border-color:var(--rouge);color:var(--blanc)}
+.tb-btn.primary:hover{background:#a50d25;transform:translateY(-1px)}
+.tb-notif{position:relative}
+.tb-notif::after{content:'2';position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:var(--rouge);font-family:'Space Mono',monospace;font-size:.44rem;color:var(--blanc);display:flex;align-items:center;justify-content:center;border:1.5px solid var(--noir)}
+
+/* ── CONTENT ── */
+.content{padding:2rem;flex:1}
+.tab-page{display:none}.tab-page.active{display:block;animation:fadeUp .35s ease forwards}
+@keyframes fadeUp{from{opacity:.3;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.2rem;position:relative;overflow:hidden;transition:border-color .25s;cursor:default}
+.stat-card:hover{border-color:var(--border)}
+.stat-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none}
+.stat-card:hover::before{opacity:1}
+.sc-rouge::before{background:radial-gradient(ellipse at 0% 0%,rgba(200,16,46,.1),transparent 70%)}
+.sc-or::before{background:radial-gradient(ellipse at 0% 0%,rgba(245,166,35,.1),transparent 70%)}
+.sc-bleu::before{background:radial-gradient(ellipse at 0% 0%,rgba(0,32,159,.1),transparent 70%)}
+.sc-vert::before{background:radial-gradient(ellipse at 0% 0%,rgba(129,199,132,.1),transparent 70%)}
+.stat-icon{font-size:1.3rem;margin-bottom:.55rem}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:var(--blanc);line-height:1}
+.stat-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);margin-top:.3rem}
+.stat-delta{font-size:.73rem;margin-top:.35rem}
+.d-up{color:var(--success)}.d-down{color:var(--error)}.d-neu{color:var(--gris)}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--blanc);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem}
+.sec-title em{color:var(--or);font-style:italic}
+.sec-actions{margin-left:auto;display:flex;gap:.5rem}
+
+/* ── CHART ── */
+.chart-card{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.2rem;margin-bottom:1.5rem}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.chart-title{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--or)}
+.chart-tabs{display:flex;gap:.3rem}
+.chart-tab{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .65rem;border-radius:4px;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gris);transition:all .2s}
+.chart-tab.on{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.25);color:var(--or)}
+.bar-chart{display:flex;align-items:flex-end;gap:.45rem;height:90px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:.25rem;flex:1}
+.bar-track{flex:1;width:100%;display:flex;align-items:flex-end}
+.bar-el{width:100%;border-radius:3px 3px 0 0;transition:height .7s cubic-bezier(.23,1,.32,1);min-height:3px;position:relative}
+.bar-el:hover::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:.52rem;color:var(--blanc);background:rgba(10,6,3,.9);padding:.15rem .4rem;border-radius:3px;white-space:nowrap}
+.be-rouge{background:linear-gradient(to top,rgba(200,16,46,.3),var(--rouge))}
+.be-or{background:linear-gradient(to top,rgba(245,166,35,.3),var(--or))}
+.be-bleu{background:linear-gradient(to top,rgba(0,32,159,.3),#5c6bc0)}
+.bar-lbl{font-family:'Space Mono',monospace;font-size:.46rem;color:var(--gris);text-transform:uppercase}
+
+/* ── GRID CARDS ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+
+/* ── CARD BASE ── */
+.card{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.2rem;transition:border-color .2s}
+.card:hover{border-color:var(--border)}
+
+/* ── PERFORMANCE BARS ── */
+.perf-item{display:flex;align-items:center;gap:.8rem;margin-bottom:.75rem}
+.perf-item:last-child{margin-bottom:0}
+.perf-label{font-size:.8rem;color:var(--creme);width:90px;flex-shrink:0}
+.perf-track{flex:1;height:5px;background:var(--surface);border-radius:3px;overflow:hidden}
+.perf-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.23,1,.32,1)}
+.pf-rouge{background:var(--rouge)}.pf-or{background:var(--or)}.pf-bleu{background:#5c6bc0}.pf-vert{background:var(--success)}
+.perf-val{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--or);width:32px;text-align:right;flex-shrink:0}
+
+/* ── AVIS LIST ── */
+.avis-list{display:flex;flex-direction:column;gap:.8rem}
+.avis-item{background:var(--surface);border:1px solid var(--border2);border-radius:7px;padding:.9rem;transition:border-color .2s;position:relative}
+.avis-item:hover{border-color:var(--border)}
+.avis-header{display:flex;align-items:center;gap:.65rem;margin-bottom:.55rem}
+.avis-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0}
+.avis-name{font-size:.84rem;font-weight:600;color:var(--blanc)}
+.avis-stars{color:var(--or);font-size:.7rem;margin-top:.1rem}
+.avis-date{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.05em;color:var(--gris);margin-left:auto}
+.avis-text{font-size:.81rem;color:rgba(249,243,232,.6);line-height:1.6;margin-bottom:.65rem}
+.avis-footer{display:flex;gap:.5rem}
+.avis-reply-btn{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.07em;text-transform:uppercase;padding:.3rem .7rem;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--gris);transition:all .2s}
+.avis-reply-btn:hover{border-color:rgba(245,166,35,.3);color:var(--or)}
+.replied-badge{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.07em;text-transform:uppercase;padding:.2rem .55rem;background:rgba(129,199,132,.1);color:var(--success);border:1px solid rgba(129,199,132,.2);border-radius:20px}
+.my-reply{margin-top:.6rem;padding:.6rem .8rem;background:rgba(245,166,35,.05);border-left:2px solid var(--or);border-radius:0 5px 5px 0;font-size:.8rem;color:rgba(249,243,232,.6);font-style:italic;line-height:1.55}
+.reply-input-area{margin-top:.65rem;display:none}
+.reply-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:.6rem .8rem;font-size:.82rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;resize:none}
+.reply-input:focus{border-color:rgba(245,166,35,.35)}
+.reply-send{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:.45rem .9rem;border-radius:4px;cursor:pointer;background:var(--rouge);color:var(--blanc);border:none;margin-top:.4rem;transition:background .2s}
+.reply-send:hover{background:#a50d25}
+
+/* ── ANNONCES ── */
+.annonce-card{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:1rem;margin-bottom:.8rem;transition:border-color .2s}
+.annonce-card:hover{border-color:var(--border)}
+.ann-header{display:flex;align-items:center;gap:.7rem;margin-bottom:.65rem}
+.ann-type{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;padding:.18rem .5rem;border-radius:3px}
+.at-annonce{background:rgba(200,16,46,.15);color:var(--rouge);border:1px solid rgba(200,16,46,.2)}
+.at-promo{background:rgba(245,166,35,.12);color:var(--or);border:1px solid rgba(245,166,35,.2)}
+.at-event{background:rgba(0,32,159,.15);color:#7986cb;border:1px solid rgba(0,32,159,.25)}
+.ann-date{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--gris);margin-left:auto}
+.ann-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--blanc);margin-bottom:.35rem}
+.ann-text{font-size:.81rem;color:rgba(249,243,232,.55);line-height:1.6;margin-bottom:.7rem}
+.ann-stats{display:flex;gap:1.2rem}
+.ann-stat{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.05em;color:var(--gris)}
+.ann-stat span{color:var(--or)}
+.ann-actions{display:flex;gap:.4rem;margin-left:auto}
+.ann-btn{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;padding:.28rem .65rem;border-radius:3px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--gris);transition:all .2s}
+.ann-btn:hover{border-color:var(--border);color:var(--creme)}
+.ann-btn.danger:hover{border-color:rgba(229,115,115,.3);color:var(--error)}
+
+/* ── GÉRANTS ── */
+.gerant-card{display:flex;align-items:center;gap:.8rem;background:var(--surface);border:1px solid var(--border2);border-radius:7px;padding:.85rem;margin-bottom:.6rem;transition:border-color .2s}
+.gerant-card:hover{border-color:var(--border)}
+.gerant-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;border:1.5px solid var(--border2)}
+.gerant-info{flex:1;min-width:0}
+.gerant-name{font-size:.84rem;font-weight:600;color:var(--blanc);margin-bottom:.15rem}
+.gerant-email{font-size:.73rem;color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gerant-droits{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem}
+.droit-pill{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.05em;text-transform:uppercase;padding:.15rem .45rem;border-radius:20px;background:rgba(245,166,35,.08);color:rgba(245,166,35,.7);border:1px solid rgba(245,166,35,.15)}
+.gerant-edit{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;padding:.32rem .7rem;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--gris);transition:all .2s;flex-shrink:0}
+.gerant-edit:hover{border-color:var(--border);color:var(--creme)}
+
+/* ── PARAMÈTRES ── */
+.settings-section{margin-bottom:2rem}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px solid var(--border2)}
+.settings-row:last-child{border-bottom:none}
+.settings-lbl{font-size:.86rem;color:var(--creme);font-weight:500}
+.settings-sub{font-size:.75rem;color:var(--gris);margin-top:.15rem;line-height:1.5}
+.toggle-sw{width:38px;height:22px;border-radius:11px;background:var(--surface);border:1px solid var(--border2);cursor:pointer;position:relative;transition:background .25s;flex-shrink:0}
+.toggle-sw.on{background:rgba(129,199,132,.2);border-color:rgba(129,199,132,.4)}
+.toggle-sw::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:var(--gris);top:2px;left:2px;transition:all .25s}
+.toggle-sw.on::after{background:var(--success);left:18px}
+.settings-input{background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:.5rem .8rem;font-size:.83rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:220px}
+.settings-input:focus{border-color:rgba(245,166,35,.35)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#1c1610;border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:560px;width:100%;animation:modalIn .3s cubic-bezier(.23,1,.32,1);max-height:90vh;overflow-y:auto}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;color:var(--blanc);margin-bottom:.3rem}
+.modal-sub{font-size:.81rem;color:var(--gris);margin-bottom:1.3rem;line-height:1.6}
+.modal-field{margin-bottom:.85rem}
+.modal-label{font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);margin-bottom:.32rem;display:block}
+.modal-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:.68rem .88rem;font-size:.85rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.modal-input:focus{border-color:rgba(245,166,35,.35)}
+.modal-input::placeholder{color:rgba(138,129,112,.5)}
+select.modal-input{cursor:pointer}
+textarea.modal-input{resize:none}
+.modal-btns{display:flex;gap:.7rem;justify-content:flex-end;margin-top:1.3rem}
+.modal-cancel{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:.62rem 1.2rem;cursor:pointer;background:transparent;color:var(--gris);border:1px solid var(--border2);border-radius:5px}
+.modal-confirm{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:.62rem 1.4rem;cursor:pointer;background:var(--rouge);color:var(--blanc);border:none;border-radius:5px;transition:background .2s}
+.modal-confirm:hover{background:#a50d25}
+.modal-confirm.safe{background:#2e7d32}.modal-confirm.safe:hover{background:#1b5e20}
+
+/* DROITS CHECKBOXES */
+.droits-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.5rem}
+.droit-check{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border2);border-radius:6px;cursor:pointer;transition:all .2s}
+.droit-check:hover{border-color:rgba(245,166,35,.25)}
+.droit-check.on{background:rgba(245,166,35,.07);border-color:rgba(245,166,35,.25)}
+.dc-box{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.6rem;transition:all .2s;flex-shrink:0}
+.droit-check.on .dc-box{background:var(--or);border-color:var(--or);color:var(--noir)}
+.dc-label{font-size:.78rem;color:var(--gris);transition:color .2s}
+.droit-check.on .dc-label{color:var(--creme)}
+
+/* PHOTO UPLOAD */
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem}
+.photo-slot{aspect-ratio:1;border-radius:6px;overflow:hidden;position:relative;cursor:pointer;transition:all .2s}
+.photo-slot.empty{background:var(--surface2);border:1.5px dashed rgba(245,166,35,.2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:rgba(138,129,112,.4)}
+.photo-slot.empty:hover{border-color:rgba(245,166,35,.4);color:var(--or)}
+.photo-slot.filled{background:linear-gradient(135deg,#7a0d1f,#C8102E)}
+.photo-del{position:absolute;top:.3rem;right:.3rem;width:20px;height:20px;border-radius:50%;background:rgba(10,6,3,.8);display:flex;align-items:center;justify-content:center;font-size:.6rem;cursor:pointer;color:var(--error);border:1px solid rgba(229,115,115,.3);transition:all .2s}
+.photo-del:hover{background:rgba(229,115,115,.2)}
+.photo-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.8rem;opacity:.25}
+
+/* HORAIRES */
+.h-row{display:grid;grid-template-columns:80px 1fr 1fr 34px;gap:.5rem;align-items:center;margin-bottom:.42rem}
+.h-day{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:.05em;color:var(--gris)}
+.h-tog{width:32px;height:20px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;position:relative;transition:background .2s}
+.h-tog.on{background:rgba(129,199,132,.2);border-color:rgba(129,199,132,.4)}
+.h-tog::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:var(--gris);top:2px;left:2px;transition:all .2s}
+.h-tog.on::after{background:var(--success);left:14px}
+.t-inp{background:var(--surface);border:1px solid var(--border2);border-radius:5px;padding:.38rem .5rem;font-size:.78rem;color:var(--creme);font-family:'DM Sans',sans-serif;outline:none;width:100%}
+.t-inp:focus{border-color:rgba(245,166,35,.3)}
+.t-inp:disabled{opacity:.3;cursor:not-allowed}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:#1c1610;border:1px solid var(--border);border-radius:8px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;z-index:999;box-shadow:0 16px 48px rgba(0,0,0,.6);max-width:280px
+  transform:translateY(90px);opacity:0;pointer-events:none;
+  transition:all .38s cubic-bezier(.23,1,.32,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.t-icon{font-size:1rem}.t-msg{font-size:.82rem;color:var(--blanc)}
+
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.sidebar{display:none}.stats-row{grid-template-columns:repeat(2,1fr)}.two-col,.three-col{grid-template-columns:1fr}}
+
+/* ══════════════════════════════════════
+   AYITI — MICRO-INTERACTIONS GLOBALES
+══════════════════════════════════════ */
+
+/* Base: toutes les transitions plus fluides */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── BOUTONS PRINCIPAUX ── */
+button, .btn-solid, .btn-outline,
+.hero-btn-primary, .hero-btn-secondary,
+.btn-next, .btn-back, .action-btn,
+.action-primary, .action-fav, .action-notif, .action-share,
+.modal-confirm, .modal-cancel,
+.submit-review, .reply-send,
+.tb-btn, .ann-btn, .r-act,
+.success-cta, .cta-btn-white, .cta-btn-ghost,
+.cat-pill, .tbl-filter-btn, .chart-tab,
+.gerant-edit, .pag-btn, .page-btn {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1),
+              background .2s ease,
+              border-color .2s ease,
+              color .2s ease,
+              box-shadow .2s ease !important;
+  cursor: pointer;
+}
+
+/* Boutons primaires — grossissent et brillent */
+.btn-next:not(:disabled):hover,
+.action-primary:hover,
+.hero-btn-primary:hover,
+.modal-confirm:hover,
+.submit-review:hover,
+.reply-send:hover,
+.tb-btn.primary:hover,
+.success-cta:hover,
+.cta-btn-white:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 8px 24px rgba(200,16,46,.35) !important;
+}
+
+/* Boutons secondaires — légère montée */
+.btn-back:hover,
+.action-fav:hover,
+.action-notif:hover,
+.action-share:hover,
+.modal-cancel:hover,
+.btn-outline:hover,
+.hero-btn-secondary:hover,
+.cta-btn-ghost:hover,
+.gerant-edit:hover,
+.ann-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+/* Boutons icônes / ronds — grossissement */
+.act-btn:hover,
+.card-fav-btn:hover,
+.three-dot-btn:hover,
+.theme-toggle:hover,
+.pw-eye:hover,
+.nav-av:hover,
+.sb-etab-arrow,
+.pag-btn:hover,
+.page-btn:hover {
+  transform: scale(1.12) !important;
+}
+
+/* Pills et filtres */
+.cat-pill:hover,
+.tbl-filter-btn:hover,
+.chart-tab:hover,
+.km-preset:hover,
+.droit-pill {
+  transform: translateY(-1px) scale(1.04) !important;
+}
+
+/* Active — enfoncement */
+button:active,
+.btn-next:active,
+.action-btn:active,
+.modal-confirm:active,
+.cat-pill:active,
+.act-btn:active {
+  transform: scale(.96) !important;
+  box-shadow: none !important;
+}
+
+/* ── CARTES / LIENS ── */
+.place-card,
+.feat-card,
+.cat-card,
+.feat-mini,
+.annonce-card,
+.avis-item,
+.report-card,
+.gerant-card,
+.role-card,
+.stat-card,
+.sidebar-card,
+.info-card,
+.app-card,
+.app-card-sm {
+  transition: transform .3s cubic-bezier(.23,1,.32,1),
+              border-color .25s ease,
+              box-shadow .3s ease !important;
+}
+
+.place-card:hover    { transform: translateY(-5px) scale(1.01) !important; box-shadow: 0 20px 50px rgba(0,0,0,.45) !important; }
+.feat-card:hover     { transform: translateY(-4px) !important; box-shadow: 0 16px 40px rgba(0,0,0,.35) !important; }
+.cat-card:hover      { transform: translateY(-7px) scale(1.02) !important; }
+.feat-mini:hover     { transform: translateY(-4px) scale(1.02) !important; }
+.annonce-card:hover  { transform: translateX(3px) !important; }
+.avis-item:hover     { transform: translateX(3px) !important; }
+.gerant-card:hover   { transform: translateX(4px) !important; }
+.role-card:hover     { transform: translateY(-3px) scale(1.01) !important; }
+.stat-card:hover     { transform: translateY(-3px) !important; box-shadow: 0 12px 32px rgba(0,0,0,.3) !important; }
+.link-card:hover     { transform: translateX(5px) !important; }
+.sb-item:hover       { transform: translateX(3px) !important; }
+.sb-etablissement:hover { transform: translateY(-1px) !important; }
+
+/* ── INPUTS — FOCUS GLOW ── */
+.field-input:focus,
+.modal-input:focus,
+.review-input:focus,
+.reply-input:focus,
+.table-search:focus,
+.city-select:focus,
+.sort-select:focus,
+.settings-input:focus,
+.t-inp:focus,
+.t-input:focus,
+.time-input:focus {
+  transform: scale(1.01) !important;
+  box-shadow: 0 0 0 3px rgba(245,166,35,.12), 0 2px 8px rgba(0,0,0,.2) !important;
+}
+
+/* ── NAV LINKS — UNDERLINE SLIDE ── */
+.nav-links a {
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 50%; right: 50%;
+  height: 1.5px;
+  background: var(--or, #F5A623);
+  transition: left .25s ease, right .25s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  left: 0; right: 0;
+}
+
+/* ── SEE-ALL / FEAT-ACTION — FLÈCHE SLIDE ── */
+.see-all, .feat-action {
+  display: inline-flex; align-items: center; gap: .4rem;
+  transition: gap .25s ease, color .2s ease !important;
+}
+.see-all:hover { gap: .9rem !important; }
+.feat-action:hover { gap: .7rem !important; }
+
+/* ── AVATARS ── */
+.comment-avatar:hover,
+.owner-avatar:hover,
+.nav-avatar:hover,
+.nav-av:hover,
+.avis-av:hover,
+.gerant-av:hover {
+  transform: scale(1.1) rotate(-3deg) !important;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+}
+
+/* ── STAR RATING ── */
+.star-btn {
+  transition: transform .15s cubic-bezier(.34,1.56,.64,1), opacity .15s ease !important;
+}
+.star-btn:hover, .star-btn.active {
+  transform: scale(1.25) !important;
+  opacity: 1 !important;
+}
+
+/* ── TOGGLES ── */
+.toggle-sw,
+.h-tog,
+.h-toggle,
+.horaire-toggle {
+  transition: background .25s ease, border-color .25s ease !important;
+  cursor: pointer;
+}
+.toggle-sw:hover, .h-tog:hover, .h-toggle:hover {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+
+/* ── DROIT CHECKBOXES ── */
+.droit-check {
+  transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
+}
+.droit-check:hover { transform: scale(1.03) !important; }
+.droit-check.on { transform: scale(1.02) !important; }
+
+/* ── PHOTO SLOTS ── */
+.photo-slot {
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), 
+              border-color .2s ease, opacity .2s ease !important;
+}
+.photo-slot:hover { transform: scale(1.05) !important; z-index: 2; }
+
+/* ── BADGE COUNTS (pulse si nb > 0) ── */
+.sb-badge-count:not(.ok),
+.stat-delta.d-down {
+  animation: subtle-pulse 2.5s ease-in-out infinite;
+}
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .65; }
+}
+
+/* ── MAP PIN ── */
+.map-pin-item {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1) !important;
+  cursor: pointer;
+}
+.map-pin-item:hover { transform: scale(1.4) translateY(-4px) !important; }
+
+/* ── GALLERY ── */
+.hero-gallery > div {
+  transition: filter .3s ease !important;
+  cursor: pointer;
+}
+.hero-gallery > div:hover { filter: brightness(1.1); }
+
+/* ── CHIP REMOVE ── */
+.chip-x {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), color .15s ease !important;
+}
+.chip-x:hover { transform: scale(1.3) rotate(90deg) !important; }
+
+/* ── ANNONCE ACTIONS ── */
+.annonce-action:hover {
+  transform: translateY(-1px) scale(1.05) !important;
+}
+
+/* ── MODAL IN ── */
+.modal-overlay.open .modal {
+  animation: modalPop .35s cubic-bezier(.34,1.3,.64,1) forwards !important;
+}
+@keyframes modalPop {
+  from { opacity:0; transform: scale(.9) translateY(16px); }
+  to   { opacity:1; transform: scale(1)  translateY(0); }
+}
+
+/* ── SCROLL APPEAR ── */
+@keyframes slideInLeft {
+  from { opacity:0; transform: translateX(-20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity:0; transform: translateX(20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+.how-step:nth-child(odd)  { animation: slideInLeft  .6s ease forwards; }
+.how-step:nth-child(even) { animation: slideInRight .6s ease forwards; }
+.how-step:nth-child(2) { animation-delay: .1s; }
+.how-step:nth-child(3) { animation-delay: .2s; }
+.how-step:nth-child(4) { animation-delay: .3s; }
+
+/* ── RESPONSIVE BASE ── */
+@media (max-width: 768px) {
+  .place-card:hover    { transform: translateY(-3px) !important; }
+  .cat-card:hover      { transform: translateY(-4px) !important; }
+  .btn-next:hover      { transform: translateY(-1px) scale(1.02) !important; }
+}
+/* ════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">AY<span>I</span>TI</div>
+    <div class="sb-etablissement" onclick="openModal('switchEtab')">
+      <div class="sb-etab-img">🍽️</div>
+      <div style="flex:1;min-width:0">
+        <div class="sb-etab-name">Lakay Lakay Restaurant</div>
+        <div class="sb-etab-status">● Actif & vérifié</div>
+      </div>
+      <div class="sb-etab-arrow">⌄</div>
+    </div>
+  </div>
+
+  <div class="sb-section">Tableau de bord</div>
+  <div class="sb-item active" onclick="goPage('overview',this)"><span class="sb-item-icon">📊</span>Vue d'ensemble</div>
+  <div class="sb-item" onclick="goPage('stats',this)"><span class="sb-item-icon">📈</span>Statistiques</div>
+
+  <div class="sb-section">Mon établissement</div>
+  <div class="sb-item" onclick="goPage('profil',this)"><span class="sb-item-icon">🏢</span>Fiche & infos</div>
+  <div class="sb-item" onclick="goPage('photos',this)"><span class="sb-item-icon">📷</span>Photos</div>
+  <div class="sb-item" onclick="goPage('horaires',this)"><span class="sb-item-icon">⏰</span>Horaires</div>
+
+  <div class="sb-section">Contenu</div>
+  <div class="sb-item" onclick="goPage('annonces',this)"><span class="sb-item-icon">📢</span>Annonces <span class="sb-count ok">2</span></div>
+  <div class="sb-item" onclick="goPage('avis',this)"><span class="sb-item-icon">⭐</span>Avis clients <span class="sb-count warn">3</span></div>
+
+  <div class="sb-section">Équipe</div>
+  <div class="sb-item" onclick="goPage('gerants',this)"><span class="sb-item-icon">👥</span>Gérants</div>
+
+  <div class="sb-section">Compte</div>
+  <div class="sb-item" onclick="goPage('parametres',this)"><span class="sb-item-icon">⚙️</span>Paramètres</div>
+
+  <div class="sb-bottom">
+    <div class="sb-owner-card">
+      <div class="sb-ow-av">👨‍🍳</div>
+      <div class="sb-ow-name">Famille Duvivier</div>
+      <div class="sb-ow-role">Propriétaire</div>
+    </div>
+    <div class="sb-item" onclick="window.location.href='ayiti-connexion.html'"><span class="sb-item-icon">🚪</span>Déconnexion</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Vue d'<em>ensemble</em></div>
+    <div class="topbar-right">
+      <button class="tb-btn tb-notif" onclick="showToast('🔔 2 nouvelles notifications')">🔔</button>
+      <button class="tb-btn" onclick="window.location.href='ayiti-fiche-lieu.html'">👁 Voir ma fiche</button>
+      <button class="tb-btn primary" onclick="openModal('newAnnonce')">＋ Nouvelle annonce</button>
+    </div>
+  </div>
+
+  <!-- ═══ VUE D'ENSEMBLE ═══ -->
+  <div class="content tab-page active" id="page-overview">
+
+    <div class="stats-row">
+      <div class="stat-card sc-rouge">
+        <div class="stat-icon">👁️</div>
+        <div class="stat-num">4 821</div>
+        <div class="stat-label">Vues ce mois</div>
+        <div class="stat-delta d-up">↑ +23% vs mois dernier</div>
+      </div>
+      <div class="stat-card sc-or">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-num">4.9</div>
+        <div class="stat-label">Note moyenne</div>
+        <div class="stat-delta d-up">↑ 214 avis au total</div>
+      </div>
+      <div class="stat-card sc-bleu">
+        <div class="stat-icon">❤️</div>
+        <div class="stat-num">387</div>
+        <div class="stat-label">Favoris</div>
+        <div class="stat-delta d-up">↑ +41 ce mois</div>
+      </div>
+      <div class="stat-card sc-vert">
+        <div class="stat-icon">🔔</div>
+        <div class="stat-num">1 240</div>
+        <div class="stat-label">Abonnés annonces</div>
+        <div class="stat-delta d-up">↑ +89 cette semaine</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- CHART VUES -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Vues de la fiche</div>
+          <div class="chart-tabs">
+            <button class="chart-tab on" onclick="switchChartTab(this,'vues7')">7j</button>
+            <button class="chart-tab" onclick="switchChartTab(this,'vues30')">30j</button>
+          </div>
+        </div>
+        <div class="bar-chart" id="chartVues"></div>
+      </div>
+      <!-- PERFORMANCE -->
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Performance globale</div></div>
+        <div class="perf-item"><div class="perf-label">Qualité service</div><div class="perf-track"><div class="perf-fill pf-rouge" style="width:0%" data-w="94%"></div></div><div class="perf-val">4.9</div></div>
+        <div class="perf-item"><div class="perf-label">Rapport qualité/prix</div><div class="perf-track"><div class="perf-fill pf-or" style="width:0%" data-w="88%"></div></div><div class="perf-val">4.4</div></div>
+        <div class="perf-item"><div class="perf-label">Ambiance</div><div class="perf-track"><div class="perf-fill pf-bleu" style="width:0%" data-w="96%"></div></div><div class="perf-val">4.8</div></div>
+        <div class="perf-item"><div class="perf-label">Propreté</div><div class="perf-track"><div class="perf-fill pf-vert" style="width:0%" data-w="92%"></div></div><div class="perf-val">4.6</div></div>
+        <div class="perf-item"><div class="perf-label">Localisation</div><div class="perf-track"><div class="perf-fill pf-rouge" style="width:0%" data-w="85%"></div></div><div class="perf-val">4.3</div></div>
+      </div>
+    </div>
+
+    <!-- DERNIERS AVIS -->
+    <div class="sec-title">Derniers avis <em>non répondus</em> <div class="sec-actions"><button class="tb-btn" onclick="goPage('avis',document.querySelector('[onclick*=avis]'))">Voir tout →</button></div></div>
+    <div class="avis-list">
+      <div class="avis-item">
+        <div class="avis-header">
+          <div class="avis-av" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>
+          <div><div class="avis-name">Marie-Claire D.</div><div class="avis-stars">★★★★★</div></div>
+          <div class="avis-date">Il y a 2j</div>
+        </div>
+        <div class="avis-text">Meilleur griot de tout Pétionville, sans hésiter ! La pikliz est parfaite, le service impeccable. J'y emmène tous mes amis étrangers.</div>
+        <div class="avis-footer">
+          <button class="avis-reply-btn" onclick="toggleReply(this)">💬 Répondre</button>
+        </div>
+        <div class="reply-input-area">
+          <textarea class="reply-input" rows="2" placeholder="Répondez à Marie-Claire..."></textarea>
+          <button class="reply-send" onclick="sendReply(this)">Publier la réponse</button>
+        </div>
+      </div>
+      <div class="avis-item">
+        <div class="avis-header">
+          <div class="avis-av" style="background:linear-gradient(135deg,#001260,#00209F)">🧑</div>
+          <div><div class="avis-name">Fabiola T.</div><div class="avis-stars">★★★★☆</div></div>
+          <div class="avis-date">Il y a 5j</div>
+        </div>
+        <div class="avis-text">De passage depuis Paris, j'ai trouvé Lakay Lakay grâce à AYITI. Exactement le goût de la cuisine de manman. Merci !</div>
+        <div class="avis-footer">
+          <button class="avis-reply-btn" onclick="toggleReply(this)">💬 Répondre</button>
+        </div>
+        <div class="reply-input-area">
+          <textarea class="reply-input" rows="2" placeholder="Répondez à Fabiola..."></textarea>
+          <button class="reply-send" onclick="sendReply(this)">Publier la réponse</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STATISTIQUES ═══ -->
+  <div class="content tab-page" id="page-stats">
+    <div class="stats-row">
+      <div class="stat-card sc-rouge"><div class="stat-icon">👁️</div><div class="stat-num">48.2k</div><div class="stat-label">Vues totales</div><div class="stat-delta d-up">↑ depuis le début</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">🖱️</div><div class="stat-num">12.4%</div><div class="stat-label">Taux d'engagement</div><div class="stat-delta d-up">↑ +2.1% ce mois</div></div>
+      <div class="stat-card sc-bleu"><div class="stat-icon">🔗</div><div class="stat-num">634</div><div class="stat-label">Clics sur le site</div><div class="stat-delta d-up">↑ +89 cette sem.</div></div>
+      <div class="stat-card sc-vert"><div class="stat-icon">📞</div><div class="stat-num">218</div><div class="stat-label">Clics "Appeler"</div><div class="stat-delta d-up">↑ +34 ce mois</div></div>
+    </div>
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Vues — 30 derniers jours</div></div>
+        <div class="bar-chart" id="chartStats30"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Sources de trafic</div></div>
+        <div style="display:flex;flex-direction:column;gap:.7rem;margin-top:.3rem">
+          <div class="perf-item"><div class="perf-label">Recherche AYITI</div><div class="perf-track"><div class="perf-fill pf-rouge" data-w="68%" style="width:0%"></div></div><div class="perf-val">68%</div></div>
+          <div class="perf-item"><div class="perf-label">Favoris</div><div class="perf-track"><div class="perf-fill pf-or" data-w="18%" style="width:0%"></div></div><div class="perf-val">18%</div></div>
+          <div class="perf-item"><div class="perf-label">Partages</div><div class="perf-track"><div class="perf-fill pf-bleu" data-w="9%" style="width:0%"></div></div><div class="perf-val">9%</div></div>
+          <div class="perf-item"><div class="perf-label">Notifications</div><div class="perf-track"><div class="perf-fill pf-vert" data-w="5%" style="width:0%"></div></div><div class="perf-val">5%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FICHE & INFOS ═══ -->
+  <div class="content tab-page" id="page-profil">
+    <div class="sec-title">Fiche de mon <em>établissement</em></div>
+    <div class="card" style="margin-bottom:1.2rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="modal-field"><label class="modal-label">Nom de l'établissement</label><input type="text" class="modal-input" value="Lakay Lakay Restaurant"></div>
+        <div class="modal-field"><label class="modal-label">Type</label><select class="modal-input"><option selected>🍽️ Restaurant</option><option>🛍️ Boutique</option><option>🎉 Événement</option></select></div>
+        <div class="modal-field"><label class="modal-label">Téléphone</label><input type="tel" class="modal-input" value="+509 3700 0000"></div>
+        <div class="modal-field"><label class="modal-label">Site internet</label><input type="url" class="modal-input" value="lakayklakay.ht"></div>
+        <div class="modal-field" style="grid-column:1/-1"><label class="modal-label">Adresse</label><input type="text" class="modal-input" value="Rue Grégoire, Pétionville, Haïti"></div>
+        <div class="modal-field" style="grid-column:1/-1"><label class="modal-label">Description</label><textarea class="modal-input" rows="3">Lakay Lakay est bien plus qu'un restaurant — c'est une expérience culturelle. Griot, diri kole ak pwa, pikliz maison préparés avec des ingrédients 100% locaux.</textarea></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:1rem">
+        <button class="modal-confirm safe" style="border-radius:5px" onclick="showToast('✅ Fiche mise à jour !')">Enregistrer les modifications</button>
+      </div>
+    </div>
+    <div class="sec-title">Commodités & <em>services</em></div>
+    <div class="card">
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">🅿️ Parking</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">🍺 Bar</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">📶 Wi-Fi</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">❄️ Climatisé</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">🎵 Musique live</div></div>
+        <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">🚗 Drive</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">🥡 À emporter</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">💳 Carte bancaire</div></div>
+        <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">🍱 Livraison</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">♿ Accès PMR</div></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:1rem">
+        <button class="modal-confirm safe" style="border-radius:5px" onclick="showToast('✅ Commodités enregistrées !')">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PHOTOS ═══ -->
+  <div class="content tab-page" id="page-photos">
+    <div class="sec-title">Gestion des <em>photos</em></div>
+    <div class="card">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--or);margin-bottom:.9rem">Photos de l'établissement · 6/20</div>
+      <div class="photo-grid">
+        <div class="photo-slot filled" onclick="showToast('📷 Photo sélectionnée')">
+          <div class="photo-emoji">🍽️</div>
+          <div class="photo-del" onclick="event.stopPropagation();showToast('🗑️ Photo supprimée');this.closest('.photo-slot').className='photo-slot empty';this.closest('.photo-slot').innerHTML='＋'">✕</div>
+        </div>
+        <div class="photo-slot filled" style="background:linear-gradient(135deg,#001260,#00209F)">
+          <div class="photo-emoji">🥘</div>
+          <div class="photo-del" onclick="event.stopPropagation();showToast('🗑️ Photo supprimée');this.closest('.photo-slot').className='photo-slot empty';this.closest('.photo-slot').innerHTML='＋'">✕</div>
+        </div>
+        <div class="photo-slot filled" style="background:linear-gradient(135deg,#3d2700,#c47e00)">
+          <div class="photo-emoji">🍖</div>
+          <div class="photo-del" onclick="event.stopPropagation();showToast('🗑️ Photo supprimée');this.closest('.photo-slot').className='photo-slot empty';this.closest('.photo-slot').innerHTML='＋'">✕</div>
+        </div>
+        <div class="photo-slot filled" style="background:linear-gradient(135deg,#0a2a1a,#2e7d32)">
+          <div class="photo-emoji">🥗</div>
+          <div class="photo-del" onclick="event.stopPropagation();showToast('🗑️ Photo supprimée');this.closest('.photo-slot').className='photo-slot empty';this.closest('.photo-slot').innerHTML='＋'">✕</div>
+        </div>
+        <div class="photo-slot filled" style="background:linear-gradient(135deg,#2d0a3a,#7b1fa2)">
+          <div class="photo-emoji">🎵</div>
+          <div class="photo-del" onclick="event.stopPropagation();showToast('🗑️ Photo supprimée');this.closest('.photo-slot').className='photo-slot empty';this.closest('.photo-slot').innerHTML='＋'">✕</div>
+        </div>
+        <div class="photo-slot filled" style="background:linear-gradient(135deg,#1a0d00,#c47e00)">
+          <div class="photo-emoji">🍹</div>
+          <div class="photo-del" onclick="event.stopPropagation();showToast('🗑️ Photo supprimée');this.closest('.photo-slot').className='photo-slot empty';this.closest('.photo-slot').innerHTML='＋'">✕</div>
+        </div>
+        <div class="photo-slot empty" onclick="showToast('📤 Upload de photo')">＋</div>
+        <div class="photo-slot empty" onclick="showToast('📤 Upload de photo')">＋</div>
+      </div>
+      <div style="font-size:.76rem;color:var(--gris);line-height:1.6">JPG, PNG · Max 10 Mo par photo · Formats acceptés : paysage et portrait · La première photo sera la photo principale.</div>
+    </div>
+  </div>
+
+  <!-- ═══ HORAIRES ═══ -->
+  <div class="content tab-page" id="page-horaires">
+    <div class="sec-title">Horaires d'<em>ouverture</em></div>
+    <div class="card">
+      <div id="horairesList"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:1.2rem">
+        <button class="modal-confirm safe" style="border-radius:5px" onclick="showToast('✅ Horaires enregistrés !')">Enregistrer les horaires</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ANNONCES ═══ -->
+  <div class="content tab-page" id="page-annonces">
+    <div class="sec-title">Mes <em>annonces</em>
+      <div class="sec-actions"><button class="tb-btn primary" onclick="openModal('newAnnonce')">＋ Nouvelle annonce</button></div>
+    </div>
+    <div class="annonce-card">
+      <div class="ann-header">
+        <span class="ann-type at-annonce">Annonce</span>
+        <div class="ann-date">Aujourd'hui 09h</div>
+        <div class="ann-actions">
+          <button class="ann-btn" onclick="showToast('✏️ Modification...')">✏️ Modifier</button>
+          <button class="ann-btn danger" onclick="showToast('🗑️ Annonce supprimée');this.closest('.annonce-card').remove()">🗑️ Supprimer</button>
+        </div>
+      </div>
+      <div class="ann-title">🍖 Menu spécial dimanche !</div>
+      <div class="ann-text">Cette semaine on vous prépare un griot géant avec pikliz maison et bananes pesées. Réservez votre table avant samedi soir — les places partent vite !</div>
+      <div class="ann-stats">
+        <div class="ann-stat">👁️ <span>847</span> vues</div>
+        <div class="ann-stat">❤️ <span>48</span> j'aime</div>
+        <div class="ann-stat">💬 <span>12</span> commentaires</div>
+        <div class="ann-stat">🔗 <span>23</span> partages</div>
+      </div>
+    </div>
+    <div class="annonce-card">
+      <div class="ann-header">
+        <span class="ann-type at-event">Événement</span>
+        <div class="ann-date">Il y a 3 jours</div>
+        <div class="ann-actions">
+          <button class="ann-btn" onclick="showToast('✏️ Modification...')">✏️ Modifier</button>
+          <button class="ann-btn danger" onclick="showToast('🗑️ Supprimée');this.closest('.annonce-card').remove()">🗑️ Supprimer</button>
+        </div>
+      </div>
+      <div class="ann-title">🎶 Soirée Kompa live ce vendredi !</div>
+      <div class="ann-text">Le groupe Symphonie des Antilles sera sur scène à partir de 20h. Entrée libre pour les clients du restaurant. À ne pas manquer !</div>
+      <div class="ann-stats">
+        <div class="ann-stat">👁️ <span>2 341</span> vues</div>
+        <div class="ann-stat">❤️ <span>127</span> j'aime</div>
+        <div class="ann-stat">💬 <span>34</span> commentaires</div>
+        <div class="ann-stat">🔗 <span>89</span> partages</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AVIS ═══ -->
+  <div class="content tab-page" id="page-avis">
+    <div class="sec-title">Avis <em>clients</em> <div class="sec-actions"><div style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;color:var(--or);padding:.4rem .8rem;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:5px">⭐ 4.9 · 214 avis</div></div></div>
+    <div class="avis-list">
+      <div class="avis-item">
+        <div class="avis-header">
+          <div class="avis-av" style="background:linear-gradient(135deg,#7a0d1f,#C8102E)">😊</div>
+          <div><div class="avis-name">Marie-Claire D. <span style="font-family:'Space Mono',monospace;font-size:.48rem;background:rgba(245,166,35,.12);color:var(--or);padding:.1rem .4rem;border-radius:2px;border:1px solid rgba(245,166,35,.2)">Top Reviewer</span></div><div class="avis-stars">★★★★★</div></div>
+          <div class="avis-date">Il y a 2j</div>
+        </div>
+        <div class="avis-text">Meilleur griot de tout Pétionville, sans hésiter ! La pikliz est parfaite, le service impeccable. J'y emmène tous mes amis étrangers pour leur faire découvrir la vraie cuisine haïtienne.</div>
+        <div class="avis-footer">
+          <button class="avis-reply-btn" onclick="toggleReply(this)">💬 Répondre</button>
+        </div>
+        <div class="reply-input-area">
+          <textarea class="reply-input" rows="2" placeholder="Répondez à Marie-Claire..."></textarea>
+          <button class="reply-send" onclick="sendReply(this)">Publier</button>
+        </div>
+      </div>
+      <div class="avis-item">
+        <div class="avis-header">
+          <div class="avis-av" style="background:linear-gradient(135deg,#001260,#00209F)">🧑</div>
+          <div><div class="avis-name">Jean-Robert M.</div><div class="avis-stars">★★★★★</div></div>
+          <div class="avis-date">Il y a 5j</div>
+        </div>
+        <div class="avis-text">La soirée du vendredi avec musique live, c'est quelque chose. On a mangé, dansé, rigolé — une vraie expérience haïtienne complète. Le diri kole était à tomber.</div>
+        <div class="avis-footer">
+          <span class="replied-badge">✓ Répondu</span>
+        </div>
+        <div class="my-reply">Mèsi anpil Jean-Robert ! C'est toujours un plaisir de vous accueillir. On vous attend vendredi prochain 🇭🇹</div>
+      </div>
+      <div class="avis-item">
+        <div class="avis-header">
+          <div class="avis-av" style="background:linear-gradient(135deg,#3d2700,#c47e00)">👩</div>
+          <div><div class="avis-name">Fabiola T.</div><div class="avis-stars">★★★★☆</div></div>
+          <div class="avis-date">Il y a 1 sem.</div>
+        </div>
+        <div class="avis-text">De passage depuis Paris et j'ai trouvé Lakay Lakay grâce à AYITI. Exactement le goût de la cuisine de manman. Merci !</div>
+        <div class="avis-footer">
+          <button class="avis-reply-btn" onclick="toggleReply(this)">💬 Répondre</button>
+        </div>
+        <div class="reply-input-area">
+          <textarea class="reply-input" rows="2" placeholder="Répondez à Fabiola..."></textarea>
+          <button class="reply-send" onclick="sendReply(this)">Publier</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ GÉRANTS ═══ -->
+  <div class="content tab-page" id="page-gerants">
+    <div class="sec-title">Mon <em>équipe</em>
+      <div class="sec-actions"><button class="tb-btn primary" onclick="openModal('addGerant')">＋ Inviter un gérant</button></div>
+    </div>
+    <div>
+      <div class="gerant-card">
+        <div class="gerant-av" style="background:linear-gradient(135deg,#001260,#00209F)">👨‍💼</div>
+        <div class="gerant-info">
+          <div class="gerant-name">Pascal D.</div>
+          <div class="gerant-email">pascal.d@email.com</div>
+          <div class="gerant-droits">
+            <span class="droit-pill">📢 Annonces</span>
+            <span class="droit-pill">💬 Répondre</span>
+            <span class="droit-pill">🗑️ Supprimer post</span>
+          </div>
+        </div>
+        <button class="gerant-edit" onclick="openModal('editGerant')">✏️ Gérer les droits</button>
+      </div>
+      <div class="gerant-card">
+        <div class="gerant-av" style="background:linear-gradient(135deg,#0a2a1a,#2e7d32)">👩‍💼</div>
+        <div class="gerant-info">
+          <div class="gerant-name">Josiane M.</div>
+          <div class="gerant-email">josiane.m@email.com</div>
+          <div class="gerant-droits">
+            <span class="droit-pill">📢 Annonces</span>
+            <span class="droit-pill">💬 Répondre</span>
+          </div>
+        </div>
+        <button class="gerant-edit" onclick="openModal('editGerant')">✏️ Gérer les droits</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PARAMÈTRES ═══ -->
+  <div class="content tab-page" id="page-parametres">
+    <div class="sec-title">Paramètres du <em>compte</em></div>
+    <div class="card" style="margin-bottom:1.2rem">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--or);margin-bottom:.9rem">Notifications</div>
+      <div class="settings-section">
+        <div class="settings-row"><div><div class="settings-lbl">Nouvel avis</div><div class="settings-sub">Recevoir une notification à chaque avis posté</div></div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="settings-row"><div><div class="settings-lbl">Nouveau favori</div><div class="settings-sub">Savoir quand quelqu'un ajoute votre lieu en favori</div></div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="settings-row"><div><div class="settings-lbl">Signalement reçu</div><div class="settings-sub">Être alerté si un signalement est soumis à l'admin</div></div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="settings-row"><div><div class="settings-lbl">Rapport hebdomadaire</div><div class="settings-sub">Résumé des stats de la semaine par email</div></div><div class="toggle-sw" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:1.2rem">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--or);margin-bottom:.9rem">Informations du compte</div>
+      <div class="settings-section">
+        <div class="settings-row"><div><div class="settings-lbl">Adresse email</div></div><input class="settings-input" type="email" value="famille.duvivier@email.com"></div>
+        <div class="settings-row"><div><div class="settings-lbl">Mot de passe</div></div><button class="ann-btn" onclick="showToast('🔑 Email de réinitialisation envoyé')">Changer le mot de passe</button></div>
+        <div class="settings-row"><div><div class="settings-lbl">Langue de l'interface</div></div><select class="settings-input"><option>🇫🇷 Français</option><option>🇺🇸 English</option><option>🇭🇹 Kreyòl</option></select></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:.8rem">
+        <button class="modal-confirm safe" style="border-radius:5px" onclick="showToast('✅ Paramètres enregistrés !')">Enregistrer</button>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(229,115,115,.2)">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--error);margin-bottom:.9rem">Zone dangereuse</div>
+      <div class="settings-row"><div><div class="settings-lbl">Supprimer mon établissement</div><div class="settings-sub">Cette action est irréversible. Toutes les données seront perdues.</div></div><button class="ann-btn danger" style="flex-shrink:0" onclick="showToast('⚠️ Contactez l\'admin pour cette action')">Supprimer</button></div>
+    </div>
+  </div>
+
+</div><!-- main -->
+</div><!-- layout -->
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- NOUVELLE ANNONCE -->
+<div class="modal-overlay" id="modal-newAnnonce">
+  <div class="modal">
+    <div class="modal-title">Nouvelle annonce</div>
+    <p class="modal-sub">Publiez une annonce visible par tous vos abonnés (1 240 personnes).</p>
+    <div class="modal-field"><label class="modal-label">Type d'annonce</label>
+      <select class="modal-input"><option>📢 Annonce générale</option><option>🎉 Événement</option><option>🏷️ Promotion</option><option>📰 Actualité</option></select>
+    </div>
+    <div class="modal-field"><label class="modal-label">Titre *</label><input type="text" class="modal-input" placeholder="Ex : Menu spécial ce dimanche..."></div>
+    <div class="modal-field"><label class="modal-label">Contenu *</label><textarea class="modal-input" rows="4" placeholder="Rédigez votre annonce..."></textarea></div>
+    <div class="modal-field"><label class="modal-label">Photo (optionnel)</label>
+      <div style="border:1.5px dashed rgba(245,166,35,.2);border-radius:6px;padding:1.2rem;text-align:center;cursor:pointer;color:var(--gris);font-size:.82rem;transition:border-color .2s" onclick="showToast('📷 Sélection de photo')">📷 Ajouter une photo</div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('newAnnonce')">Annuler</button>
+      <button class="modal-confirm safe" onclick="closeModal('newAnnonce');showToast('📢 Annonce publiée !')">Publier maintenant</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVITER GÉRANT -->
+<div class="modal-overlay" id="modal-addGerant">
+  <div class="modal">
+    <div class="modal-title">Inviter un gérant</div>
+    <p class="modal-sub">Le gérant recevra un email d'invitation. Définissez ses droits d'accès.</p>
+    <div class="modal-field"><label class="modal-label">Nom complet *</label><input type="text" class="modal-input" placeholder="Prénom Nom"></div>
+    <div class="modal-field"><label class="modal-label">Email *</label><input type="email" class="modal-input" placeholder="email@exemple.com"></div>
+    <div class="modal-field"><label class="modal-label">Droits accordés</label>
+      <div class="droits-grid">
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">📢 Poster une annonce</div></div>
+        <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">💬 Répondre aux avis</div></div>
+        <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">🗑️ Supprimer un post</div></div>
+        <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">📷 Gérer les photos</div></div>
+        <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">⏰ Modifier horaires</div></div>
+        <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">📊 Voir les stats</div></div>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('addGerant')">Annuler</button>
+      <button class="modal-confirm safe" onclick="closeModal('addGerant');showToast('✉️ Invitation envoyée !')">Envoyer l'invitation</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT GÉRANT -->
+<div class="modal-overlay" id="modal-editGerant">
+  <div class="modal">
+    <div class="modal-title">Gérer les droits — Pascal D.</div>
+    <p class="modal-sub">Cochez ou décochez les droits de ce gérant. Les changements sont immédiats.</p>
+    <div class="droits-grid">
+      <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">📢 Poster une annonce</div></div>
+      <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">💬 Répondre aux avis</div></div>
+      <div class="droit-check on" onclick="this.classList.toggle('on')"><div class="dc-box">✓</div><div class="dc-label">🗑️ Supprimer un post</div></div>
+      <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">📷 Gérer les photos</div></div>
+      <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">⏰ Modifier horaires</div></div>
+      <div class="droit-check" onclick="this.classList.toggle('on')"><div class="dc-box"></div><div class="dc-label">📊 Voir les stats</div></div>
+    </div>
+    <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center">
+      <button style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:.45rem .9rem;border-radius:4px;cursor:pointer;background:transparent;border:1px solid rgba(229,115,115,.3);color:var(--error);transition:all .2s" onclick="closeModal('editGerant');showToast('🚫 Gérant retiré de l\'équipe')">Retirer de l'équipe</button>
+      <div class="modal-btns" style="margin:0">
+        <button class="modal-cancel" onclick="closeModal('editGerant')">Annuler</button>
+        <button class="modal-confirm safe" onclick="closeModal('editGerant');showToast('✅ Droits mis à jour !')">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SWITCH ÉTABLISSEMENT -->
+<div class="modal-overlay" id="modal-switchEtab">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title">Mes établissements</div>
+    <p class="modal-sub">Basculez entre vos différents établissements.</p>
+    <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.2rem">
+      <div class="sb-etablissement" onclick="closeModal('switchEtab');showToast('🍽️ Lakay Lakay sélectionné')" style="border-color:rgba(245,166,35,.4)">
+        <div class="sb-etab-img">🍽️</div>
+        <div style="flex:1"><div class="sb-etab-name">Lakay Lakay Restaurant</div><div class="sb-etab-status">● Actif & vérifié</div></div>
+        <div style="color:var(--or);font-size:.7rem">✓</div>
+      </div>
+      <div class="sb-etablissement" onclick="closeModal('switchEtab');showToast('🛍️ Duvivier Shop sélectionné')">
+        <div class="sb-etab-img" style="background:linear-gradient(135deg,#3d2700,#c47e00)">🛍️</div>
+        <div style="flex:1"><div class="sb-etab-name">Duvivier Shop</div><div style="font-family:'Space Mono',monospace;font-size:.48rem;color:var(--warn)">⏳ En attente</div></div>
+      </div>
+    </div>
+    <button class="modal-confirm safe" style="width:100%;border-radius:5px" onclick="closeModal('switchEtab');openModal('addLieuPro')">＋ Ajouter un établissement</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="t-icon" id="ti"></div><div class="t-msg" id="tm"></div><button class="toast-close-btn" onclick="this.closest('.toast').classList.remove('show')" title="Fermer">✕</button>
+</div>
+
+<script>
+// ── NAVIGATION ──
+const TITLES={overview:"Vue d'<em>ensemble</em>",stats:"Statist<em>iques</em>",profil:"Fiche & <em>infos</em>",photos:"Mes <em>photos</em>",horaires:"Mes <em>horaires</em>",annonces:"Mes <em>annonces</em>",avis:"Avis <em>clients</em>",gerants:"Mon <em>équipe</em>",parametres:"Para<em>mètres</em>"};
+function goPage(id,el){
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+  document.getElementById('pageTitle').innerHTML=TITLES[id]||id;
+  if(id==='stats'||id==='overview')animatePerf();
+}
+
+// ── CHARTS ──
+function buildBar(id,data,cls){
+  const el=document.getElementById(id);if(!el)return;
+  const max=Math.max(...data.map(d=>d.v));
+  el.innerHTML=data.map(d=>`<div class="bar-col">
+    <div class="bar-lbl" style="color:var(--blanc);margin-bottom:.2rem;font-size:.5rem">${d.v}</div>
+    <div class="bar-track" style="height:80px">
+      <div class="bar-el ${cls}" data-v="${d.v}" style="height:${Math.round(d.v/max*80)}px"></div>
+    </div>
+    <div class="bar-lbl">${d.l}</div>
+  </div>`).join('');
+}
+const vues7=[{l:'L',v:142},{l:'M',v:118},{l:'M',v:195},{l:'J',v:223},{l:'V',v:287},{l:'S',v:421},{l:'D',v:198}];
+const vues30=[{l:'S1',v:820},{l:'S2',v:940},{l:'S3',v:1120},{l:'S4',v:1380}];
+const s30=[{l:'S1',v:980},{l:'S2',v:1100},{l:'S3',v:1340},{l:'S4',v:1520}];
+setTimeout(()=>{buildBar('chartVues',vues7,'be-rouge');buildBar('chartStats30',s30,'be-or');},100);
+
+function switchChartTab(btn,type){
+  btn.parentElement.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  buildBar('chartVues',type==='vues7'?vues7:vues30,'be-rouge');
+}
+
+// ── PERF BARS ANIMATION ──
+function animatePerf(){
+  setTimeout(()=>{
+    document.querySelectorAll('.perf-fill').forEach(el=>{
+      el.style.width=el.dataset.w||'0%';
+    });
+  },150);
+}
+animatePerf();
+
+// ── MODALS ──
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
+});
+
+// ── REPLY ──
+function toggleReply(btn){
+  const area=btn.closest('.avis-item').querySelector('.reply-input-area');
+  const isOpen=area.style.display==='block';
+  area.style.display=isOpen?'none':'block';
+  if(!isOpen)area.querySelector('.reply-input').focus();
+}
+function sendReply(btn){
+  const item=btn.closest('.avis-item');
+  const text=item.querySelector('.reply-input').value.trim();
+  if(!text){showToast('⚠️ Rédigez votre réponse d\'abord');return;}
+  item.querySelector('.reply-input-area').style.display='none';
+  item.querySelector('.avis-footer').innerHTML='<span class="replied-badge">✓ Répondu</span>';
+  const replyEl=document.createElement('div');
+  replyEl.className='my-reply';
+  replyEl.textContent=text;
+  item.appendChild(replyEl);
+  showToast('✅ Réponse publiée !');
+}
+
+// ── HORAIRES ──
+const DAYS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+const DEF_ON=[true,true,true,true,true,true,false];
+const DEF_F=['09:00','09:00','09:00','09:00','09:00','10:00','10:00'];
+const DEF_T=['22:00','22:00','22:00','22:00','23:00','23:00','21:00'];
+function buildHoraires(){
+  const c=document.getElementById('horairesList');if(!c)return;
+  c.innerHTML=DAYS.map((d,i)=>`
+    <div class="h-row">
+      <span class="h-day">${d}</span>
+      <input type="time" class="t-inp" value="${DEF_F[i]}" ${DEF_ON[i]?'':' disabled'}>
+      <input type="time" class="t-inp" value="${DEF_T[i]}" ${DEF_ON[i]?'':' disabled'}>
+      <div class="h-tog ${DEF_ON[i]?'on':''}" onclick="this.classList.toggle('on');const on=this.classList.contains('on');this.parentElement.querySelectorAll('.t-inp').forEach(x=>x.disabled=!on)"></div>
+    </div>`).join('');
+}
+buildHoraires();
+
+// ── TOAST ──
+let tt;
+let _tt;
+function showToast(msg){
+  const parts=msg.split(' ');
+  document.getElementById('ti').textContent=parts[0];
+  document.getElementById('tm').textContent=parts.slice(1).join(' ');
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(tt);
+  tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

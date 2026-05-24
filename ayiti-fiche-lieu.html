@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lakay Lakay Restaurant — AYITI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noir: #0a0603;
+  --rouge: #C8102E;
+  --bleu: #00209F;
+  --or: #F5A623;
+  --creme: #F9F3E8;
+  --blanc: #ffffff;
+  --gris: #8a8170;
+  --surface: #141008;
+  --surface2: #1c1610;
+  --border: rgba(245,166,35,0.12);
+  --border2: rgba(255,255,255,0.06);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--noir);
+  color: var(--creme);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2.5rem;
+  background: rgba(10,6,3,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 900;
+  color: var(--blanc); text-decoration: none;
+}
+.nav-logo span { color: var(--or); }
+.nav-back {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gris); text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--or); }
+.nav-right {
+  display: flex; align-items: center; gap: 1rem;
+}
+.nav-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--rouge), #6d0a17);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; cursor: pointer;
+}
+
+/* ── HERO GALLERY ── */
+.hero-gallery {
+  margin-top: 62px;
+  height: 480px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+  position: relative;
+  cursor: pointer;
+}
+.gallery-main {
+  grid-row: 1 / 3;
+  background: linear-gradient(160deg, #7a0d1f 0%, #C8102E 35%, #1a0408 100%);
+  position: relative; overflow: hidden;
+}
+.gallery-thumb {
+  background: linear-gradient(160deg, #001260 0%, #00209F 50%, #000820 100%);
+  position: relative; overflow: hidden;
+}
+.gallery-thumb:nth-child(3) {
+  background: linear-gradient(160deg, #3d2700 0%, #c47e00 50%, #1a1000 100%);
+}
+.gallery-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(transparent 50%, rgba(0,0,0,0.5));
+}
+.gallery-pattern {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 40% 30%, rgba(255,255,255,0.05) 0%, transparent 60%);
+}
+.gallery-emoji {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 4rem; opacity: 0.15;
+}
+.gallery-emoji.sm { font-size: 2.5rem; }
+.gallery-more {
+  position: absolute; bottom: 1rem; right: 1rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+  background: rgba(10,6,3,0.85); color: var(--creme);
+  padding: 0.4rem 0.9rem; border-radius: 3px;
+  border: 1px solid var(--border2);
+  backdrop-filter: blur(8px);
+}
+
+/* ── LAYOUT ── */
+.page-layout {
+  max-width: 1200px; margin: 0 auto;
+  padding: 2.5rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* ── LEFT COL ── */
+.main-col {}
+
+/* HEADER INFO */
+.place-header {
+  margin-bottom: 2rem;
+}
+.place-badges {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.25rem 0.65rem; border-radius: 3px;
+}
+.badge-cat { background: var(--rouge); color: var(--blanc); }
+.badge-verified { background: rgba(245,166,35,0.15); color: var(--or); border: 1px solid rgba(245,166,35,0.3); }
+.badge-open { background: rgba(46,125,50,0.15); color: #81c784; border: 1px solid rgba(46,125,50,0.3); }
+.badge-top { background: rgba(0,32,159,0.2); color: #7986cb; border: 1px solid rgba(0,32,159,0.4); }
+
+.place-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900; line-height: 1.05;
+  color: var(--blanc);
+  margin-bottom: 0.8rem;
+}
+
+.place-meta {
+  display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center;
+  margin-bottom: 1.2rem;
+}
+.meta-rating {
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.stars { color: var(--or); font-size: 0.9rem; letter-spacing: 0.05em; }
+.rating-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--blanc);
+}
+.rating-count {
+  font-size: 0.78rem; color: var(--gris);
+}
+.meta-sep { color: var(--border); }
+.meta-item {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.82rem; color: var(--gris);
+}
+.meta-item strong { color: var(--creme); }
+
+.place-desc {
+  font-size: 0.95rem; color: rgba(249,243,232,0.65);
+  line-height: 1.8; max-width: 640px;
+  margin-bottom: 1.5rem;
+}
+
+/* ACTION BAR */
+.action-bar {
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border2);
+}
+.action-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.7rem 1.3rem;
+  border-radius: 4px; cursor: pointer;
+  transition: all 0.25s; border: none; text-decoration: none;
+}
+.action-primary {
+  background: var(--rouge); color: var(--blanc);
+}
+.action-primary:hover { background: #a50d25; transform: translateY(-1px); }
+.action-fav {
+  background: var(--surface2); color: var(--creme);
+  border: 1px solid var(--border2);
+}
+.action-fav:hover { border-color: var(--or); color: var(--or); }
+.action-fav.active { background: rgba(245,166,35,0.1); border-color: var(--or); color: var(--or); }
+.action-notif {
+  background: var(--surface2); color: var(--creme);
+  border: 1px solid var(--border2);
+}
+.action-notif:hover { border-color: rgba(129,199,132,0.5); color: #81c784; }
+.action-share {
+  background: var(--surface2); color: var(--creme);
+  border: 1px solid var(--border2);
+}
+.action-share:hover { border-color: var(--border); }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border2);
+  margin-bottom: 2rem;
+}
+.tab {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.8rem 1.5rem; cursor: pointer;
+  color: var(--gris); background: none; border: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s; margin-bottom: -1px;
+}
+.tab:hover { color: var(--creme); }
+.tab.active { color: var(--or); border-bottom-color: var(--or); }
+
+/* TAB CONTENT */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── INFOS TAB ── */
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.5rem; margin-bottom: 2rem;
+}
+.info-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 6px; padding: 1.2rem;
+}
+.info-card-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--or); margin-bottom: 0.8rem;
+}
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border2);
+  font-size: 0.82rem;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row-label { color: var(--gris); }
+.info-row-val { color: var(--creme); font-weight: 500; }
+.info-row-val.open { color: #81c784; }
+.info-row-val.closed { color: #e57373; }
+
+.hours-list { display: flex; flex-direction: column; gap: 0.35rem; }
+.hour-item {
+  display: flex; justify-content: space-between;
+  font-size: 0.8rem; padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border2);
+}
+.hour-item:last-child { border: none; }
+.hour-day { color: var(--gris); }
+.hour-time { color: var(--creme); }
+.hour-item.today .hour-day { color: var(--or); font-weight: 500; }
+.hour-item.today .hour-time { color: #81c784; }
+
+/* MAP PLACEHOLDER */
+.map-placeholder {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  height: 200px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative; overflow: hidden;
+}
+.map-placeholder:hover { border-color: var(--or); }
+.map-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.map-pin { font-size: 2rem; z-index: 1; }
+.map-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gris); z-index: 1;
+}
+.map-addr {
+  font-size: 0.78rem; color: rgba(249,243,232,0.5); z-index: 1;
+}
+
+/* ── ANNONCES TAB ── */
+.annonce-list { display: flex; flex-direction: column; gap: 1rem; }
+.annonce-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 1.2rem;
+  transition: border-color 0.2s;
+}
+.annonce-card:hover { border-color: var(--border); }
+.annonce-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+.annonce-avatar {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--rouge), #6d0a17);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.annonce-meta {}
+.annonce-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; font-weight: 700; color: var(--blanc);
+}
+.annonce-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem; letter-spacing: 0.08em; color: var(--gris);
+  margin-top: 0.1rem;
+}
+.annonce-body {
+  font-size: 0.88rem; color: rgba(249,243,232,0.7);
+  line-height: 1.65; margin-bottom: 0.8rem;
+}
+.annonce-img {
+  height: 140px; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(135deg, #7a0d1f 0%, #C8102E 50%, #1a0408 100%);
+  margin-bottom: 0.8rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem; opacity: 0.3;
+}
+.annonce-footer {
+  display: flex; align-items: center; gap: 1rem;
+}
+.annonce-action {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gris); cursor: pointer;
+  background: none; border: none;
+  transition: color 0.2s; padding: 0;
+}
+.annonce-action:hover { color: var(--or); }
+.annonce-action.liked { color: var(--rouge); }
+
+/* ── AVIS TAB ── */
+.rating-overview {
+  display: flex; gap: 2rem; align-items: center;
+  padding: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border2); border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+.big-rating { text-align: center; }
+.big-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem; font-weight: 900; color: var(--blanc);
+  line-height: 1;
+}
+.big-stars { color: var(--or); font-size: 1rem; margin: 0.3rem 0; }
+.big-count { font-size: 0.75rem; color: var(--gris); }
+.rating-bars { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
+.bar-row { display: flex; align-items: center; gap: 0.6rem; }
+.bar-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; color: var(--gris); width: 12px; text-align: right;
+}
+.bar-track {
+  flex: 1; height: 5px; background: var(--surface2);
+  border-radius: 3px; overflow: hidden;
+}
+.bar-fill {
+  height: 100%; background: var(--or); border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.bar-pct {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem; color: var(--gris); width: 28px;
+}
+
+/* WRITE REVIEW */
+.write-review {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px; padding: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.write-review-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.my-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--bleu), #001060);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+}
+.write-placeholder {
+  flex: 1; font-size: 0.85rem; color: var(--gris);
+  cursor: text;
+}
+.star-select {
+  display: flex; gap: 0.25rem; margin-bottom: 0.8rem;
+}
+.star-btn {
+  font-size: 1.3rem; cursor: pointer; opacity: 0.3;
+  transition: opacity 0.15s, transform 0.15s;
+  background: none; border: none;
+}
+.star-btn:hover, .star-btn.active { opacity: 1; transform: scale(1.1); }
+.review-input {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border2); border-radius: 6px;
+  padding: 0.75rem; font-size: 0.85rem;
+  color: var(--creme); font-family: 'DM Sans', sans-serif;
+  resize: none; margin-bottom: 0.75rem;
+  outline: none; transition: border-color 0.2s;
+}
+.review-input:focus { border-color: rgba(245,166,35,0.3); }
+.review-input::placeholder { color: var(--gris); }
+.review-actions {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.media-btns { display: flex; gap: 0.5rem; }
+.media-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.4rem 0.8rem; cursor: pointer;
+  background: var(--surface2); color: var(--gris);
+  border: 1px solid var(--border2); border-radius: 3px;
+  transition: all 0.2s;
+}
+.media-btn:hover { border-color: var(--or); color: var(--or); }
+.submit-review {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.55rem 1.2rem; cursor: pointer;
+  background: var(--rouge); color: var(--blanc);
+  border: none; border-radius: 3px;
+  transition: background 0.2s;
+}
+.submit-review:hover { background: #a50d25; }
+
+/* COMMENT CARD */
+.comment-list { display: flex; flex-direction: column; gap: 1rem; }
+.comment-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px; padding: 1.2rem;
+  position: relative;
+}
+.comment-header {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.comment-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; border: 1.5px solid var(--border2);
+}
+.av1 { background: linear-gradient(135deg, #C8102E, #6d0a17); }
+.av2 { background: linear-gradient(135deg, #00209F, #00104f); }
+.av3 { background: linear-gradient(135deg, #c47e00, #3d2700); }
+.av4 { background: linear-gradient(135deg, #2e7d32, #0a2a1a); }
+.comment-info { flex: 1; }
+.comment-user {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; font-weight: 700; color: var(--blanc);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.user-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.48rem; letter-spacing: 0.06em; text-transform: uppercase;
+  background: rgba(245,166,35,0.12); color: var(--or);
+  padding: 0.12rem 0.4rem; border-radius: 2px;
+  border: 1px solid rgba(245,166,35,0.25);
+}
+.comment-stars { color: var(--or); font-size: 0.75rem; margin-top: 0.15rem; }
+.comment-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem; color: var(--gris); margin-left: auto;
+}
+
+/* THREE DOT MENU */
+.three-dot-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 3px;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.three-dot-btn:hover { background: var(--surface2); }
+.dot {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: var(--gris);
+}
+.three-dot-menu {
+  position: absolute; top: 3rem; right: 1.2rem;
+  background: #1c1610;
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  z-index: 50; min-width: 180px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  display: none;
+  animation: menuIn 0.15s ease;
+}
+.three-dot-menu.open { display: block; }
+@keyframes menuIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.menu-item {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.7rem 1rem; cursor: pointer;
+  font-size: 0.82rem; color: var(--creme);
+  transition: background 0.15s;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.menu-item:hover { background: rgba(255,255,255,0.04); }
+.menu-item.danger { color: #e57373; }
+.menu-item.danger:hover { background: rgba(229,115,115,0.08); }
+.menu-item-icon { font-size: 0.9rem; width: 18px; text-align: center; }
+.menu-sep { height: 1px; background: var(--border2); margin: 0.25rem 0; }
+.menu-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gris); padding: 0.5rem 1rem 0.25rem;
+}
+
+.comment-text {
+  font-size: 0.88rem; color: rgba(249,243,232,0.7);
+  line-height: 1.65; margin-bottom: 0.8rem;
+}
+.comment-photos {
+  display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;
+}
+.comment-photo {
+  width: 72px; height: 72px; border-radius: 5px; overflow: hidden;
+  background: linear-gradient(135deg, #3d1a00, #c47e00);
+  flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; opacity: 0.4;
+  transition: opacity 0.2s;
+}
+.comment-photo:hover { opacity: 0.7; }
+
+.comment-footer {
+  display: flex; align-items: center; gap: 1rem;
+}
+.comment-like {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--gris); cursor: pointer;
+  background: none; border: none;
+  transition: color 0.2s; padding: 0;
+}
+.comment-like:hover { color: var(--rouge); }
+.comment-like.liked { color: var(--rouge); }
+.comment-reply {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--gris); cursor: pointer;
+  background: none; border: none;
+  transition: color 0.2s; padding: 0;
+}
+.comment-reply:hover { color: var(--or); }
+
+/* ADMIN REPLY */
+.admin-reply {
+  margin-top: 0.75rem; margin-left: 1.5rem;
+  background: rgba(245,166,35,0.05);
+  border-left: 2px solid var(--or);
+  border-radius: 0 6px 6px 0;
+  padding: 0.75rem 1rem;
+}
+.admin-reply-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.admin-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;
+  background: rgba(245,166,35,0.15); color: var(--or);
+  padding: 0.1rem 0.4rem; border-radius: 2px;
+}
+.admin-reply-name {
+  font-size: 0.8rem; font-weight: 600; color: var(--blanc);
+}
+.admin-reply-text {
+  font-size: 0.82rem; color: rgba(249,243,232,0.6); line-height: 1.6;
+  font-style: italic;
+}
+
+/* ── RIGHT COL (STICKY SIDEBAR) ── */
+.sidebar {
+  position: sticky; top: 80px;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+
+.sidebar-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px; padding: 1.2rem;
+}
+.sidebar-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--or); margin-bottom: 1rem;
+}
+
+/* OWNER CARD */
+.owner-info {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.owner-avatar {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--rouge), #6d0a17);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  border: 2px solid rgba(200,16,46,0.3);
+}
+.owner-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700; color: var(--blanc);
+}
+.owner-since {
+  font-size: 0.72rem; color: var(--gris); margin-top: 0.1rem;
+}
+.owner-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.5rem; margin-bottom: 1rem;
+}
+.owner-stat {
+  background: var(--surface2);
+  border-radius: 5px; padding: 0.6rem;
+  text-align: center;
+}
+.owner-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--blanc);
+}
+.owner-stat-label {
+  font-size: 0.62rem; color: var(--gris); margin-top: 0.1rem;
+}
+.contact-btn {
+  width: 100%;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.75rem; cursor: pointer;
+  background: transparent; color: var(--or);
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 5px; transition: all 0.2s;
+}
+.contact-btn:hover { background: rgba(245,166,35,0.08); }
+
+/* HORAIRES CARD */
+.open-status {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.open-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #81c784;
+  box-shadow: 0 0 6px #81c784;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 6px #81c784; }
+  50% { box-shadow: 0 0 12px #81c784; }
+}
+.open-dot.closed { background: #e57373; box-shadow: 0 0 6px #e57373; animation: none; }
+.open-text { font-size: 0.85rem; color: #81c784; font-weight: 500; }
+.open-text.closed { color: #e57373; }
+.closes-at { font-size: 0.75rem; color: var(--gris); margin-left: 0.3rem; }
+
+/* SIGNAL / REPORT */
+.report-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.65rem; cursor: pointer;
+  background: transparent; color: var(--gris);
+  border: 1px solid var(--border2);
+  border-radius: 5px; transition: all 0.2s;
+}
+.report-btn:hover { border-color: rgba(229,115,115,0.3); color: #e57373; }
+
+/* PARTAGER */
+.share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.share-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  padding: 0.7rem; cursor: pointer;
+  background: var(--surface2); border-radius: 6px;
+  border: 1px solid var(--border2); transition: all 0.2s;
+}
+.share-item:hover { border-color: var(--border); }
+.share-icon { font-size: 1.1rem; }
+.share-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gris);
+}
+
+/* ── MODALS ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  z-index: 500; display: none;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: #1c1610;
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 2rem;
+  max-width: 480px; width: 90%;
+  animation: modalIn 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 900; color: var(--blanc);
+  margin-bottom: 0.4rem;
+}
+.modal-sub {
+  font-size: 0.82rem; color: var(--gris);
+  margin-bottom: 1.5rem; line-height: 1.6;
+}
+.modal-input {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border2); border-radius: 6px;
+  padding: 0.8rem; font-size: 0.85rem;
+  color: var(--creme); font-family: 'DM Sans', sans-serif;
+  resize: none; margin-bottom: 1rem;
+  outline: none; transition: border-color 0.2s;
+}
+.modal-input:focus { border-color: rgba(245,166,35,0.3); }
+.modal-input::placeholder { color: var(--gris); }
+.modal-btns { display: flex; gap: 0.75rem; justify-content: flex-end; }
+.modal-cancel {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.65rem 1.2rem; cursor: pointer;
+  background: transparent; color: var(--gris);
+  border: 1px solid var(--border2); border-radius: 4px;
+}
+.modal-submit {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.65rem 1.4rem; cursor: pointer;
+  background: var(--rouge); color: var(--blanc);
+  border: none; border-radius: 4px;
+  transition: background 0.2s;
+}
+.modal-submit:hover { background: #a50d25; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: #1c1610; border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.9rem 1.3rem;
+  display: flex; align-items: center; gap: 0.75rem;
+  z-index: 999;  
+  
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  
+
+  transform:translateY(90px);opacity:0;pointer-events:none;
+  transition:all .38s cubic-bezier(.23,1,.32,1);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 1.2rem; }
+.toast-text { font-size: 0.85rem; color: var(--blanc); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:.3; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.6s ease forwards; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .hero-gallery { height: 300px; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════════════
+   AYITI — MICRO-INTERACTIONS GLOBALES
+══════════════════════════════════════ */
+
+/* Base: toutes les transitions plus fluides */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── BOUTONS PRINCIPAUX ── */
+button, .btn-solid, .btn-outline,
+.hero-btn-primary, .hero-btn-secondary,
+.btn-next, .btn-back, .action-btn,
+.action-primary, .action-fav, .action-notif, .action-share,
+.modal-confirm, .modal-cancel,
+.submit-review, .reply-send,
+.tb-btn, .ann-btn, .r-act,
+.success-cta, .cta-btn-white, .cta-btn-ghost,
+.cat-pill, .tbl-filter-btn, .chart-tab,
+.gerant-edit, .pag-btn, .page-btn {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1),
+              background .2s ease,
+              border-color .2s ease,
+              color .2s ease,
+              box-shadow .2s ease !important;
+  cursor: pointer;
+}
+
+/* Boutons primaires — grossissent et brillent */
+.btn-next:not(:disabled):hover,
+.action-primary:hover,
+.hero-btn-primary:hover,
+.modal-confirm:hover,
+.submit-review:hover,
+.reply-send:hover,
+.tb-btn.primary:hover,
+.success-cta:hover,
+.cta-btn-white:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 8px 24px rgba(200,16,46,.35) !important;
+}
+
+/* Boutons secondaires — légère montée */
+.btn-back:hover,
+.action-fav:hover,
+.action-notif:hover,
+.action-share:hover,
+.modal-cancel:hover,
+.btn-outline:hover,
+.hero-btn-secondary:hover,
+.cta-btn-ghost:hover,
+.gerant-edit:hover,
+.ann-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+/* Boutons icônes / ronds — grossissement */
+.act-btn:hover,
+.card-fav-btn:hover,
+.three-dot-btn:hover,
+.theme-toggle:hover,
+.pw-eye:hover,
+.nav-av:hover,
+.sb-etab-arrow,
+.pag-btn:hover,
+.page-btn:hover {
+  transform: scale(1.12) !important;
+}
+
+/* Pills et filtres */
+.cat-pill:hover,
+.tbl-filter-btn:hover,
+.chart-tab:hover,
+.km-preset:hover,
+.droit-pill {
+  transform: translateY(-1px) scale(1.04) !important;
+}
+
+/* Active — enfoncement */
+button:active,
+.btn-next:active,
+.action-btn:active,
+.modal-confirm:active,
+.cat-pill:active,
+.act-btn:active {
+  transform: scale(.96) !important;
+  box-shadow: none !important;
+}
+
+/* ── CARTES / LIENS ── */
+.place-card,
+.feat-card,
+.cat-card,
+.feat-mini,
+.annonce-card,
+.avis-item,
+.report-card,
+.gerant-card,
+.role-card,
+.stat-card,
+.sidebar-card,
+.info-card,
+.app-card,
+.app-card-sm {
+  transition: transform .3s cubic-bezier(.23,1,.32,1),
+              border-color .25s ease,
+              box-shadow .3s ease !important;
+}
+
+.place-card:hover    { transform: translateY(-5px) scale(1.01) !important; box-shadow: 0 20px 50px rgba(0,0,0,.45) !important; }
+.feat-card:hover     { transform: translateY(-4px) !important; box-shadow: 0 16px 40px rgba(0,0,0,.35) !important; }
+.cat-card:hover      { transform: translateY(-7px) scale(1.02) !important; }
+.feat-mini:hover     { transform: translateY(-4px) scale(1.02) !important; }
+.annonce-card:hover  { transform: translateX(3px) !important; }
+.avis-item:hover     { transform: translateX(3px) !important; }
+.gerant-card:hover   { transform: translateX(4px) !important; }
+.role-card:hover     { transform: translateY(-3px) scale(1.01) !important; }
+.stat-card:hover     { transform: translateY(-3px) !important; box-shadow: 0 12px 32px rgba(0,0,0,.3) !important; }
+.link-card:hover     { transform: translateX(5px) !important; }
+.sb-item:hover       { transform: translateX(3px) !important; }
+.sb-etablissement:hover { transform: translateY(-1px) !important; }
+
+/* ── INPUTS — FOCUS GLOW ── */
+.field-input:focus,
+.modal-input:focus,
+.review-input:focus,
+.reply-input:focus,
+.table-search:focus,
+.city-select:focus,
+.sort-select:focus,
+.settings-input:focus,
+.t-inp:focus,
+.t-input:focus,
+.time-input:focus {
+  transform: scale(1.01) !important;
+  box-shadow: 0 0 0 3px rgba(245,166,35,.12), 0 2px 8px rgba(0,0,0,.2) !important;
+}
+
+/* ── NAV LINKS — UNDERLINE SLIDE ── */
+.nav-links a {
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 50%; right: 50%;
+  height: 1.5px;
+  background: var(--or, #F5A623);
+  transition: left .25s ease, right .25s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  left: 0; right: 0;
+}
+
+/* ── SEE-ALL / FEAT-ACTION — FLÈCHE SLIDE ── */
+.see-all, .feat-action {
+  display: inline-flex; align-items: center; gap: .4rem;
+  transition: gap .25s ease, color .2s ease !important;
+}
+.see-all:hover { gap: .9rem !important; }
+.feat-action:hover { gap: .7rem !important; }
+
+/* ── AVATARS ── */
+.comment-avatar:hover,
+.owner-avatar:hover,
+.nav-avatar:hover,
+.nav-av:hover,
+.avis-av:hover,
+.gerant-av:hover {
+  transform: scale(1.1) rotate(-3deg) !important;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+}
+
+/* ── STAR RATING ── */
+.star-btn {
+  transition: transform .15s cubic-bezier(.34,1.56,.64,1), opacity .15s ease !important;
+}
+.star-btn:hover, .star-btn.active {
+  transform: scale(1.25) !important;
+  opacity: 1 !important;
+}
+
+/* ── TOGGLES ── */
+.toggle-sw,
+.h-tog,
+.h-toggle,
+.horaire-toggle {
+  transition: background .25s ease, border-color .25s ease !important;
+  cursor: pointer;
+}
+.toggle-sw:hover, .h-tog:hover, .h-toggle:hover {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+
+/* ── DROIT CHECKBOXES ── */
+.droit-check {
+  transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
+}
+.droit-check:hover { transform: scale(1.03) !important; }
+.droit-check.on { transform: scale(1.02) !important; }
+
+/* ── PHOTO SLOTS ── */
+.photo-slot {
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), 
+              border-color .2s ease, opacity .2s ease !important;
+}
+.photo-slot:hover { transform: scale(1.05) !important; z-index: 2; }
+
+/* ── BADGE COUNTS (pulse si nb > 0) ── */
+.sb-badge-count:not(.ok),
+.stat-delta.d-down {
+  animation: subtle-pulse 2.5s ease-in-out infinite;
+}
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .65; }
+}
+
+/* ── MAP PIN ── */
+.map-pin-item {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1) !important;
+  cursor: pointer;
+}
+.map-pin-item:hover { transform: scale(1.4) translateY(-4px) !important; }
+
+/* ── GALLERY ── */
+.hero-gallery > div {
+  transition: filter .3s ease !important;
+  cursor: pointer;
+}
+.hero-gallery > div:hover { filter: brightness(1.1); }
+
+/* ── CHIP REMOVE ── */
+.chip-x {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), color .15s ease !important;
+}
+.chip-x:hover { transform: scale(1.3) rotate(90deg) !important; }
+
+/* ── ANNONCE ACTIONS ── */
+.annonce-action:hover {
+  transform: translateY(-1px) scale(1.05) !important;
+}
+
+/* ── MODAL IN ── */
+.modal-overlay.open .modal {
+  animation: modalPop .35s cubic-bezier(.34,1.3,.64,1) forwards !important;
+}
+@keyframes modalPop {
+  from { opacity:0; transform: scale(.9) translateY(16px); }
+  to   { opacity:1; transform: scale(1)  translateY(0); }
+}
+
+/* ── SCROLL APPEAR ── */
+@keyframes slideInLeft {
+  from { opacity:0; transform: translateX(-20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity:0; transform: translateX(20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+.how-step:nth-child(odd)  { animation: slideInLeft  .6s ease forwards; }
+.how-step:nth-child(even) { animation: slideInRight .6s ease forwards; }
+.how-step:nth-child(2) { animation-delay: .1s; }
+.how-step:nth-child(3) { animation-delay: .2s; }
+.how-step:nth-child(4) { animation-delay: .3s; }
+
+/* ── RESPONSIVE BASE ── */
+@media (max-width: 768px) {
+  .place-card:hover    { transform: translateY(-3px) !important; }
+  .cat-card:hover      { transform: translateY(-4px) !important; }
+  .btn-next:hover      { transform: translateY(-1px) scale(1.02) !important; }
+}
+/* ════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+
+<!-- NAV -->
+<nav>
+  <a href="ayiti-exploration.html" class="nav-back">← Retour aux restaurants</a>
+  <a href="ayiti-platform-landing.html" class="nav-logo">AY<span>I</span>TI</a>
+  <div class="nav-right">
+    <div class="nav-avatar">👤</div>
+  </div>
+</nav>
+
+<!-- GALLERY -->
+<div class="hero-gallery" id="gallery">
+  <div class="gallery-main">
+    <div class="gallery-pattern"></div>
+    <div class="gallery-emoji">🍽️</div>
+    <div class="gallery-overlay"></div>
+  </div>
+  <div class="gallery-thumb">
+    <div class="gallery-pattern"></div>
+    <div class="gallery-emoji sm">🍛</div>
+    <div class="gallery-overlay"></div>
+  </div>
+  <div class="gallery-thumb">
+    <div class="gallery-pattern"></div>
+    <div class="gallery-emoji sm">🥘</div>
+    <div class="gallery-overlay"></div>
+  </div>
+  <div class="gallery-more">📷 Voir les 24 photos</div>
+</div>
+
+<!-- PAGE LAYOUT -->
+<div class="page-layout">
+
+  <!-- MAIN COL -->
+  <div class="main-col">
+
+    <!-- HEADER -->
+    <div class="place-header fade-up">
+      <div class="place-badges">
+        <span class="badge badge-cat">🍽️ Restaurant</span>
+        <span class="badge badge-verified">✓ Vérifié</span>
+        <span class="badge badge-open">● Ouvert maintenant</span>
+        <span class="badge badge-top">🏆 Top 10 Pétionville</span>
+      </div>
+      <h1 class="place-name">Lakay Lakay Restaurant</h1>
+      <div class="place-meta">
+        <div class="meta-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-num">4.9</span>
+          <span class="rating-count">(214 avis)</span>
+        </div>
+        <span class="meta-sep">·</span>
+        <div class="meta-item">📍 <strong>Pétionville, Haïti</strong></div>
+        <span class="meta-sep">·</span>
+        <div class="meta-item">💰 <strong>$$</strong></div>
+        <span class="meta-sep">·</span>
+        <div class="meta-item">Cuisine <strong>Haïtienne traditionnelle</strong></div>
+      </div>
+      <p class="place-desc">
+        Lakay Lakay est bien plus qu'un restaurant — c'est une expérience culturelle. Griot, diri kole ak pwa, pikliz maison, tasso et bien d'autres spécialités préparées avec des ingrédients 100% locaux. Fondé en 2018 par la famille Duvivier, ce lieu incarne l'âme de la cuisine haïtienne.
+      </p>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar fade-up delay-1">
+      <button class="action-btn action-primary" onclick="showToast('📞 Appel en cours...')">
+        📞 Appeler
+      </button>
+      <button class="action-btn action-fav" id="favBtn" onclick="toggleFav()">
+        🤍 Ajouter aux favoris
+      </button>
+      <button class="action-btn action-notif" id="notifBtn" onclick="toggleNotif()">
+        🔔 Suivre les annonces
+      </button>
+      <button class="action-btn action-share" onclick="showToast('🔗 Lien copié !')">
+        🔗 Partager
+      </button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs fade-up delay-2">
+      <button class="tab active" onclick="switchTab('infos', this)">Infos</button>
+      <button class="tab" onclick="switchTab('annonces', this)">Annonces <span style="color:var(--rouge);font-size:0.7em">●</span></button>
+      <button class="tab" onclick="switchTab('avis', this)">Avis (214)</button>
+      <button class="tab" onclick="switchTab('photos', this)">Photos (24)</button>
+    </div>
+
+    <!-- TAB: INFOS -->
+    <div class="tab-content active" id="tab-infos">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-title">Informations</div>
+          <div class="info-row">
+            <span class="info-row-label">Téléphone</span>
+            <span class="info-row-val">+509 3700 0000</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">Site web</span>
+            <span class="info-row-val">lakayklakay.ht</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">Cuisine</span>
+            <span class="info-row-val">Haïtienne</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">Prix moyen</span>
+            <span class="info-row-val">500–1500 HTG</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">Capacité</span>
+            <span class="info-row-val">80 personnes</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">Statut</span>
+            <span class="info-row-val open">Ouvert maintenant</span>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Horaires d'ouverture</div>
+          <div class="hours-list">
+            <div class="hour-item"><span class="hour-day">Lundi</span><span class="hour-time">11h – 22h</span></div>
+            <div class="hour-item"><span class="hour-day">Mardi</span><span class="hour-time">11h – 22h</span></div>
+            <div class="hour-item today"><span class="hour-day">Mercredi ← aujourd'hui</span><span class="hour-time">11h – 22h ✓</span></div>
+            <div class="hour-item"><span class="hour-day">Jeudi</span><span class="hour-time">11h – 22h</span></div>
+            <div class="hour-item"><span class="hour-day">Vendredi</span><span class="hour-time">11h – 23h</span></div>
+            <div class="hour-item"><span class="hour-day">Samedi</span><span class="hour-time">10h – 23h</span></div>
+            <div class="hour-item"><span class="hour-day">Dimanche</span><span class="hour-time">10h – 21h</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-placeholder" onclick="showToast('🗺️ Ouverture de la carte...')">
+        <div class="map-grid"></div>
+        <div class="map-pin">📍</div>
+        <div class="map-label">Voir sur la carte</div>
+        <div class="map-addr">Rue Grégoire, Pétionville, Haïti</div>
+      </div>
+
+      <!-- Commodités -->
+      <div class="info-card">
+        <div class="info-card-title">Commodités & Services</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;">
+          <span class="badge badge-verified">🅿️ Parking</span>
+          <span class="badge badge-verified">🍺 Bar</span>
+          <span class="badge badge-verified">📶 Wi-Fi</span>
+          <span class="badge badge-verified">❄️ Climatisé</span>
+          <span class="badge badge-verified">🎵 Musique live</span>
+          <span class="badge badge-verified">🥡 À emporter</span>
+          <span class="badge badge-verified">💳 Carte acceptée</span>
+          <span class="badge badge-verified">♿ Accès PMR</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: ANNONCES -->
+    <div class="tab-content" id="tab-annonces">
+      <div class="annonce-list">
+        <div class="annonce-card">
+          <div class="annonce-header">
+            <div class="annonce-avatar">🍽️</div>
+            <div class="annonce-meta">
+              <div class="annonce-name">Lakay Lakay Restaurant</div>
+              <div class="annonce-date">Il y a 2 heures · Annonce officielle</div>
+            </div>
+          </div>
+          <div class="annonce-body">
+            🎉 Menu spécial dimanche ! Cette semaine on vous prépare un griot géant avec pikliz maison et bananes pesées. Réservez votre table avant samedi soir — les places partent vite !<br><br>
+            📞 Réservation : +509 3700 0000
+          </div>
+          <div class="annonce-img">🍖</div>
+          <div class="annonce-footer">
+            <button class="annonce-action liked">❤️ 48 j'aime</button>
+            <button class="annonce-action">💬 12 commentaires</button>
+            <button class="annonce-action">🔗 Partager</button>
+          </div>
+        </div>
+        <div class="annonce-card">
+          <div class="annonce-header">
+            <div class="annonce-avatar">🎵</div>
+            <div class="annonce-meta">
+              <div class="annonce-name">Lakay Lakay Restaurant</div>
+              <div class="annonce-date">Il y a 3 jours · Événement</div>
+            </div>
+          </div>
+          <div class="annonce-body">
+            🎶 Soirée Kompa live ce vendredi à partir de 20h ! Le groupe Symphonie des Antilles sera sur scène. Entrée libre pour les clients du restaurant. À ne pas manquer !
+          </div>
+          <div class="annonce-footer">
+            <button class="annonce-action">❤️ 127 j'aime</button>
+            <button class="annonce-action">💬 34 commentaires</button>
+            <button class="annonce-action">🔗 Partager</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: AVIS -->
+    <div class="tab-content" id="tab-avis">
+
+      <!-- Rating overview -->
+      <div class="rating-overview">
+        <div class="big-rating">
+          <div class="big-num">4.9</div>
+          <div class="big-stars">★★★★★</div>
+          <div class="big-count">214 avis</div>
+        </div>
+        <div class="rating-bars">
+          <div class="bar-row"><span class="bar-label">5</span><div class="bar-track"><div class="bar-fill" style="width:88%"></div></div><span class="bar-pct">88%</span></div>
+          <div class="bar-row"><span class="bar-label">4</span><div class="bar-track"><div class="bar-fill" style="width:8%"></div></div><span class="bar-pct">8%</span></div>
+          <div class="bar-row"><span class="bar-label">3</span><div class="bar-track"><div class="bar-fill" style="width:2%"></div></div><span class="bar-pct">2%</span></div>
+          <div class="bar-row"><span class="bar-label">2</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-pct">1%</span></div>
+          <div class="bar-row"><span class="bar-label">1</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-pct">1%</span></div>
+        </div>
+      </div>
+
+      <!-- Write review -->
+      <div class="write-review">
+        <div class="write-review-header">
+          <div class="my-avatar">😊</div>
+          <div class="write-placeholder">Partagez votre expérience...</div>
+        </div>
+        <div class="star-select">
+          <button class="star-btn active" onclick="setStar(1)">★</button>
+          <button class="star-btn active" onclick="setStar(2)">★</button>
+          <button class="star-btn active" onclick="setStar(3)">★</button>
+          <button class="star-btn active" onclick="setStar(4)">★</button>
+          <button class="star-btn" onclick="setStar(5)">★</button>
+        </div>
+        <textarea class="review-input" rows="3" placeholder="Décrivez votre expérience (ambiance, service, plats...)"></textarea>
+        <div class="review-actions">
+          <div class="media-btns">
+            <button class="media-btn" onclick="showToast('📷 Ajout de photo')">📷 Photo</button>
+            <button class="media-btn" onclick="showToast('🎥 Ajout de vidéo')">🎥 Vidéo</button>
+          </div>
+          <button class="submit-review" onclick="showToast('✅ Avis publié !')">Publier mon avis</button>
+        </div>
+      </div>
+
+      <!-- Comments -->
+      <div class="comment-list">
+
+        <!-- Comment 1 -->
+        <div class="comment-card" style="position:relative">
+          <div class="comment-header">
+            <div class="comment-avatar av1">😊</div>
+            <div class="comment-info">
+              <div class="comment-user">
+                Marie-Claire D.
+                <span class="user-badge">Top Reviewer</span>
+              </div>
+              <div class="comment-stars">★★★★★</div>
+            </div>
+            <div class="comment-date">Il y a 2 jours</div>
+            <button class="three-dot-btn" onclick="toggleMenu('menu1')">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </button>
+            <div class="three-dot-menu" id="menu1">
+              <div class="menu-label">Actions</div>
+              <button class="menu-item" onclick="closeMenus();showToast('🚩 Commentaire signalé')"><span class="menu-item-icon">🚩</span>Signaler ce commentaire</button>
+              <button class="menu-item" onclick="closeMenus();showToast('🔗 Lien copié')"><span class="menu-item-icon">🔗</span>Copier le lien</button>
+              <div class="menu-sep"></div>
+              <div class="menu-label">Admin uniquement</div>
+              <button class="menu-item danger" onclick="closeMenus();showToast('🗑️ Commentaire supprimé')"><span class="menu-item-icon">🗑️</span>Supprimer</button>
+              <button class="menu-item danger" onclick="closeMenus();showToast('🚫 Utilisateur banni')"><span class="menu-item-icon">🚫</span>Bannir l'utilisateur</button>
+              <button class="menu-item danger" onclick="closeMenus();showToast('📌 Commentaire épinglé')"><span class="menu-item-icon">📌</span>Épingler en haut</button>
+            </div>
+          </div>
+          <p class="comment-text">Meilleur griot de tout Pétionville, sans hésiter. La pikliz est parfaite, le service impeccable. J'y emmène tous mes amis étrangers pour leur faire découvrir la vraie cuisine haïtienne. La famille Duvivier fait un travail remarquable !</p>
+          <div class="comment-photos">
+            <div class="comment-photo">🥘</div>
+            <div class="comment-photo">🍖</div>
+            <div class="comment-photo">🥗</div>
+          </div>
+          <div class="comment-footer">
+            <button class="comment-like liked" onclick="this.classList.toggle('liked')">❤️ 24</button>
+            <button class="comment-reply" onclick="showToast('💬 Répondre...')">💬 Répondre</button>
+          </div>
+          <div class="admin-reply">
+            <div class="admin-reply-header">
+              <span class="admin-tag">Propriétaire</span>
+              <span class="admin-reply-name">Lakay Lakay</span>
+            </div>
+            <p class="admin-reply-text">Mèsi anpil Marie-Claire ! C'est toujours un plaisir de vous accueillir. Nous serons ravis de vous revoir bientôt 🙏🇭🇹</p>
+          </div>
+        </div>
+
+        <!-- Comment 2 -->
+        <div class="comment-card" style="position:relative">
+          <div class="comment-header">
+            <div class="comment-avatar av2">🧑</div>
+            <div class="comment-info">
+              <div class="comment-user">Jean-Robert M.</div>
+              <div class="comment-stars">★★★★★</div>
+            </div>
+            <div class="comment-date">Il y a 5 jours</div>
+            <button class="three-dot-btn" onclick="toggleMenu('menu2')">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </button>
+            <div class="three-dot-menu" id="menu2">
+              <div class="menu-label">Actions</div>
+              <button class="menu-item" onclick="closeMenus();showToast('🚩 Signalé')"><span class="menu-item-icon">🚩</span>Signaler</button>
+              <button class="menu-item" onclick="closeMenus();showToast('🔗 Copié')"><span class="menu-item-icon">🔗</span>Copier le lien</button>
+              <div class="menu-sep"></div>
+              <div class="menu-label">Admin uniquement</div>
+              <button class="menu-item danger" onclick="closeMenus();showToast('🗑️ Supprimé')"><span class="menu-item-icon">🗑️</span>Supprimer</button>
+              <button class="menu-item danger" onclick="closeMenus();showToast('🚫 Banni')"><span class="menu-item-icon">🚫</span>Bannir</button>
+            </div>
+          </div>
+          <p class="comment-text">La soirée du vendredi avec musique live, c'est quelque chose. On a mangé, dansé, rigolé — une vraie expérience haïtienne complète. Le diri kole était à tomber.</p>
+          <div class="comment-footer">
+            <button class="comment-like" onclick="this.classList.toggle('liked')">🤍 8</button>
+            <button class="comment-reply" onclick="showToast('💬 Répondre...')">💬 Répondre</button>
+          </div>
+        </div>
+
+        <!-- Comment 3 -->
+        <div class="comment-card" style="position:relative">
+          <div class="comment-header">
+            <div class="comment-avatar av3">👩</div>
+            <div class="comment-info">
+              <div class="comment-user">Fabiola T. <span class="user-badge">Diaspora 🇫🇷</span></div>
+              <div class="comment-stars">★★★★☆</div>
+            </div>
+            <div class="comment-date">Il y a 1 semaine</div>
+            <button class="three-dot-btn" onclick="toggleMenu('menu3')">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </button>
+            <div class="three-dot-menu" id="menu3">
+              <div class="menu-label">Actions</div>
+              <button class="menu-item" onclick="closeMenus()"><span class="menu-item-icon">🚩</span>Signaler</button>
+              <button class="menu-item" onclick="closeMenus()"><span class="menu-item-icon">🔗</span>Copier le lien</button>
+              <div class="menu-sep"></div>
+              <div class="menu-label">Admin uniquement</div>
+              <button class="menu-item danger" onclick="closeMenus()"><span class="menu-item-icon">🗑️</span>Supprimer</button>
+              <button class="menu-item danger" onclick="closeMenus()"><span class="menu-item-icon">🚫</span>Bannir</button>
+            </div>
+          </div>
+          <p class="comment-text">De passage à Pétionville pour 3 semaines depuis Paris et j'ai trouvé Lakay Lakay grâce à AYITI. Exactement ce que je cherchais — le goût de la cuisine de manman. Merci pour cette plateforme et merci à ce restaurant !</p>
+          <div class="comment-footer">
+            <button class="comment-like" onclick="this.classList.toggle('liked')">🤍 15</button>
+            <button class="comment-reply" onclick="showToast('💬 Répondre...')">💬 Répondre</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="action-btn action-fav" style="margin:0 auto" onclick="showToast('📋 Chargement des avis...')">
+          Voir les 211 autres avis →
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB: PHOTOS -->
+    <div class="tab-content" id="tab-photos">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#7a0d1f,#C8102E);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🍽️</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#001260,#00209F);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🥘</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#3d2700,#c47e00);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🍖</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#0a2a1a,#2e7d32);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🥗</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#2d0a3a,#7b1fa2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🎵</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#7a0d1f,#C8102E);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🍹</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#3d2700,#c47e00);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🥩</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#001260,#00209F);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🍚</div>
+        <div style="aspect-ratio:1;background:linear-gradient(135deg,#0a2a1a,#2e7d32);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4;cursor:pointer">🫙</div>
+      </div>
+    </div>
+
+  </div><!-- end main-col -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Owner card -->
+    <div class="sidebar-card">
+      <div class="sidebar-title">Propriétaire</div>
+      <div class="owner-info">
+        <div class="owner-avatar">👨‍🍳</div>
+        <div>
+          <div class="owner-name">Famille Duvivier</div>
+          <div class="owner-since">Membre depuis 2018</div>
+        </div>
+      </div>
+      <div class="owner-stats">
+        <div class="owner-stat">
+          <div class="owner-stat-num">214</div>
+          <div class="owner-stat-label">Avis reçus</div>
+        </div>
+        <div class="owner-stat">
+          <div class="owner-stat-num">1</div>
+          <div class="owner-stat-label">Établissement</div>
+        </div>
+      </div>
+      <button class="contact-btn" onclick="showToast('📨 Message envoyé !')">
+        ✉️ Contacter le propriétaire
+      </button>
+    </div>
+
+    <!-- Horaires rapide -->
+    <div class="sidebar-card">
+      <div class="sidebar-title">Statut actuel</div>
+      <div class="open-status">
+        <div class="open-dot"></div>
+        <span class="open-text">Ouvert</span>
+        <span class="closes-at">· Ferme à 22h00</span>
+      </div>
+      <div style="font-size:0.78rem;color:var(--gris);line-height:1.6;">
+        📍 Rue Grégoire, Pétionville<br>
+        📞 +509 3700 0000<br>
+        🌐 lakayklakay.ht
+      </div>
+    </div>
+
+    <!-- Partager -->
+    <div class="sidebar-card">
+      <div class="sidebar-title">Partager ce lieu</div>
+      <div class="share-grid">
+        <div class="share-item" onclick="showToast('📋 Lien copié !')">
+          <div class="share-icon">🔗</div>
+          <div class="share-label">Copier</div>
+        </div>
+        <div class="share-item" onclick="showToast('📱 Partage WhatsApp')">
+          <div class="share-icon">💬</div>
+          <div class="share-label">WhatsApp</div>
+        </div>
+        <div class="share-item" onclick="showToast('📘 Partage Facebook')">
+          <div class="share-icon">📘</div>
+          <div class="share-label">Facebook</div>
+        </div>
+        <div class="share-item" onclick="showToast('🐦 Partage Twitter')">
+          <div class="share-icon">🐦</div>
+          <div class="share-label">Twitter</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signaler -->
+    <button class="report-btn" onclick="openModal()">
+      🚩 Signaler cet établissement
+    </button>
+
+  </div><!-- end sidebar -->
+
+</div><!-- end page-layout -->
+
+<!-- MODAL SIGNALEMENT -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal">
+    <div class="modal-title">Signaler un établissement</div>
+    <p class="modal-sub">Votre signalement sera examiné par notre équipe sous 24h. Merci de nous aider à maintenir la qualité de la plateforme.</p>
+    <select class="modal-input" style="cursor:pointer;appearance:none;">
+      <option value="" disabled selected>Choisir un motif...</option>
+      <option>Informations incorrectes</option>
+      <option>Établissement fermé définitivement</option>
+      <option>Contenu inapproprié</option>
+      <option>Faux établissement</option>
+      <option>Autre</option>
+    </select>
+    <textarea class="modal-input" rows="4" placeholder="Décrivez le problème en détail (optionnel)..."></textarea>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Annuler</button>
+      <button class="modal-submit" onclick="closeModal();showToast('✅ Signalement envoyé à l\'admin')">Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon">✅<button class="toast-close-btn" onclick="this.closest('.toast').classList.remove('show')" title="Fermer">✕</button>
+</div>
+  <div class="toast-text" id="toastText">Action effectuée</div>
+</div>
+
+<script>
+  // Tabs
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Three dot menu
+  function toggleMenu(id) {
+    const menu = document.getElementById(id);
+    const isOpen = menu.classList.contains('open');
+    closeMenus();
+    if (!isOpen) menu.classList.add('open');
+  }
+  function closeMenus() {
+    document.querySelectorAll('.three-dot-menu').forEach(m => m.classList.remove('open'));
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.three-dot-btn') && !e.target.closest('.three-dot-menu')) {
+      closeMenus();
+    }
+  });
+
+  // Favori
+  let favActive = false;
+  function toggleFav() {
+    favActive = !favActive;
+    const btn = document.getElementById('favBtn');
+    if (favActive) {
+      btn.classList.add('active');
+      btn.innerHTML = '❤️ Sauvegardé';
+      showToast('❤️ Ajouté aux favoris !');
+    } else {
+      btn.classList.remove('active');
+      btn.innerHTML = '🤍 Ajouter aux favoris';
+      showToast('💔 Retiré des favoris');
+    }
+  }
+
+  // Notif
+  let notifActive = false;
+  function toggleNotif() {
+    notifActive = !notifActive;
+    const btn = document.getElementById('notifBtn');
+    if (notifActive) {
+      btn.innerHTML = '🔔 Notifications activées';
+      btn.style.borderColor = 'rgba(129,199,132,0.5)';
+      btn.style.color = '#81c784';
+      showToast('🔔 Vous suivez ce lieu !');
+    } else {
+      btn.innerHTML = '🔕 Suivre les annonces';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      showToast('🔕 Notifications désactivées');
+    }
+  }
+
+  // Stars
+  function setStar(n) {
+    document.querySelectorAll('.star-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i < n);
+    });
+  }
+
+  // Modal
+  function openModal() { document.getElementById('reportModal').classList.add('open'); }
+  function closeModal() { document.getElementById('reportModal').classList.remove('open'); }
+  document.getElementById('reportModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('reportModal')) closeModal();
+  });
+
+  // Toast
+  let toastTimer;
+  function showToast(msg) {
+  clearTimeout(_tt);
+    const toast = document.getElementById('toast');
+    const [icon, ...rest] = msg.split(' ');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastText').textContent = rest.join(' ');
+    toast.classList.add('show');
+  _tt=setTimeout(()=>t.classList.remove('show'),3500);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+</script>
+
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

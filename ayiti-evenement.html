@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festival Rara 2026 — AYITI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0a0603;--rouge:#C8102E;--bleu:#00209F;--or:#F5A623;
+  --creme:#F9F3E8;--blanc:#fff;--gris:#8a8170;
+  --surface:#141008;--surface2:#1c1610;--surface3:#221c12;
+  --border:rgba(245,166,35,.13);--border2:rgba(255,255,255,.06);
+  --success:#81c784;--error:#e57373;--warn:#FFB74D;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2.5rem;background:rgba(10,6,3,0);backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all .4s ease}
+nav.scrolled{background:rgba(10,6,3,.92);backdrop-filter:blur(16px);border-bottom-color:var(--border2)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--blanc);text-decoration:none}
+.nav-logo span{color:var(--or)}
+.nav-back{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s}
+.nav-back:hover{color:var(--or)}
+.nav-right{display:flex;gap:.7rem}
+.nav-share{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:.5rem 1rem;border-radius:5px;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:transparent;color:var(--blanc);transition:all .22s}
+.nav-share:hover{border-color:var(--or);color:var(--or)}
+
+/* ── HERO ── */
+.hero{height:100vh;min-height:600px;position:relative;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg-color{width:100%;height:100%;background:linear-gradient(160deg,#00209F 0%,#001060 30%,#0a0603 60%,#C8102E 100%)}
+.hero-pattern{position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 40px)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(10,6,3,.5) 60%,rgba(10,6,3,.95) 100%)}
+.hero-emoji-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18rem;opacity:.06;user-select:none;pointer-events:none;animation:rotateSlow 30s linear infinite}
+@keyframes rotateSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* FLAG STRIPE */
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--bleu) 50%,var(--rouge) 50%)}
+
+.hero-content{position:relative;z-index:1;padding:0 3rem 4rem}
+.hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.hero-badge{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .65rem;border-radius:3px;display:flex;align-items:center;gap:.35rem}
+.hb-cat{background:rgba(0,32,159,.4);color:#90caf9;border:1px solid rgba(0,32,159,.5)}
+.hb-free{background:rgba(129,199,132,.15);color:var(--success);border:1px solid rgba(129,199,132,.25)}
+.hb-hot{background:rgba(200,16,46,.25);color:var(--rouge);border:1px solid rgba(200,16,46,.35);animation:hotPulse 2s ease-in-out infinite}
+@keyframes hotPulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,7vw,5.5rem);font-weight:900;line-height:.95;color:var(--blanc);margin-bottom:.8rem;letter-spacing:-.02em}
+.hero-title em{color:var(--or);font-style:italic}
+.hero-org{font-size:.9rem;color:rgba(249,243,232,.6);margin-bottom:1.5rem;display:flex;align-items:center;gap:.6rem}
+.org-av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--rouge),#6d0a17);display:flex;align-items:center;justify-content:center;font-size:.65rem;border:1.5px solid rgba(200,16,46,.4)}
+
+/* COUNTDOWN */
+.countdown-wrap{background:rgba(10,6,3,.6);border:1px solid rgba(245,166,35,.2);backdrop-filter:blur(12px);border-radius:10px;padding:1.2rem 1.5rem;display:inline-flex;gap:2rem;margin-bottom:2rem}
+.countdown-unit{text-align:center}
+.countdown-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--blanc);line-height:1;min-width:50px;display:block;transition:transform .2s}
+.countdown-num.tick{animation:tick .15s ease}
+@keyframes tick{0%{transform:translateY(-6px);opacity:.5}100%{transform:translateY(0);opacity:1}}
+.countdown-lbl{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.15em;text-transform:uppercase;color:var(--or);margin-top:.25rem;display:block}
+.countdown-sep{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:rgba(245,166,35,.4);align-self:flex-start;padding-top:.15rem}
+
+/* HERO ACTIONS */
+.hero-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+.rsvp-btn{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:1rem 2.5rem;cursor:pointer;background:var(--rouge);color:var(--blanc);border:none;border-radius:6px;transition:all .3s;position:relative;overflow:hidden}
+.rsvp-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);pointer-events:none}
+.rsvp-btn:hover{background:#a50d25;transform:translateY(-2px);box-shadow:0 12px 32px rgba(200,16,46,.45)}
+.rsvp-btn:active{transform:translateY(0)}
+.rsvp-btn.done{background:rgba(129,199,132,.2);border:1px solid rgba(129,199,132,.4);color:var(--success)}
+.rsvp-btn.done:hover{background:rgba(129,199,132,.3);box-shadow:0 8px 24px rgba(129,199,132,.2)}
+.hero-btn-sec{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:1rem 1.8rem;cursor:pointer;background:rgba(10,6,3,.5);color:var(--creme);border:1px solid rgba(255,255,255,.2);border-radius:6px;transition:all .25s;backdrop-filter:blur(8px)}
+.hero-btn-sec:hover{border-color:var(--or);color:var(--or)}
+
+/* RSVP COUNT */
+.rsvp-count{display:flex;align-items:center;gap:.75rem;margin-top:1.2rem}
+.rsvp-avatars{display:flex}
+.rsvp-av{width:28px;height:28px;border-radius:50%;border:2px solid var(--noir);margin-left:-7px;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.rsvp-av:first-child{margin-left:0}
+.rsvp-text{font-size:.82rem;color:rgba(249,243,232,.6)}
+.rsvp-text strong{color:var(--blanc)}
+.rsvp-remaining{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.08em;padding:.2rem .55rem;border-radius:20px;background:rgba(200,16,46,.15);color:var(--rouge);border:1px solid rgba(200,16,46,.25)}
+
+/* ── LAYOUT ── */
+.page-layout{max-width:1100px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:1fr 340px;gap:3rem;align-items:start}
+
+/* ── LEFT ── */
+.main-col{}
+
+/* SECTION */
+.sec{margin-bottom:2.5rem}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--blanc);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;padding-bottom:.7rem;border-bottom:1px solid var(--border2)}
+.sec-title em{color:var(--or);font-style:italic}
+
+/* INFO GRID */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.info-item{background:var(--surface);border:1px solid var(--border2);border-radius:7px;padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.75rem;transition:all .25s;cursor:default}
+.info-item:hover{border-color:var(--border);transform:translateY(-2px)}
+.info-icon{font-size:1.2rem;flex-shrink:0;margin-top:.05rem}
+.info-lbl{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);margin-bottom:.2rem}
+.info-val{font-size:.85rem;color:var(--blanc);font-weight:500;line-height:1.45}
+.info-sub{font-size:.73rem;color:var(--gris);margin-top:.15rem}
+
+/* DESCRIPTION */
+.desc-text{font-size:.9rem;color:rgba(249,243,232,.65);line-height:1.85}
+.desc-text p{margin-bottom:.8rem}
+.desc-text p:last-child{margin-bottom:0}
+.read-more-btn{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--or);background:none;border:none;cursor:pointer;padding:0;margin-top:.6rem;transition:opacity .2s}
+.read-more-btn:hover{opacity:.7}
+
+/* PROGRAMME */
+.programme-list{display:flex;flex-direction:column;gap:0}
+.prog-item{display:flex;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--border2);position:relative}
+.prog-item:last-child{border-bottom:none}
+.prog-time-col{width:80px;flex-shrink:0;text-align:right;padding-top:.15rem}
+.prog-time{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.06em;color:var(--or);font-weight:700}
+.prog-dot-col{width:20px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding-top:.3rem}
+.prog-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--or);background:var(--noir);flex-shrink:0;transition:all .3s}
+.prog-item.active .prog-dot{background:var(--rouge);border-color:var(--rouge);box-shadow:0 0 10px rgba(200,16,46,.5)}
+.prog-line{flex:1;width:2px;background:var(--border2);margin-top:.35rem}
+.prog-item:last-child .prog-line{display:none}
+.prog-info{flex:1;padding-top:.1rem}
+.prog-name{font-size:.88rem;font-weight:600;color:var(--blanc);margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem}
+.prog-badge{font-family:'Space Mono',monospace;font-size:.44rem;letter-spacing:.07em;text-transform:uppercase;padding:.12rem .4rem;border-radius:3px}
+.pb-main{background:rgba(200,16,46,.15);color:var(--rouge);border:1px solid rgba(200,16,46,.2)}
+.pb-now{background:rgba(129,199,132,.12);color:var(--success);border:1px solid rgba(129,199,132,.2)}
+.prog-desc{font-size:.78rem;color:rgba(249,243,232,.5);line-height:1.55}
+.prog-artist{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}
+.prog-artist-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;border:1px solid var(--border2)}
+.prog-artist-name{font-size:.76rem;color:var(--gris)}
+
+/* GALERIE */
+.galerie-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:160px 160px;gap:4px;border-radius:8px;overflow:hidden}
+.gal-item{position:relative;overflow:hidden;cursor:pointer;transition:filter .3s}
+.gal-item:hover{filter:brightness(1.1)}
+.gal-item:first-child{grid-row:1/3}
+.gal-bg{width:100%;height:100%;transition:transform .5s}
+.gal-item:hover .gal-bg{transform:scale(1.05)}
+.gal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .3s}
+.gal-item:hover .gal-overlay{background:rgba(0,0,0,.2)}
+.gal-more{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,6,3,.6);font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--creme)}
+
+/* AVIS */
+.avis-mini{background:var(--surface);border:1px solid var(--border2);border-radius:7px;padding:.9rem;margin-bottom:.7rem;transition:all .25s;cursor:pointer}
+.avis-mini:hover{border-color:var(--border);transform:translateX(3px)}
+.avis-mini-header{display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem}
+.am-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0}
+.am-name{font-size:.84rem;font-weight:600;color:var(--blanc)}
+.am-stars{color:var(--or);font-size:.7rem;margin-top:.08rem}
+.am-date{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.05em;color:var(--gris);margin-left:auto}
+.am-text{font-size:.81rem;color:rgba(249,243,232,.6);line-height:1.6}
+
+/* ── SIDEBAR ── */
+.sidebar{position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem}
+
+/* TICKET CARD */
+.ticket-card{background:var(--surface);border:1px solid var(--border2);border-radius:10px;overflow:hidden}
+.ticket-top{background:linear-gradient(135deg,var(--bleu),#001060);padding:1.2rem;position:relative;overflow:hidden}
+.ticket-bg-pattern{position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 25px)}
+.ticket-event{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--blanc);margin-bottom:.2rem;position:relative}
+.ticket-date{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;color:rgba(255,255,255,.6);position:relative}
+.ticket-perfs{position:absolute;top:1rem;right:1rem;text-align:right}
+.ticket-perfs-num{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--or)}
+.ticket-perfs-lbl{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+
+.ticket-dashed{height:0;border-top:2px dashed rgba(255,255,255,.08);margin:0 1.2rem;position:relative}
+.ticket-dashed::before,.ticket-dashed::after{content:'';position:absolute;width:20px;height:20px;background:var(--noir);border-radius:50%;top:-10px}
+.ticket-dashed::before{left:-22px}.ticket-dashed::after{right:-22px}
+
+.ticket-body{padding:1.2rem}
+.ticket-options{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.2rem}
+.ticket-opt{display:flex;align-items:center;justify-content:space-between;padding:.75rem .9rem;background:var(--surface2);border:1.5px solid var(--border2);border-radius:7px;cursor:pointer;transition:all .25s}
+.ticket-opt:hover{border-color:rgba(245,166,35,.3);background:var(--surface3)}
+.ticket-opt.selected{border-color:var(--or);background:rgba(245,166,35,.07)}
+.to-left{}
+.to-name{font-size:.86rem;font-weight:600;color:var(--blanc);margin-bottom:.15rem}
+.to-desc{font-size:.72rem;color:var(--gris)}
+.to-price{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--or)}
+.to-price.free{color:var(--success)}
+.to-badge{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.07em;text-transform:uppercase;padding:.12rem .4rem;border-radius:3px;background:rgba(200,16,46,.15);color:var(--rouge);border:1px solid rgba(200,16,46,.2);display:block;margin-top:.2rem}
+
+.qty-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.qty-lbl{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris)}
+.qty-ctrl{display:flex;align-items:center;gap:.8rem}
+.qty-btn{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--creme);transition:all .25s cubic-bezier(.34,1.56,.64,1);line-height:1}
+.qty-btn:hover{border-color:var(--or);color:var(--or);transform:scale(1.12)}
+.qty-num{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--blanc);min-width:24px;text-align:center}
+
+.ticket-total{display:flex;justify-content:space-between;align-items:center;padding:.8rem 0;border-top:1px solid var(--border2);margin-bottom:1rem}
+.total-lbl{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris)}
+.total-price{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--blanc)}
+
+.reserve-btn{width:100%;font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;padding:.92rem;cursor:pointer;background:var(--rouge);color:var(--blanc);border:none;border-radius:6px;transition:all .3s;margin-bottom:.7rem}
+.reserve-btn:hover{background:#a50d25;transform:translateY(-2px);box-shadow:0 10px 28px rgba(200,16,46,.4)}
+.reserve-btn:active{transform:translateY(0)}
+
+.ticket-notice{font-size:.73rem;color:var(--gris);text-align:center;line-height:1.6}
+.ticket-notice a{color:var(--or);text-decoration:none}
+
+/* PARTAGE CARD */
+.share-card{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:1rem}
+.share-title{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--or);margin-bottom:.8rem}
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.share-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem;border-radius:6px;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;font-size:.75rem;color:var(--creme);transition:all .22s}
+.share-btn:hover{border-color:rgba(245,166,35,.3);transform:translateY(-2px)}
+
+/* ORGANISATEUR CARD */
+.org-card{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:1rem}
+.org-header{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}
+.org-av-lg{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--bleu),#001060);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;border:2px solid rgba(0,32,159,.3)}
+.org-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--blanc)}
+.org-meta{font-size:.73rem;color:var(--gris);margin-top:.1rem}
+.org-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.8rem}
+.org-stat{text-align:center;background:var(--surface2);border-radius:5px;padding:.5rem}
+.org-stat-num{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--blanc)}
+.org-stat-lbl{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gris)}
+.follow-btn{width:100%;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:.62rem;cursor:pointer;background:transparent;border:1px solid rgba(245,166,35,.3);color:var(--or);border-radius:5px;transition:all .22s}
+.follow-btn:hover{background:rgba(245,166,35,.08)}
+.follow-btn.following{background:rgba(129,199,132,.08);border-color:rgba(129,199,132,.3);color:var(--success)}
+
+/* PARTICIPANTS */
+.participants-wrap{display:flex;align-items:center;gap:.6rem;margin:.8rem 0}
+.participants-avs{display:flex}
+.part-av{width:26px;height:26px;border-radius:50%;border:2px solid var(--noir);margin-left:-6px;display:flex;align-items:center;justify-content:center;font-size:.65rem}
+.part-av:first-child{margin-left:0}
+.part-more{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);background:var(--surface2);margin-left:-6px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.44rem;color:var(--gris)}
+.part-text{font-size:.78rem;color:var(--gris)}
+.part-text strong{color:var(--blanc)}
+
+/* MAP */
+.map-card{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden}
+.map-area{height:160px;background:var(--surface2);position:relative;cursor:pointer;transition:filter .2s}
+.map-area:hover{filter:brightness(1.05)}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px}
+.map-pin-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:2rem;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));animation:pinBounce 2s ease-in-out infinite}
+@keyframes pinBounce{0%,100%{transform:translate(-50%,-60%)}50%{transform:translate(-50%,-75%)}}
+.map-pulse{position:absolute;top:50%;left:50%;width:40px;height:40px;border-radius:50%;border:2px solid rgba(200,16,46,.4);transform:translate(-50%,-50%);animation:mapPulse 2s ease-out infinite}
+@keyframes mapPulse{0%{width:20px;height:20px;opacity:1}100%{width:80px;height:80px;opacity:0}}
+.map-body{padding:.85rem}
+.map-addr{font-size:.84rem;color:var(--blanc);font-weight:500;margin-bottom:.2rem}
+.map-city{font-size:.75rem;color:var(--gris)}
+.map-btn{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:.45rem .9rem;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--gris);transition:all .2s;margin-top:.6rem;display:inline-block}
+.map-btn:hover{border-color:var(--or);color:var(--or)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;z-index:999;transform:translateY(80px);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.23,1,.32,1);box-shadow:0 16px 48px rgba(0,0,0,.5);max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+.t-icon{font-size:1rem}.t-msg{font-size:.82rem;color:var(--blanc)}
+
+@keyframes fadeUp{from{opacity:.3;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .5s ease forwards}
+.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}
+
+@media(max-width:900px){
+  .page-layout{grid-template-columns:1fr}
+  .sidebar{position:static}
+  .hero-content{padding:0 1.5rem 3rem}
+  .hero-title{font-size:clamp(2rem,8vw,3.5rem)}
+  .countdown-wrap{gap:1rem}
+  .info-grid{grid-template-columns:1fr}
+  .galerie-grid{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,140px)}
+  .galerie-grid .gal-item:first-child{grid-row:1/2;grid-column:1/3}
+}
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="ayiti-exploration.html" class="nav-back">← Explorer</a>
+  <a href="ayiti-platform-landing.html" class="nav-logo">AY<span>I</span>TI</a>
+  <div class="nav-right">
+    <button class="nav-share" onclick="showToast('🔗 Lien copié !')">🔗 Partager</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="flag-stripe"></div>
+  <div class="hero-bg">
+    <div class="hero-bg-color"></div>
+    <div class="hero-pattern"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-emoji-bg">🎺</div>
+  </div>
+
+  <div class="hero-content fade-up">
+    <div class="hero-badges">
+      <span class="hero-badge hb-cat">🎉 Événement</span>
+      <span class="hero-badge hb-free">🎟️ Entrée libre</span>
+      <span class="hero-badge hb-hot">🔥 Sold out imminent</span>
+    </div>
+
+    <h1 class="hero-title">Festival<br><em>Rara 2026</em></h1>
+
+    <div class="hero-org">
+      <div class="org-av">🎺</div>
+      Organisé par <strong style="color:var(--blanc);margin-left:.25rem">Komité Rara Nasyonal</strong>
+    </div>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-wrap" id="countdown">
+      <div class="countdown-unit"><span class="countdown-num" id="cd-days">00</span><span class="countdown-lbl">Jours</span></div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit"><span class="countdown-num" id="cd-hours">00</span><span class="countdown-lbl">Heures</span></div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit"><span class="countdown-num" id="cd-mins">00</span><span class="countdown-lbl">Minutes</span></div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit"><span class="countdown-num" id="cd-secs">00</span><span class="countdown-lbl">Secondes</span></div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="rsvp-btn" id="rsvpBtn" onclick="toggleRSVP()">🎟️ Je participe</button>
+      <button class="hero-btn-sec" onclick="showToast('📅 Ajouté au calendrier !')">📅 Mon calendrier</button>
+      <button class="hero-btn-sec" onclick="document.getElementById('tab-programme').scrollIntoView({behavior:'smooth'})">📋 Programme</button>
+    </div>
+
+    <div class="rsvp-count">
+      <div class="rsvp-avatars">
+        <div class="rsvp-av" style="background:linear-gradient(135deg,#C8102E,#6d0a17)">😊</div>
+        <div class="rsvp-av" style="background:linear-gradient(135deg,#00209F,#001060)">🧑</div>
+        <div class="rsvp-av" style="background:linear-gradient(135deg,#c47e00,#3d2700)">👩</div>
+        <div class="rsvp-av" style="background:linear-gradient(135deg,#2e7d32,#0a2a1a)">😄</div>
+        <div class="rsvp-av" style="background:linear-gradient(135deg,#7b1fa2,#2d0a3a)">🙂</div>
+      </div>
+      <div class="rsvp-text"><strong id="rsvpCountNum">142</strong> personnes participent</div>
+      <div class="rsvp-remaining" id="rsvpRemaining">58 places restantes</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE LAYOUT -->
+<div class="page-layout">
+
+  <!-- MAIN -->
+  <div class="main-col">
+
+    <!-- INFOS -->
+    <div class="sec fade-up">
+      <div class="sec-title">Informations <em>pratiques</em></div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-icon">📅</div>
+          <div><div class="info-lbl">Date</div><div class="info-val">Samedi 24 Mai 2026</div><div class="info-sub">De 14h00 à 23h59</div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📍</div>
+          <div><div class="info-lbl">Lieu</div><div class="info-val">Champ de Mars</div><div class="info-sub">Port-au-Prince, Haïti 🇭🇹</div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🎟️</div>
+          <div><div class="info-lbl">Entrée</div><div class="info-val">Gratuite</div><div class="info-sub">RSVP obligatoire · 200 places</div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🌐</div>
+          <div><div class="info-lbl">Langue</div><div class="info-val">Kreyòl / Français</div><div class="info-sub">Sous-titres en anglais</div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🎭</div>
+          <div><div class="info-lbl">Type</div><div class="info-val">Festival culturel</div><div class="info-sub">Musique, danse, art, gastronomie</div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">👨‍👩‍👧</div>
+          <div><div class="info-lbl">Public</div><div class="info-val">Tout public</div><div class="info-sub">Accessible PMR · Parking gratuit</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="sec fade-up delay-1">
+      <div class="sec-title">À propos de <em>l'événement</em></div>
+      <div class="desc-text">
+        <p>Le Festival Rara est l'événement culturel haïtien le plus attendu de l'année. Célébration de la culture, de la musique et de l'identité haïtienne, le Rara rassemble chaque année des milliers de participants venus de toute l'île et de la diaspora mondiale.</p>
+        <p id="desc-more" style="display:none">Cette édition 2026 promet d'être exceptionnelle avec plus de 20 groupes de musique Rara, des ateliers de danse traditionnelle, une exposition d'art haïtien contemporain et un marché gastronomique avec les meilleurs plats de la cuisine créole. Un événement à ne manquer sous aucun prétexte — que tu sois en Haïti ou dans la diaspora, rejoins-nous en présentiel ou en live streaming !</p>
+        <button class="read-more-btn" id="readMoreBtn" onclick="toggleReadMore()">Lire la suite →</button>
+      </div>
+    </div>
+
+    <!-- PROGRAMME -->
+    <div class="sec fade-up delay-2" id="tab-programme">
+      <div class="sec-title">Programme <em>de la journée</em></div>
+      <div class="programme-list">
+        <div class="prog-item">
+          <div class="prog-time-col"><div class="prog-time">14:00</div></div>
+          <div class="prog-dot-col"><div class="prog-dot"></div><div class="prog-line"></div></div>
+          <div class="prog-info">
+            <div class="prog-name">Ouverture officielle <span class="prog-badge pb-main">Cérémonie</span></div>
+            <div class="prog-desc">Discours d'ouverture et bénédiction traditionnelle. Défilé d'ouverture avec les premiers groupes Rara.</div>
+          </div>
+        </div>
+        <div class="prog-item active">
+          <div class="prog-time-col"><div class="prog-time">15:30</div></div>
+          <div class="prog-dot-col"><div class="prog-dot"></div><div class="prog-line"></div></div>
+          <div class="prog-info">
+            <div class="prog-name">Atelier Rara <span class="prog-badge pb-now">🔴 En cours</span></div>
+            <div class="prog-desc">Apprenez les bases du Rara avec des musiciens traditionnels. Tout niveau, instruments fournis.</div>
+            <div class="prog-artist">
+              <div class="prog-artist-av" style="background:linear-gradient(135deg,#C8102E,#6d0a17)">🎺</div>
+              <div class="prog-artist-name">Maître Jean-Claude Pierre · Musicien traditionnel</div>
+            </div>
+          </div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-time-col"><div class="prog-time">17:00</div></div>
+          <div class="prog-dot-col"><div class="prog-dot"></div><div class="prog-line"></div></div>
+          <div class="prog-info">
+            <div class="prog-name">Groupe Rara Nèg Mawon <span class="prog-badge pb-main">Concert</span></div>
+            <div class="prog-desc">Le groupe légendaire de Port-au-Prince, connu pour leur interprétation magistrale du Rara traditionnel.</div>
+            <div class="prog-artist">
+              <div class="prog-artist-av" style="background:linear-gradient(135deg,#00209F,#001060)">🎵</div>
+              <div class="prog-artist-name">Rara Nèg Mawon · 15 musiciens</div>
+            </div>
+          </div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-time-col"><div class="prog-time">19:00</div></div>
+          <div class="prog-dot-col"><div class="prog-dot"></div><div class="prog-line"></div></div>
+          <div class="prog-info">
+            <div class="prog-name">Marché gastronomique</div>
+            <div class="prog-desc">Griot, pikliz, diri kole, tasso, bannann peze... Les meilleurs chefs haïtiens vous régalent.</div>
+          </div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-time-col"><div class="prog-time">21:00</div></div>
+          <div class="prog-dot-col"><div class="prog-dot"></div><div class="prog-line"></div></div>
+          <div class="prog-info">
+            <div class="prog-name">Grand Concert de Clôture <span class="prog-badge pb-main">⭐ Star</span></div>
+            <div class="prog-desc">La soirée la plus attendue. Artistes surprises + feux d'artifice à minuit.</div>
+            <div class="prog-artist">
+              <div class="prog-artist-av" style="background:linear-gradient(135deg,#F5A623,#c47e00)">🌟</div>
+              <div class="prog-artist-name">Artiste surprise · Annonce à 20h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALERIE -->
+    <div class="sec fade-up">
+      <div class="sec-title">Galerie <em>photos</em></div>
+      <div class="galerie-grid">
+        <div class="gal-item" onclick="showToast('📷 Photo agrandie')">
+          <div class="gal-bg" style="background:linear-gradient(135deg,#00209F 0%,#7b1fa2 50%,#001060 100%);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;opacity:.3">🎺</div>
+          <div class="gal-overlay"></div>
+        </div>
+        <div class="gal-item" onclick="showToast('📷 Photo agrandie')">
+          <div class="gal-bg" style="background:linear-gradient(135deg,#C8102E,#6d0a17);height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:.3">🥁</div>
+          <div class="gal-overlay"></div>
+        </div>
+        <div class="gal-item" onclick="showToast('📷 Photo agrandie')">
+          <div class="gal-bg" style="background:linear-gradient(135deg,#F5A623,#c47e00);height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:.3">💃</div>
+          <div class="gal-overlay"></div>
+        </div>
+        <div class="gal-item" onclick="showToast('📷 Photo agrandie')">
+          <div class="gal-bg" style="background:linear-gradient(135deg,#2e7d32,#0a2a1a);height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:.3">🎨</div>
+          <div class="gal-overlay"></div>
+        </div>
+        <div class="gal-item" onclick="showToast('📷 Voir toutes les photos')">
+          <div class="gal-bg" style="background:rgba(10,6,3,.8);height:100%"></div>
+          <div class="gal-more">+18 photos →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVIS -->
+    <div class="sec">
+      <div class="sec-title">Avis des <em>éditions précédentes</em></div>
+      <div class="avis-mini">
+        <div class="avis-mini-header">
+          <div class="am-av" style="background:linear-gradient(135deg,#C8102E,#6d0a17)">😊</div>
+          <div><div class="am-name">Marie-Claire D.</div><div class="am-stars">★★★★★</div></div>
+          <div class="am-date">Rara 2025</div>
+        </div>
+        <div class="am-text">Une expérience inoubliable ! L'énergie du groupe Nèg Mawon était indescriptible. J'y retourne cette année sans hésitation.</div>
+      </div>
+      <div class="avis-mini">
+        <div class="avis-mini-header">
+          <div class="am-av" style="background:linear-gradient(135deg,#00209F,#001060)">🧑</div>
+          <div><div class="am-name">Jean-Robert M.</div><div class="am-stars">★★★★★</div></div>
+          <div class="am-date">Rara 2025</div>
+        </div>
+        <div class="am-text">Le meilleur événement culturel haïtien de l'année. La nourriture, la musique, l'ambiance — parfait de A à Z. 🇭🇹</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- TICKET -->
+    <div class="ticket-card">
+      <div class="ticket-top">
+        <div class="ticket-bg-pattern"></div>
+        <div class="ticket-event">Festival Rara 2026</div>
+        <div class="ticket-date">Sam 24 Mai 2026 · 14h - Minuit</div>
+        <div class="ticket-perfs">
+          <div class="ticket-perfs-num" id="sideRsvp">142</div>
+          <div class="ticket-perfs-lbl">participants</div>
+        </div>
+      </div>
+      <div class="ticket-dashed"></div>
+      <div class="ticket-body">
+
+        <!-- PARTICIPANTS -->
+        <div class="participants-wrap">
+          <div class="participants-avs">
+            <div class="part-av" style="background:linear-gradient(135deg,#C8102E,#6d0a17)">😊</div>
+            <div class="part-av" style="background:linear-gradient(135deg,#00209F,#001060)">🧑</div>
+            <div class="part-av" style="background:linear-gradient(135deg,#c47e00,#3d2700)">👩</div>
+            <div class="part-av" style="background:linear-gradient(135deg,#2e7d32,#0a2a1a)">😄</div>
+            <div class="part-more">+138</div>
+          </div>
+          <div class="part-text"><strong>142</strong> participants</div>
+        </div>
+
+        <div class="ticket-options">
+          <div class="ticket-opt selected" onclick="selectTicket(this)">
+            <div class="to-left">
+              <div class="to-name">🎟️ Entrée Générale</div>
+              <div class="to-desc">Accès à tous les espaces</div>
+              <span class="to-badge">58 places restantes</span>
+            </div>
+            <div>
+              <div class="to-price free">Gratuit</div>
+            </div>
+          </div>
+          <div class="ticket-opt" onclick="selectTicket(this)">
+            <div class="to-left">
+              <div class="to-name">⭐ Pass VIP</div>
+              <div class="to-desc">Zone VIP + Meet & Greet</div>
+              <span class="to-badge">12 places · Limité</span>
+            </div>
+            <div>
+              <div class="to-price">2 500 HTG</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="qty-row">
+          <div class="qty-lbl">Nombre de places</div>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <div class="qty-num" id="qtyNum">1</div>
+            <button class="qty-btn" onclick="changeQty(1)">＋</button>
+          </div>
+        </div>
+
+        <div class="ticket-total">
+          <div class="total-lbl">Total</div>
+          <div class="total-price" id="totalPrice">Gratuit</div>
+        </div>
+
+        <button class="reserve-btn" onclick="reserveTicket()">🎟️ Réserver ma place →</button>
+        <div class="ticket-notice">Réservation gratuite · <a href="#">Conditions</a> · Remboursable jusqu'au 22 Mai</div>
+      </div>
+    </div>
+
+    <!-- PARTAGER -->
+    <div class="share-card">
+      <div class="share-title">Partager l'événement</div>
+      <div class="share-grid">
+        <button class="share-btn" onclick="showToast('💬 Partage WhatsApp')">💬 WhatsApp</button>
+        <button class="share-btn" onclick="showToast('📘 Partage Facebook')">📘 Facebook</button>
+        <button class="share-btn" onclick="showToast('🐦 Partage Twitter')">🐦 Twitter</button>
+        <button class="share-btn" onclick="showToast('🔗 Lien copié !')">🔗 Copier</button>
+      </div>
+    </div>
+
+    <!-- ORGANISATEUR -->
+    <div class="org-card">
+      <div class="share-title">Organisateur</div>
+      <div class="org-header">
+        <div class="org-av-lg">🎺</div>
+        <div>
+          <div class="org-name">Komité Rara Nasyonal</div>
+          <div class="org-meta">Organisation culturelle · Haïti 🇭🇹</div>
+        </div>
+      </div>
+      <div class="org-stats">
+        <div class="org-stat"><div class="org-stat-num">12</div><div class="org-stat-lbl">Événements</div></div>
+        <div class="org-stat"><div class="org-stat-num">4.9</div><div class="org-stat-lbl">Note</div></div>
+        <div class="org-stat"><div class="org-stat-num">2.4k</div><div class="org-stat-lbl">Abonnés</div></div>
+      </div>
+      <button class="follow-btn" id="followBtn" onclick="toggleFollow()">+ Suivre l'organisateur</button>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-card">
+      <div class="map-area" onclick="showToast('🗺️ Ouverture de Google Maps...')">
+        <div class="map-grid"></div>
+        <div class="map-pulse"></div>
+        <div class="map-pin-center">📍</div>
+      </div>
+      <div class="map-body">
+        <div class="map-addr">Champ de Mars</div>
+        <div class="map-city">Port-au-Prince, Haïti</div>
+        <button class="map-btn" onclick="showToast('🗺️ Navigation lancée...')">Obtenir l'itinéraire →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="t-icon" id="ti"></div><div class="t-msg" id="tm"></div></div>
+
+<script>
+// ── NAV SCROLL ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// ── COUNTDOWN ──
+const EVENT_DATE = new Date('2026-05-24T14:00:00');
+function updateCountdown(){
+  const now = new Date();
+  const diff = EVENT_DATE - now;
+  if(diff <= 0){
+    document.getElementById('countdown').innerHTML = '<div style="font-family:\'Playfair Display\',serif;font-size:1.2rem;color:var(--success)">🎉 L\'événement est en cours !</div>';
+    return;
+  }
+  const days  = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins  = Math.floor((diff % 3600000) / 60000);
+  const secs  = Math.floor((diff % 60000) / 1000);
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    const v = String(val).padStart(2,'0');
+    if(el.textContent !== v){ el.textContent = v; el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
+  };
+  set('cd-days', days); set('cd-hours', hours); set('cd-mins', mins); set('cd-secs', secs);
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// ── RSVP ──
+let rsvpDone = false;
+let rsvpCount = 142;
+function toggleRSVP(){
+  rsvpDone = !rsvpDone;
+  const btn = document.getElementById('rsvpBtn');
+  if(rsvpDone){
+    rsvpCount++;
+    btn.textContent = '✓ Je participe !';
+    btn.classList.add('done');
+    showToast('🎉 RSVP confirmé ! À samedi !');
+  } else {
+    rsvpCount--;
+    btn.textContent = '🎟️ Je participe';
+    btn.classList.remove('done');
+    showToast('↩️ RSVP annulé');
+  }
+  document.getElementById('rsvpCountNum').textContent = rsvpCount;
+  document.getElementById('sideRsvp').textContent = rsvpCount;
+  document.getElementById('rsvpRemaining').textContent = (200 - rsvpCount) + ' places restantes';
+}
+
+// ── TICKETS ──
+let qty = 1;
+let isVIP = false;
+function selectTicket(el){
+  document.querySelectorAll('.ticket-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  isVIP = el.querySelector('.to-name').textContent.includes('VIP');
+  updateTotal();
+}
+function changeQty(d){
+  qty = Math.max(1, Math.min(10, qty + d));
+  document.getElementById('qtyNum').textContent = qty;
+  updateTotal();
+}
+function updateTotal(){
+  const price = isVIP ? 2500 * qty : 0;
+  document.getElementById('totalPrice').textContent = price === 0 ? 'Gratuit' : price.toLocaleString() + ' HTG';
+}
+function reserveTicket(){
+  showToast('🎟️ Réservation confirmée ! Vérifiez votre email.');
+  if(!rsvpDone) toggleRSVP();
+}
+
+// ── FOLLOW ──
+let following = false;
+function toggleFollow(){
+  following = !following;
+  const btn = document.getElementById('followBtn');
+  btn.textContent = following ? '✓ Abonné' : '+ Suivre l\'organisateur';
+  btn.classList.toggle('following', following);
+  showToast(following ? '🔔 Tu suis Komité Rara Nasyonal' : '↩️ Abonnement annulé');
+}
+
+// ── READ MORE ──
+let expanded = false;
+function toggleReadMore(){
+  expanded = !expanded;
+  document.getElementById('desc-more').style.display = expanded ? 'block' : 'none';
+  document.getElementById('readMoreBtn').textContent = expanded ? 'Réduire ↑' : 'Lire la suite →';
+}
+
+// ── TOAST ──
+let _tt;
+function showToast(msg){
+  const parts=msg.split(' ');
+  document.getElementById('ti').textContent=parts[0];
+  document.getElementById('tm').textContent=parts.slice(1).join(' ');
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

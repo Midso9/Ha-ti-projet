@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bienvenue — AYITI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0a0603;--rouge:#C8102E;--bleu:#00209F;--or:#F5A623;
+  --creme:#F9F3E8;--blanc:#fff;--gris:#8a8170;
+  --surface:#141008;--surface2:#1c1610;
+  --border:rgba(245,166,35,.13);--border2:rgba(255,255,255,.06);
+  --success:#81c784;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif}
+
+/* ── BG LAYER ── */
+.bg-wrap{position:fixed;inset:0;z-index:0;transition:all .8s cubic-bezier(.23,1,.32,1)}
+.bg-layer{position:absolute;inset:0;opacity:0;transition:opacity .7s ease}
+.bg-layer.active{opacity:1}
+.bg-0{background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(200,16,46,.18),transparent 60%),radial-gradient(ellipse 60% 80% at 80% 80%,rgba(0,32,159,.12),transparent 60%)}
+.bg-1{background:radial-gradient(ellipse 70% 60% at 20% 50%,rgba(0,32,159,.2),transparent 60%),radial-gradient(ellipse 50% 70% at 80% 30%,rgba(245,166,35,.08),transparent 60%)}
+.bg-2{background:radial-gradient(ellipse 80% 60% at 50% 80%,rgba(245,166,35,.12),transparent 60%),radial-gradient(ellipse 60% 50% at 20% 20%,rgba(200,16,46,.1),transparent 60%)}
+.bg-3{background:radial-gradient(ellipse 100% 60% at 50% 50%,rgba(129,199,132,.1),transparent 60%)}
+.bg-4{background:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(200,16,46,.15),rgba(0,32,159,.1) 50%,transparent 80%)}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(245,166,35,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.02) 1px,transparent 1px);background-size:44px 44px}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.06);z-index:100}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--rouge),var(--or));border-radius:0 2px 2px 0;transition:width .6s cubic-bezier(.23,1,.32,1)}
+
+/* ── DOTS ── */
+.dots{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:100}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s cubic-bezier(.34,1.56,.64,1);cursor:pointer}
+.dot.active{background:var(--or);width:24px;border-radius:4px}
+.dot:hover{background:rgba(245,166,35,.5)}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:3rem 2rem;text-align:center;opacity:0;transform:translateX(60px);pointer-events:none;transition:all .5s cubic-bezier(.23,1,.32,1)}
+.screen.active{opacity:1;transform:translateX(0);pointer-events:auto}
+.screen.exit-left{opacity:0;transform:translateX(-60px)}
+
+/* ── NAV ── */
+.screen-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2rem}
+.skip-btn{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(249,243,232,.4);background:none;border:none;cursor:pointer;transition:color .2s;padding:0}
+.skip-btn:hover{color:var(--gris)}
+.step-label{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris)}
+
+/* ── SCREEN 0 — SPLASH ── */
+.splash-logo{font-family:'Playfair Display',serif;font-size:clamp(3.5rem,10vw,7rem);font-weight:900;color:var(--blanc);line-height:1;margin-bottom:.5rem;animation:logoIn 1s cubic-bezier(.23,1,.32,1) forwards}
+.splash-logo span{color:var(--or)}
+@keyframes logoIn{from{opacity:0;transform:scale(.7) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.splash-flag{display:flex;width:60px;height:38px;border-radius:5px;overflow:hidden;border:1px solid rgba(255,255,255,.1);margin:1rem auto;animation:fadeIn .8s .3s ease forwards}
+.sf-b{flex:1;background:var(--bleu)}.sf-r{flex:1;background:var(--rouge)}
+@keyframes fadeIn{from{opacity:.3}to{opacity:1}}
+.splash-tagline{font-family:'Playfair Display',serif;font-size:clamp(1rem,3vw,1.4rem);font-style:italic;color:var(--or);margin-bottom:.8rem;animation:fadeIn .8s .5s ease forwards}
+.splash-sub{font-size:.9rem;color:rgba(249,243,232,.5);line-height:1.7;max-width:420px;margin:0 auto 2.5rem;animation:fadeIn .8s .7s ease forwards}
+.splash-btn{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:1rem 3rem;background:var(--rouge);color:var(--blanc);border:none;border-radius:7px;cursor:pointer;transition:all .3s;animation:fadeIn .8s .9s ease forwards;position:relative;overflow:hidden}
+.splash-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);pointer-events:none}
+.splash-btn:hover{background:#a50d25;transform:translateY(-3px);box-shadow:0 12px 32px rgba(200,16,46,.45)}
+.splash-btn:active{transform:translateY(0)}
+
+/* ── SCREEN 1 — VILLE ── */
+.screen-icon{font-size:3.5rem;margin-bottom:1rem;animation:bounce .6s ease forwards}
+@keyframes bounce{from{transform:scale(0) rotate(-10deg)}to{transform:scale(1) rotate(0)}}
+.screen-eyebrow{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rouge);margin-bottom:.6rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.screen-eyebrow::before,.screen-eyebrow::after{content:'';width:16px;height:1px;background:var(--rouge)}
+.screen-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;color:var(--blanc);margin-bottom:.6rem;line-height:1.1}
+.screen-title em{color:var(--or);font-style:italic}
+.screen-sub{font-size:.88rem;color:rgba(249,243,232,.5);line-height:1.7;max-width:420px;margin:0 auto 2rem}
+
+/* CITY GRID */
+.city-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;max-width:520px;margin:0 auto 2rem;width:100%}
+.city-item{background:var(--surface);border:1.5px solid var(--border2);border-radius:8px;padding:.8rem .6rem;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);text-align:center}
+.city-item:hover{border-color:rgba(245,166,35,.35);transform:translateY(-3px) scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.city-item.selected{border-color:var(--or);background:rgba(245,166,35,.08);transform:scale(1.04)}
+.city-emoji{font-size:1.5rem;margin-bottom:.35rem}
+.city-name{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--creme);transition:color .2s}
+.city-item.selected .city-name{color:var(--or)}
+.city-item.selected .city-check{display:block}
+.city-check{display:none;font-size:.6rem;color:var(--or);margin-top:.2rem}
+
+/* ── SCREEN 2 — CATÉGORIES ── */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;max-width:520px;margin:0 auto 2rem;width:100%}
+.cat-item{background:var(--surface);border:1.5px solid var(--border2);border-radius:10px;padding:1rem .7rem;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);text-align:center;position:relative;overflow:hidden}
+.cat-item::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.cat-item:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 28px rgba(0,0,0,.4)}
+.cat-item.selected{transform:scale(1.05)}
+.cat-item.selected::before{opacity:1}
+
+.cat-resto::before{background:radial-gradient(ellipse at 50% 0%,rgba(200,16,46,.2),transparent 70%)}
+.cat-soiree::before{background:radial-gradient(ellipse at 50% 0%,rgba(123,31,162,.2),transparent 70%)}
+.cat-event::before{background:radial-gradient(ellipse at 50% 0%,rgba(0,32,159,.2),transparent 70%)}
+.cat-boutique::before{background:radial-gradient(ellipse at 50% 0%,rgba(245,166,35,.15),transparent 70%)}
+.cat-art::before{background:radial-gradient(ellipse at 50% 0%,rgba(46,125,50,.2),transparent 70%)}
+.cat-musique::before{background:radial-gradient(ellipse at 50% 0%,rgba(2,119,189,.2),transparent 70%)}
+
+.cat-item.selected.cat-resto{border-color:var(--rouge)}
+.cat-item.selected.cat-soiree{border-color:#7b1fa2}
+.cat-item.selected.cat-event{border-color:var(--bleu)}
+.cat-item.selected.cat-boutique{border-color:var(--or)}
+.cat-item.selected.cat-art{border-color:#2e7d32}
+.cat-item.selected.cat-musique{border-color:#0277bd}
+
+.cat-emoji{font-size:1.8rem;margin-bottom:.5rem;position:relative;z-index:1;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.cat-item:hover .cat-emoji{transform:scale(1.2)}
+.cat-item.selected .cat-emoji{transform:scale(1.15)}
+.cat-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);position:relative;z-index:1;transition:color .2s}
+.cat-item.selected .cat-label{color:var(--blanc)}
+.cat-count-badge{position:absolute;top:.4rem;right:.4rem;font-family:'Space Mono',monospace;font-size:.44rem;background:rgba(255,255,255,.06);color:var(--gris);padding:.1rem .35rem;border-radius:3px;z-index:1}
+.cat-item.selected .cat-count-badge{background:rgba(255,255,255,.12);color:var(--blanc)}
+
+/* ── SCREEN 3 — TYPE DE COMPTE ── */
+.role-cards{display:flex;gap:1rem;max-width:520px;margin:0 auto 2rem;width:100%;flex-wrap:wrap;justify-content:center}
+.role-card{flex:1;min-width:200px;background:var(--surface);border:2px solid var(--border2);border-radius:12px;padding:1.5rem 1.2rem;cursor:pointer;transition:all .3s cubic-bezier(.34,1.3,.64,1);text-align:center;position:relative;overflow:hidden}
+.role-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.role-card.visiteur::before{background:radial-gradient(ellipse at 50% 0%,rgba(0,32,159,.18),transparent 70%)}
+.role-card.pro::before{background:radial-gradient(ellipse at 50% 0%,rgba(200,16,46,.18),transparent 70%)}
+.role-card:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 16px 48px rgba(0,0,0,.4)}
+.role-card:hover::before{opacity:1}
+.role-card.selected.visiteur{border-color:var(--bleu);box-shadow:0 0 0 3px rgba(0,32,159,.15)}
+.role-card.selected.pro{border-color:var(--rouge);box-shadow:0 0 0 3px rgba(200,16,46,.15)}
+.role-card.selected::before{opacity:1}
+.role-icon-big{font-size:2.5rem;margin-bottom:.8rem;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.role-card:hover .role-icon-big{transform:scale(1.15) rotate(-5deg)}
+.role-card.selected .role-icon-big{transform:scale(1.1)}
+.role-name-big{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--blanc);margin-bottom:.4rem}
+.role-desc-big{font-size:.78rem;color:rgba(249,243,232,.5);line-height:1.55}
+.role-check-big{position:absolute;top:.75rem;right:.75rem;width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.65rem;transition:all .25s}
+.role-card.selected .role-check-big{background:var(--or);border-color:var(--or);color:var(--noir)}
+
+/* ── SCREEN 4 — NOTIFICATIONS ── */
+.notif-options{display:flex;flex-direction:column;gap:.7rem;max-width:420px;margin:0 auto 2rem;width:100%}
+.notif-opt{display:flex;align-items:center;gap:1rem;background:var(--surface);border:1.5px solid var(--border2);border-radius:8px;padding:.9rem 1rem;cursor:pointer;transition:all .25s;text-align:left}
+.notif-opt:hover{border-color:rgba(245,166,35,.3);transform:translateX(4px)}
+.notif-opt.on{border-color:rgba(129,199,132,.3);background:rgba(129,199,132,.05)}
+.notif-opt-icon{font-size:1.3rem;flex-shrink:0}
+.notif-opt-info{flex:1}
+.notif-opt-title{font-size:.86rem;font-weight:600;color:var(--blanc);margin-bottom:.1rem}
+.notif-opt-sub{font-size:.73rem;color:var(--gris);line-height:1.4}
+.notif-tog{width:36px;height:20px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;position:relative;transition:all .3s;flex-shrink:0}
+.notif-opt.on .notif-tog{background:rgba(129,199,132,.2);border-color:rgba(129,199,132,.4)}
+.notif-tog::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:var(--gris);top:2px;left:2px;transition:all .3s}
+.notif-opt.on .notif-tog::after{background:var(--success);left:18px}
+
+/* ── SCREEN 5 — PRÊT ── */
+.ready-icon{font-size:5rem;margin-bottom:1rem;animation:popIn .5s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes popIn{from{transform:scale(0) rotate(-15deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.ready-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:900;color:var(--blanc);margin-bottom:.6rem;line-height:1.05}
+.ready-title em{color:var(--or);font-style:italic}
+.ready-sub{font-size:.9rem;color:rgba(249,243,232,.55);line-height:1.7;max-width:400px;margin:0 auto 1.5rem}
+.summary-chips{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;max-width:480px;margin:0 auto 2.5rem}
+.summary-chip{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;padding:.28rem .75rem;border-radius:20px;background:rgba(245,166,35,.08);color:rgba(245,166,35,.8);border:1px solid rgba(245,166,35,.18)}
+.ready-btn{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;padding:1.1rem 3.5rem;background:var(--rouge);color:var(--blanc);border:none;border-radius:7px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.ready-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);pointer-events:none}
+.ready-btn:hover{background:#a50d25;transform:translateY(-3px);box-shadow:0 14px 36px rgba(200,16,46,.45)}
+.ready-confetti{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* ── BOTTOM CTA ── */
+.bottom-cta{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:10;width:100%;max-width:380px;padding:0 1.5rem}
+.next-btn{width:100%;font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:.92rem;background:var(--rouge);color:var(--blanc);border:none;border-radius:8px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.next-btn:hover{background:#a50d25;transform:translateY(-2px);box-shadow:0 12px 32px rgba(200,16,46,.4)}
+.next-btn:disabled{opacity:.4;pointer-events:none;transform:none;box-shadow:none}
+.next-btn-sub{text-align:center;margin-top:.5rem;font-size:.73rem;color:var(--gris)}
+.next-btn-sub a{color:var(--or);text-decoration:none}
+.next-btn-sub a:hover{text-decoration:underline}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;z-index:999;transform:translateY(80px);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.23,1,.32,1);box-shadow:0 16px 48px rgba(0,0,0,.5);max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+.t-icon{font-size:1rem}.t-msg{font-size:.82rem;color:var(--blanc)}
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+
+<!-- BG -->
+<div class="bg-wrap">
+  <div class="bg-layer bg-0 active" id="bg0"></div>
+  <div class="bg-layer bg-1" id="bg1"></div>
+  <div class="bg-layer bg-2" id="bg2"></div>
+  <div class="bg-layer bg-3" id="bg3"></div>
+  <div class="bg-layer bg-4" id="bg4"></div>
+</div>
+<div class="bg-grid"></div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<!-- NAV -->
+<div class="screen-nav">
+  <button class="skip-btn" id="skipBtn" onclick="skipOnboarding()" style="visibility:hidden">Passer →</button>
+  <div class="step-label" id="stepLabel"></div>
+  <div style="width:60px"></div>
+</div>
+
+<!-- DOTS -->
+<div class="dots" id="dotsContainer"></div>
+
+<!-- ═══ SCREEN 0 — SPLASH ═══ -->
+<div class="screen active" id="screen-0">
+  <div class="splash-logo">AY<span>I</span>TI</div>
+  <div class="splash-flag"><div class="sf-b"></div><div class="sf-r"></div></div>
+  <div class="splash-tagline">La culture haïtienne, répertoriée.</div>
+  <p class="splash-sub">Restaurants, soirées, boutiques, événements — tout ce qui est 100% Haïti, réuni pour toi.</p>
+  <button class="splash-btn" onclick="goToScreen(1)">Commencer 🇭🇹</button>
+</div>
+
+<!-- ═══ SCREEN 1 — VILLE ═══ -->
+<div class="screen" id="screen-1">
+  <div class="screen-icon">🗺️</div>
+  <div class="screen-eyebrow">Étape 1 sur 4</div>
+  <h2 class="screen-title">Tu es <em>où ?</em></h2>
+  <p class="screen-sub">Choisis ta ville pour voir les lieux haïtiens près de toi. Tu pourras en ajouter d'autres plus tard.</p>
+  <div class="city-grid">
+    <div class="city-item" onclick="selectCity(this)" data-city="Port-au-Prince">
+      <div class="city-emoji">🇭🇹</div>
+      <div class="city-name">PAP</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="Pétionville">
+      <div class="city-emoji">🏙️</div>
+      <div class="city-name">Pétionville</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="Cap-Haïtien">
+      <div class="city-emoji">🌊</div>
+      <div class="city-name">Cap-Haïtien</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="Paris">
+      <div class="city-emoji">🗼</div>
+      <div class="city-name">Paris 🇫🇷</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="Miami">
+      <div class="city-emoji">🌴</div>
+      <div class="city-name">Miami 🇺🇸</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="Montréal">
+      <div class="city-emoji">🍁</div>
+      <div class="city-name">Montréal 🇨🇦</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="New York">
+      <div class="city-emoji">🗽</div>
+      <div class="city-name">New York 🇺🇸</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="Bruxelles">
+      <div class="city-emoji">🇧🇪</div>
+      <div class="city-name">Bruxelles</div>
+      <div class="city-check">✓</div>
+    </div>
+    <div class="city-item" onclick="selectCity(this)" data-city="Autre">
+      <div class="city-emoji">🌍</div>
+      <div class="city-name">Autre</div>
+      <div class="city-check">✓</div>
+    </div>
+  </div>
+  <div class="bottom-cta">
+    <button class="next-btn" id="nextCity" onclick="goToScreen(2)" disabled>Continuer →</button>
+    <div class="next-btn-sub"><a href="#" onclick="goToScreen(2);return false">Passer cette étape</a></div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 2 — CATÉGORIES ═══ -->
+<div class="screen" id="screen-2">
+  <div class="screen-icon">✨</div>
+  <div class="screen-eyebrow">Étape 2 sur 4</div>
+  <h2 class="screen-title">Tes <em>centres</em> d'intérêt</h2>
+  <p class="screen-sub">Choisis au moins 2 catégories pour personnaliser ton expérience AYITI.</p>
+  <div class="cat-grid">
+    <div class="cat-item cat-resto" onclick="toggleCat(this)" data-cat="Restaurants">
+      <div class="cat-count-badge">148</div>
+      <div class="cat-emoji">🍽️</div>
+      <div class="cat-label">Restaurants</div>
+    </div>
+    <div class="cat-item cat-soiree" onclick="toggleCat(this)" data-cat="Soirées">
+      <div class="cat-count-badge">41</div>
+      <div class="cat-emoji">🎶</div>
+      <div class="cat-label">Soirées</div>
+    </div>
+    <div class="cat-item cat-event" onclick="toggleCat(this)" data-cat="Événements">
+      <div class="cat-count-badge">34</div>
+      <div class="cat-emoji">🎉</div>
+      <div class="cat-label">Événements</div>
+    </div>
+    <div class="cat-item cat-boutique" onclick="toggleCat(this)" data-cat="Boutiques">
+      <div class="cat-count-badge">62</div>
+      <div class="cat-emoji">🛍️</div>
+      <div class="cat-label">Boutiques</div>
+    </div>
+    <div class="cat-item cat-art" onclick="toggleCat(this)" data-cat="Art & Culture">
+      <div class="cat-count-badge">29</div>
+      <div class="cat-emoji">🎨</div>
+      <div class="cat-label">Art & Culture</div>
+    </div>
+    <div class="cat-item cat-musique" onclick="toggleCat(this)" data-cat="Musique">
+      <div class="cat-count-badge">41</div>
+      <div class="cat-emoji">🎵</div>
+      <div class="cat-label">Musique</div>
+    </div>
+  </div>
+  <div class="bottom-cta">
+    <button class="next-btn" id="nextCat" onclick="goToScreen(3)" disabled>Continuer →</button>
+    <div class="next-btn-sub"><a href="#" onclick="goToScreen(3);return false">Passer cette étape</a></div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 3 — RÔLE ═══ -->
+<div class="screen" id="screen-3">
+  <div class="screen-icon">👤</div>
+  <div class="screen-eyebrow">Étape 3 sur 4</div>
+  <h2 class="screen-title">Tu es <em>qui ?</em></h2>
+  <p class="screen-sub">Ça nous aide à te montrer les bonnes fonctionnalités dès le départ.</p>
+  <div class="role-cards">
+    <div class="role-card visiteur" onclick="selectRole(this,'visiteur')">
+      <div class="role-check-big"></div>
+      <div class="role-icon-big">🧑‍🤝‍🧑</div>
+      <div class="role-name-big">Visiteur</div>
+      <div class="role-desc-big">J'explore des lieux, je note et je partage mes expériences.</div>
+    </div>
+    <div class="role-card pro" onclick="selectRole(this,'pro')">
+      <div class="role-check-big"></div>
+      <div class="role-icon-big">🏢</div>
+      <div class="role-name-big">Professionnel</div>
+      <div class="role-desc-big">Je suis propriétaire d'un restaurant, boutique ou organisateur.</div>
+    </div>
+  </div>
+  <div class="bottom-cta">
+    <button class="next-btn" id="nextRole" onclick="goToScreen(4)" disabled>Continuer →</button>
+    <div class="next-btn-sub"><a href="#" onclick="goToScreen(4);return false">Passer cette étape</a></div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 4 — NOTIFICATIONS ═══ -->
+<div class="screen" id="screen-4">
+  <div class="screen-icon">🔔</div>
+  <div class="screen-eyebrow">Étape 4 sur 4</div>
+  <h2 class="screen-title">Reste <em>informé</em></h2>
+  <p class="screen-sub">Choisis ce que tu veux recevoir. Tu peux modifier ça à tout moment.</p>
+  <div class="notif-options">
+    <div class="notif-opt on" onclick="toggleNotif(this)">
+      <div class="notif-opt-icon">📢</div>
+      <div class="notif-opt-info">
+        <div class="notif-opt-title">Annonces de mes favoris</div>
+        <div class="notif-opt-sub">Quand un lieu que tu suis publie quelque chose</div>
+      </div>
+      <div class="notif-tog"></div>
+    </div>
+    <div class="notif-opt on" onclick="toggleNotif(this)">
+      <div class="notif-opt-icon">🎉</div>
+      <div class="notif-opt-info">
+        <div class="notif-opt-title">Nouveaux événements</div>
+        <div class="notif-opt-sub">Événements et soirées près de ta ville</div>
+      </div>
+      <div class="notif-tog"></div>
+    </div>
+    <div class="notif-opt" onclick="toggleNotif(this)">
+      <div class="notif-opt-icon">⭐</div>
+      <div class="notif-opt-info">
+        <div class="notif-opt-title">Réponses à mes avis</div>
+        <div class="notif-opt-sub">Quand un proprio répond à ton commentaire</div>
+      </div>
+      <div class="notif-tog"></div>
+    </div>
+    <div class="notif-opt" onclick="toggleNotif(this)">
+      <div class="notif-opt-icon">📧</div>
+      <div class="notif-opt-info">
+        <div class="notif-opt-title">Newsletter hebdomadaire</div>
+        <div class="notif-opt-sub">Les meilleures découvertes de la semaine par email</div>
+      </div>
+      <div class="notif-tog"></div>
+    </div>
+  </div>
+  <div class="bottom-cta">
+    <button class="next-btn" onclick="goToScreen(5)">C'est parti ! 🎉</button>
+    <div class="next-btn-sub"><a href="#" onclick="goToScreen(5);return false">Passer</a></div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 5 — PRÊT ═══ -->
+<div class="screen" id="screen-5">
+  <div class="ready-confetti" id="confetti"></div>
+  <div class="ready-icon">🎉</div>
+  <h2 class="ready-title">AYITI est<br><em>prêt pour toi !</em></h2>
+  <p class="ready-sub" id="readySub">On a personnalisé ton expérience. Voilà ce qu'on a préparé pour toi.</p>
+  <div class="summary-chips" id="summaryChips"></div>
+  <button class="ready-btn" onclick="finishOnboarding()">Explorer AYITI 🇭🇹</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="t-icon" id="ti"></div><div class="t-msg" id="tm"></div></div>
+
+<script>
+// ── STATE ──
+let currentScreen = 0;
+const TOTAL_SCREENS = 6;
+let selectedCity = null;
+let selectedCats = [];
+let selectedRole = null;
+
+// ── DOTS ──
+function buildDots(){
+  const c = document.getElementById('dotsContainer');
+  c.innerHTML = '';
+  // Only show dots for screens 1-4 (not splash or ready)
+  if(currentScreen === 0 || currentScreen === 5){ c.style.display='none'; return; }
+  c.style.display='flex';
+  [1,2,3,4].forEach(i=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===currentScreen?' active':'');
+    d.onclick = ()=>{ if(i<currentScreen) goToScreen(i); };
+    c.appendChild(d);
+  });
+}
+
+// ── PROGRESS ──
+function updateProgress(){
+  const pct = currentScreen === 0 ? 0 : currentScreen === 5 ? 100 : ((currentScreen-1)/4)*100;
+  document.getElementById('progressFill').style.width = pct+'%';
+  const skip = document.getElementById('skipBtn');
+  const lbl = document.getElementById('stepLabel');
+  skip.style.visibility = (currentScreen>0&&currentScreen<5) ? 'visible':'hidden';
+  lbl.textContent = currentScreen>0&&currentScreen<5 ? `${currentScreen}/4` : '';
+}
+
+// ── NAVIGATION ──
+function goToScreen(n){
+  const curr = document.getElementById('screen-'+currentScreen);
+  curr.classList.remove('active');
+  curr.classList.add('exit-left');
+  setTimeout(()=>curr.classList.remove('exit-left'), 500);
+
+  currentScreen = n;
+  const next = document.getElementById('screen-'+n);
+  setTimeout(()=>{
+    next.classList.add('active');
+    // Swap bg
+    document.querySelectorAll('.bg-layer').forEach(b=>b.classList.remove('active'));
+    const bg = document.getElementById('bg'+Math.min(n,4));
+    if(bg) bg.classList.add('active');
+    buildDots();
+    updateProgress();
+    if(n===5) launchConfetti();
+  }, 50);
+}
+
+function skipOnboarding(){ goToScreen(5); }
+function finishOnboarding(){ showToast('🇭🇹 Bienvenue sur AYITI !'); setTimeout(()=>{ window.location.href='ayiti-exploration.html'; },1200); }
+
+// ── CITY ──
+function selectCity(el){
+  document.querySelectorAll('.city-item').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCity = el.dataset.city;
+  document.getElementById('nextCity').disabled = false;
+  showToast('📍 ' + selectedCity + ' sélectionné !');
+}
+
+// ── CATS ──
+function toggleCat(el){
+  el.classList.toggle('selected');
+  selectedCats = [...document.querySelectorAll('.cat-item.selected')].map(c=>c.dataset.cat);
+  document.getElementById('nextCat').disabled = selectedCats.length < 2;
+}
+
+// ── ROLE ──
+function selectRole(el, role){
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRole = role;
+  document.getElementById('nextRole').disabled = false;
+  showToast(role==='pro' ? '🏢 Mode professionnel sélectionné' : '🧑 Mode visiteur sélectionné');
+  setTimeout(()=>goToScreen(4), 500);
+}
+
+// ── NOTIF ──
+function toggleNotif(el){ el.classList.toggle('on'); }
+
+// ── SUMMARY CHIPS ──
+function buildSummary(){
+  const chips = document.getElementById('summaryChips');
+  chips.innerHTML = '';
+  const items = [];
+  if(selectedCity) items.push('📍 ' + selectedCity);
+  selectedCats.forEach(c=>items.push(c));
+  if(selectedRole) items.push(selectedRole==='pro'?'🏢 Pro':'🧑 Visiteur');
+  const notifs = document.querySelectorAll('.notif-opt.on').length;
+  if(notifs>0) items.push('🔔 ' + notifs + ' notif' + (notifs>1?'s':''));
+  if(items.length===0) items.push('🇭🇹 Profil AYITI');
+  items.forEach(item=>{
+    const chip = document.createElement('div');
+    chip.className='summary-chip';
+    chip.textContent = item;
+    chips.appendChild(chip);
+  });
+}
+
+// ── CONFETTI ──
+function launchConfetti(){
+  buildSummary();
+  const colors = ['#C8102E','#00209F','#F5A623','#81c784','#ffffff'];
+  const c = document.getElementById('confetti');
+  c.innerHTML='';
+  for(let i=0;i<60;i++){
+    const piece = document.createElement('div');
+    piece.className='confetti-piece';
+    piece.style.cssText=`
+      left:${Math.random()*100}%;
+      top:-20px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*6}px;
+      height:${6+Math.random()*6}px;
+      animation-duration:${2+Math.random()*2}s;
+      animation-delay:${Math.random()*.8}s;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      transform:rotate(${Math.random()*360}deg);
+    `;
+    c.appendChild(piece);
+    setTimeout(()=>piece.remove(), 4000);
+  }
+}
+
+// ── INIT ──
+buildDots(); updateProgress();
+
+// ── TOAST ──
+let _tt;
+function showToast(msg){
+  const parts=msg.split(' ');
+  document.getElementById('ti').textContent=parts[0];
+  document.getElementById('tm').textContent=parts.slice(1).join(' ');
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

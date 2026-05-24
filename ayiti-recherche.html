@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recherche — AYITI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0a0603;--rouge:#C8102E;--bleu:#00209F;--or:#F5A623;
+  --creme:#F9F3E8;--blanc:#fff;--gris:#8a8170;
+  --surface:#141008;--surface2:#1c1610;--surface3:#221c12;
+  --border:rgba(245,166,35,.13);--border2:rgba(255,255,255,.06);
+  --success:#81c784;--error:#e57373;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(200,16,46,.07),transparent 60%)}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;background:rgba(10,6,3,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border2);padding:.8rem 2rem;display:flex;align-items:center;gap:1rem}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--blanc);text-decoration:none;flex-shrink:0}
+.nav-logo span{color:var(--or)}
+
+/* ── SEARCH BAR ── */
+.search-container{position:relative;flex:1;max-width:680px;margin:0 auto}
+.search-bar{display:flex;align-items:center;gap:.6rem;background:var(--surface2);border:1.5px solid var(--border2);border-radius:50px;padding:.6rem 1rem .6rem 1.2rem;transition:all .3s;cursor:text}
+.search-bar.focused{border-color:rgba(245,166,35,.4);background:var(--surface3);box-shadow:0 0 0 3px rgba(245,166,35,.08),0 8px 32px rgba(0,0,0,.3)}
+.search-icon{color:var(--gris);font-size:1rem;flex-shrink:0;transition:color .2s}
+.search-bar.focused .search-icon{color:var(--or)}
+.search-input{flex:1;background:none;border:none;outline:none;font-size:.95rem;color:var(--creme);font-family:'DM Sans',sans-serif;min-width:0}
+.search-input::placeholder{color:rgba(138,129,112,.55)}
+.search-clear{width:22px;height:22px;border-radius:50%;background:var(--gris);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:.65rem;color:var(--noir);transition:all .2s cubic-bezier(.34,1.56,.64,1);flex-shrink:0}
+.search-clear.show{display:flex}
+.search-clear:hover{background:var(--rouge);color:var(--blanc);transform:scale(1.1)}
+.search-voice{width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .25s cubic-bezier(.34,1.56,.64,1);flex-shrink:0;color:var(--gris)}
+.search-voice:hover{border-color:var(--rouge);color:var(--rouge);transform:scale(1.1)}
+.search-voice.listening{background:rgba(200,16,46,.15);border-color:var(--rouge);color:var(--rouge);animation:voicePulse 1s ease-in-out infinite}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(200,16,46,.3)}50%{box-shadow:0 0 0 8px rgba(200,16,46,0)}}
+
+/* AUTOCOMPLETE DROPDOWN */
+.autocomplete{position:absolute;top:calc(100% + .5rem);left:0;right:0;background:#1c1610;border:1px solid var(--border);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6);z-index:300;overflow:hidden;display:none;animation:dropIn .2s cubic-bezier(.23,1,.32,1)}
+.autocomplete.open{display:block}
+@keyframes dropIn{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.ac-section{padding:.5rem 0}
+.ac-section-label{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);padding:.5rem 1.1rem .3rem;display:flex;align-items:center;justify-content:space-between}
+.ac-clear-all{color:var(--rouge);cursor:pointer;transition:opacity .2s;font-size:.48rem}
+.ac-clear-all:hover{opacity:.7}
+.ac-item{display:flex;align-items:center;gap:.8rem;padding:.65rem 1.1rem;cursor:pointer;transition:all .18s;position:relative}
+.ac-item:hover{background:rgba(255,255,255,.04)}
+.ac-item.highlighted{background:rgba(245,166,35,.06)}
+.ac-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.ac-item:hover .ac-icon{transform:scale(1.1)}
+.ai-history{background:rgba(138,129,112,.1);border:1px solid rgba(138,129,112,.12)}
+.ai-trending{background:rgba(200,16,46,.12);border:1px solid rgba(200,16,46,.15)}
+.ai-lieu{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.15)}
+.ai-cat{background:rgba(0,32,159,.12);border:1px solid rgba(0,32,159,.15)}
+.ac-text{flex:1;min-width:0}
+.ac-main{font-size:.86rem;color:var(--blanc);margin-bottom:.08rem}
+.ac-main mark{background:none;color:var(--or);font-weight:600}
+.ac-sub{font-size:.72rem;color:var(--gris)}
+.ac-right{font-family:'Space Mono',monospace;font-size:.48rem;color:var(--gris);letter-spacing:.05em;flex-shrink:0}
+.ac-arrow{color:var(--gris);font-size:.7rem;flex-shrink:0;opacity:0;transition:opacity .15s;margin-left:.3rem}
+.ac-item:hover .ac-arrow{opacity:1}
+.ac-del{width:18px;height:18px;border-radius:50%;background:none;border:none;cursor:pointer;color:rgba(138,129,112,.5);font-size:.75rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
+.ac-del:hover{background:rgba(229,115,115,.15);color:var(--error)}
+.ac-divider{height:1px;background:var(--border2);margin:.25rem 0}
+
+/* ── MAIN LAYOUT ── */
+.main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:1.5rem 2rem}
+
+/* ── FILTER ROW ── */
+.filter-row{display:flex;align-items:center;gap:.6rem;margin-bottom:1.5rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.3rem}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-pill{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;padding:.38rem .9rem;border-radius:20px;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gris);transition:all .22s;white-space:nowrap;display:flex;align-items:center;gap:.35rem;flex-shrink:0}
+.filter-pill:hover{border-color:rgba(245,166,35,.3);color:var(--creme);transform:translateY(-1px)}
+.filter-pill.on{background:var(--rouge);border-color:var(--rouge);color:var(--blanc)}
+.filter-pill.on[data-f="evenement"]{background:var(--bleu);border-color:var(--bleu)}
+.filter-pill.on[data-f="boutique"]{background:var(--or);border-color:var(--or);color:var(--noir)}
+.filter-pill.on[data-f="soiree"]{background:#7b1fa2;border-color:#7b1fa2}
+.filter-pill.on[data-f="art"]{background:#2e7d32;border-color:#2e7d32}
+.filter-pill.on[data-f="open"]{background:rgba(129,199,132,.2);border-color:var(--success);color:var(--success)}
+.filter-sep{width:1px;height:24px;background:var(--border2);flex-shrink:0}
+.filter-pill.active-filter{border-color:rgba(245,166,35,.3);color:var(--or)}
+.filter-count{background:rgba(255,255,255,.15);border-radius:10px;padding:.05rem .35rem;font-size:.44rem}
+
+/* ── ACTIVE FILTERS BAR ── */
+.active-filters-bar{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.af-chip{display:flex;align-items:center;gap:.35rem;font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.06em;text-transform:uppercase;padding:.25rem .65rem;border-radius:20px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);color:var(--or)}
+.af-x{cursor:pointer;opacity:.7;transition:all .2s;background:none;border:none;color:var(--or);font-size:.7rem;padding:0;display:flex;align-items:center}
+.af-x:hover{opacity:1;transform:rotate(90deg) scale(1.2)}
+
+/* ── RESULTS HEADER ── */
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.8rem}
+.results-count{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--blanc)}
+.results-count em{color:var(--or);font-style:italic}
+.results-count span{color:var(--gris);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:400;margin-left:.4rem}
+.results-right{display:flex;align-items:center;gap:.6rem}
+.sort-btn{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;padding:.4rem .85rem;border-radius:5px;cursor:pointer;background:var(--surface2);border:1px solid var(--border2);color:var(--gris);transition:all .2s;display:flex;align-items:center;gap:.35rem}
+.sort-btn:hover{border-color:var(--border);color:var(--creme)}
+.sort-btn.active-sort{border-color:rgba(245,166,35,.3);color:var(--or)}
+.view-btns{display:flex;gap:.3rem}
+.view-btn{width:30px;height:30px;border-radius:5px;background:var(--surface2);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;transition:all .2s;color:var(--gris)}
+.view-btn:hover,.view-btn.on{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);color:var(--or)}
+
+/* ── GRID ── */
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.results-list{display:flex;flex-direction:column;gap:.7rem}
+
+/* RESULT CARD GRID */
+.r-card{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .3s cubic-bezier(.23,1,.32,1);position:relative}
+.r-card:hover{border-color:rgba(245,166,35,.25);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.45)}
+.r-img{height:155px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:.3}
+.r-img-bg{position:absolute;inset:0}
+.r-img:hover .r-img-bg{transform:scale(1.04)}
+.r-img .r-img-bg{transition:transform .5s}
+.r-overlay{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(10,6,3,.8))}
+.r-cat-tag{position:absolute;top:.65rem;left:.65rem;font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.08em;text-transform:uppercase;padding:.18rem .5rem;border-radius:3px}
+.rt-resto{background:var(--rouge);color:var(--blanc)}
+.rt-evt{background:var(--bleu);color:var(--blanc)}
+.rt-boutique{background:var(--or);color:var(--noir)}
+.rt-soiree{background:#7b1fa2;color:var(--blanc)}
+.rt-art{background:#2e7d32;color:var(--blanc)}
+.r-fav{position:absolute;top:.6rem;right:.6rem;width:26px;height:26px;border-radius:50%;background:rgba(10,6,3,.7);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.r-fav:hover{transform:scale(1.15);background:rgba(200,16,46,.3)}
+.r-fav.saved{background:rgba(200,16,46,.2);border-color:rgba(200,16,46,.4)}
+.r-open{position:absolute;bottom:.65rem;left:.65rem;font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.06em;text-transform:uppercase;padding:.15rem .45rem;border-radius:3px}
+.ro-open{background:rgba(129,199,132,.2);color:var(--success);border:1px solid rgba(129,199,132,.25)}
+.ro-closed{background:rgba(229,115,115,.2);color:var(--error);border:1px solid rgba(229,115,115,.25)}
+.r-body{padding:.9rem}
+.r-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--blanc);margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-name mark{background:none;color:var(--or)}
+.r-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.r-stars{color:var(--or);font-size:.68rem}
+.r-rating{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--blanc)}
+.r-reviews{font-size:.68rem;color:var(--gris)}
+.r-loc{font-size:.73rem;color:var(--gris);margin-top:.35rem;display:flex;align-items:center;gap:.25rem}
+.r-dist{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--or);margin-left:auto}
+
+/* RESULT CARD LIST */
+.r-card-list{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .25s;display:grid;grid-template-columns:100px 1fr;position:relative}
+.r-card-list:hover{border-color:rgba(245,166,35,.22);transform:translateX(4px);box-shadow:6px 0 24px rgba(0,0,0,.3)}
+.r-list-img{height:85px;position:relative;display:flex;align-items:center;justify-content:center;font-size:1.8rem;opacity:.35}
+.r-list-body{padding:.7rem .9rem;display:flex;flex-direction:column;justify-content:center}
+.r-list-name{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--blanc);margin-bottom:.2rem}
+.r-list-name mark{background:none;color:var(--or)}
+.r-list-meta{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.r-list-desc{font-size:.73rem;color:rgba(249,243,232,.45);margin-top:.25rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+
+/* ── TRENDING SECTION ── */
+.trending-section{margin-bottom:2rem}
+.ts-title{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--or);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem}
+.ts-title::after{content:'';flex:1;height:1px;background:rgba(245,166,35,.1)}
+.trending-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.7rem}
+.trend-card{background:var(--surface);border:1px solid var(--border2);border-radius:7px;padding:.8rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:.7rem}
+.trend-card:hover{border-color:rgba(245,166,35,.22);transform:translateY(-2px) translateX(2px)}
+.trend-rank{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:rgba(245,166,35,.25);width:24px;flex-shrink:0;text-align:center}
+.trend-icon{font-size:1rem;flex-shrink:0}
+.trend-info{}
+.trend-name{font-size:.82rem;font-weight:600;color:var(--blanc);margin-bottom:.08rem}
+.trend-meta{font-size:.68rem;color:var(--gris)}
+.trend-up{font-family:'Space Mono',monospace;font-size:.48rem;color:var(--success);margin-left:auto;flex-shrink:0}
+
+/* ── RECENT SEARCHES ── */
+.recent-section{margin-bottom:2rem}
+.recent-list{display:flex;flex-wrap:wrap;gap:.4rem}
+.recent-chip{display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:rgba(249,243,232,.6);padding:.35rem .85rem;border-radius:20px;background:var(--surface);border:1px solid var(--border2);cursor:pointer;transition:all .22s}
+.recent-chip:hover{border-color:rgba(245,166,35,.3);color:var(--creme);transform:translateY(-1px)}
+.recent-del{color:rgba(138,129,112,.5);font-size:.7rem;background:none;border:none;cursor:pointer;padding:0;transition:color .15s;line-height:1}
+.recent-del:hover{color:var(--error)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:4rem 2rem;display:none}
+.empty-state.show{display:block;animation:fadeUp .4s ease forwards}
+@keyframes fadeUp{from{opacity:.3;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.empty-icon{font-size:3.5rem;margin-bottom:1rem;opacity:.3}
+.empty-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--blanc);margin-bottom:.5rem}
+.empty-sub{font-size:.84rem;color:var(--gris);line-height:1.7;margin-bottom:1.5rem}
+.empty-suggestions{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
+.empty-sug{font-size:.8rem;color:var(--or);padding:.3rem .8rem;border-radius:20px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.18);cursor:pointer;transition:all .2s}
+.empty-sug:hover{background:rgba(245,166,35,.15)}
+
+/* SKELETON LOADER */
+.skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;border-radius:4px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;z-index:999;transform:translateY(80px);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.23,1,.32,1);box-shadow:0 16px 48px rgba(0,0,0,.5);max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+.t-icon{font-size:1rem}.t-msg{font-size:.82rem;color:var(--blanc)}
+
+@media(max-width:768px){.main{padding:1rem 1rem}.results-grid{grid-template-columns:1fr}}
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+<div class="bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="ayiti-platform-landing.html" class="nav-logo">AY<span>I</span>TI</a>
+  <div class="search-container">
+    <div class="search-bar" id="searchBar">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput"
+        placeholder="Restaurant, soirée, boutique, ville..."
+        oninput="handleInput(this)"
+        onfocus="onFocus()"
+        onblur="onBlur()"
+        onkeydown="handleKey(event)">
+      <button class="search-clear" id="clearBtn" onclick="clearSearch()">✕</button>
+      <button class="search-voice" id="voiceBtn" onclick="toggleVoice()" title="Recherche vocale">🎤</button>
+    </div>
+    <!-- AUTOCOMPLETE -->
+    <div class="autocomplete" id="autocomplete"></div>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- DEFAULT STATE — no search -->
+  <div id="defaultState">
+
+    <!-- RECENT SEARCHES -->
+    <div class="recent-section" id="recentSection">
+      <div class="ts-title">🕐 Recherches récentes</div>
+      <div class="recent-list" id="recentList"></div>
+    </div>
+
+    <!-- TRENDING -->
+    <div class="trending-section">
+      <div class="ts-title">🔥 Tendances cette semaine</div>
+      <div class="trending-grid" id="trendingGrid"></div>
+    </div>
+
+    <!-- CAT QUICK ACCESS -->
+    <div class="trending-section">
+      <div class="ts-title">📂 Explorer par catégorie</div>
+      <div class="trending-grid" id="catGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- RESULTS STATE -->
+  <div id="resultsState" style="display:none">
+
+    <!-- FILTERS -->
+    <div class="filter-row" id="filterRow">
+      <button class="filter-pill on" data-f="all" onclick="toggleFilter(this)">Tous</button>
+      <button class="filter-pill" data-f="restaurant" onclick="toggleFilter(this)">🍽️ Restos</button>
+      <button class="filter-pill" data-f="evenement" onclick="toggleFilter(this)">🎉 Événements</button>
+      <button class="filter-pill" data-f="boutique" onclick="toggleFilter(this)">🛍️ Boutiques</button>
+      <button class="filter-pill" data-f="soiree" onclick="toggleFilter(this)">🎶 Soirées</button>
+      <button class="filter-pill" data-f="art" onclick="toggleFilter(this)">🎨 Art</button>
+      <div class="filter-sep"></div>
+      <button class="filter-pill" data-f="open" onclick="toggleFilter(this)">🟢 Ouvert</button>
+      <button class="filter-pill active-filter" onclick="showToast('⭐ Filtre note')">⭐ 4+ étoiles</button>
+      <button class="filter-pill active-filter" onclick="showToast('📍 Filtre ville')">📍 Ville</button>
+    </div>
+
+    <!-- ACTIVE FILTERS -->
+    <div class="active-filters-bar" id="activeFiltersBar"></div>
+
+    <!-- RESULTS HEADER -->
+    <div class="results-header">
+      <div class="results-count" id="resultsCount">
+        <em id="countNum">0</em> résultats
+        <span id="queryLabel"></span>
+      </div>
+      <div class="results-right">
+        <button class="sort-btn active-sort" onclick="showToast('📊 Tri : Pertinence')">↕ Pertinence</button>
+        <button class="sort-btn" onclick="showToast('⭐ Tri : Note')">⭐ Note</button>
+        <button class="sort-btn" onclick="showToast('📍 Tri : Distance')">📍 Distance</button>
+        <div class="view-btns">
+          <button class="view-btn on" id="vGrid" onclick="setView('grid')" title="Grille">⊞</button>
+          <button class="view-btn" id="vList" onclick="setView('list')" title="Liste">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="resultsContainer" class="results-grid"></div>
+
+    <!-- EMPTY -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">Aucun résultat trouvé</div>
+      <p class="empty-sub">Essaie avec d'autres mots-clés ou élargis tes critères.</p>
+      <div class="empty-suggestions" id="emptySuggestions"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="t-icon" id="ti"></div><div class="t-msg" id="tm"></div></div>
+
+<script>
+// ═══ DATA ═══
+const PLACES = [
+  {id:1,name:'Lakay Lakay Restaurant',cat:'restaurant',city:'Pétionville',rating:4.9,reviews:214,open:true,emoji:'🍽️',tag:'rt-resto',label:'Restaurant',bg:'linear-gradient(135deg,#7a0d1f,#C8102E)',desc:'Griot, pikliz, diri kole — cuisine haïtienne authentique.'},
+  {id:2,name:'Festival Rara 2026',cat:'evenement',city:'Port-au-Prince',rating:0,reviews:0,open:true,emoji:'🎉',tag:'rt-evt',label:'Événement',bg:'linear-gradient(135deg,#001260,#00209F)',desc:'Le grand festival culturel haïtien annuel.'},
+  {id:3,name:'Bèl Ayiti Shop',cat:'boutique',city:'Miami',rating:4.7,reviews:89,open:true,emoji:'🛍️',tag:'rt-boutique',label:'Boutique',bg:'linear-gradient(135deg,#3d2700,#c47e00)',desc:'Mode, artisanat et produits 100% haïtiens.'},
+  {id:4,name:'Nuit Kompa Vibes',cat:'soiree',city:'Paris',rating:4.8,reviews:142,open:false,emoji:'🎶',tag:'rt-soiree',label:'Soirée',bg:'linear-gradient(135deg,#2d0a3a,#7b1fa2)',desc:'La meilleure soirée Kompa de Paris.'},
+  {id:5,name:'Galerie Nan Zile',cat:'art',city:'Cap-Haïtien',rating:5.0,reviews:12,open:true,emoji:'🎨',tag:'rt-art',label:'Art',bg:'linear-gradient(135deg,#0a2a1a,#2e7d32)',desc:'Art contemporain haïtien au Cap.'},
+  {id:6,name:'Tam Tam Studio',cat:'musique',city:'Montréal',rating:4.6,reviews:67,open:true,emoji:'🎵',tag:'rt-evt',label:'Musique',bg:'linear-gradient(135deg,#012a40,#0277bd)',desc:'Studio d\'enregistrement Kompa à Montréal.'},
+  {id:7,name:'Resto Ti Lakay',cat:'restaurant',city:'Jacmel',rating:4.5,reviews:98,open:false,emoji:'🍛',tag:'rt-resto',label:'Restaurant',bg:'linear-gradient(135deg,#5a0d1f,#a80d28)',desc:'Petits plats haïtiens dans le Jacmel historique.'},
+  {id:8,name:'Expo Haïti Art',cat:'art',city:'Pétionville',rating:4.3,reviews:31,open:true,emoji:'🖼️',tag:'rt-art',label:'Art',bg:'linear-gradient(135deg,#0a2a1a,#2e7d32)',desc:'Exposition permanente des maîtres haïtiens.'},
+  {id:9,name:'Soirée Diaspora NYC',cat:'soiree',city:'New York',rating:4.9,reviews:200,open:false,emoji:'🎊',tag:'rt-soiree',label:'Soirée',bg:'linear-gradient(135deg,#1d0a3a,#5b1fa2)',desc:'La soirée haïtienne la plus populaire de NYC.'},
+  {id:10,name:'Ayiti Kreations',cat:'boutique',city:'Port-au-Prince',rating:4.4,reviews:55,open:true,emoji:'🎁',tag:'rt-boutique',label:'Boutique',bg:'linear-gradient(135deg,#3d2700,#b47e00)',desc:'Artisanat local, bijoux et vêtements créoles.'},
+  {id:11,name:'Le Roi du Griot',cat:'restaurant',city:'Cap-Haïtien',rating:4.8,reviews:176,open:true,emoji:'🥘',tag:'rt-resto',label:'Restaurant',bg:'linear-gradient(135deg,#6a0d1a,#C8102E)',desc:'Griot, bannann peze et joumou depuis 1995.'},
+  {id:12,name:'Rara Dance Workshop',cat:'evenement',city:'Pétionville',rating:4.7,reviews:43,open:true,emoji:'💃',tag:'rt-evt',label:'Événement',bg:'linear-gradient(135deg,#001060,#00209F)',desc:'Ateliers de danse Rara chaque samedi.'},
+];
+
+const TRENDING = [
+  {rank:1,emoji:'🍽️',name:'Griot Pétionville',meta:'148 recherches · +34%',up:'↑'},
+  {rank:2,emoji:'🎶',name:'Soirée Kompa Paris',meta:'97 recherches · +21%',up:'↑'},
+  {rank:3,emoji:'🎉',name:'Festival Rara 2026',meta:'203 recherches · +89%',up:'🔥'},
+  {rank:4,emoji:'🛍️',name:'Boutique haïtienne Miami',meta:'64 recherches · +12%',up:'↑'},
+  {rank:5,emoji:'🎨',name:'Art haïtien contemporain',meta:'41 recherches · +8%',up:'↑'},
+  {rank:6,emoji:'🍹',name:'Bar cocktails PAP',meta:'38 recherches · +5%',up:'↑'},
+];
+
+const CATS = [
+  {emoji:'🍽️',name:'Restaurants',count:'148 lieux',bg:'linear-gradient(135deg,rgba(200,16,46,.15),rgba(200,16,46,.05))'},
+  {emoji:'🎉',name:'Événements',count:'34 à venir',bg:'linear-gradient(135deg,rgba(0,32,159,.15),rgba(0,32,159,.05))'},
+  {emoji:'🛍️',name:'Boutiques',count:'62 lieux',bg:'linear-gradient(135deg,rgba(245,166,35,.12),rgba(245,166,35,.04))'},
+  {emoji:'🎶',name:'Soirées',count:'18 ce mois',bg:'linear-gradient(135deg,rgba(123,31,162,.15),rgba(123,31,162,.05))'},
+  {emoji:'🎨',name:'Art & Culture',count:'29 lieux',bg:'linear-gradient(135deg,rgba(46,125,50,.15),rgba(46,125,50,.05))'},
+  {emoji:'🎵',name:'Musique',count:'41 artistes',bg:'linear-gradient(135deg,rgba(2,119,189,.15),rgba(2,119,189,.05))'},
+];
+
+const AUTOCOMPLETE_SUGGESTIONS = [
+  {icon:'🍽️',main:'Restaurant haïtien',sub:'148 lieux · Partout',type:'lieu'},
+  {icon:'🎶',main:'Soirée Kompa',sub:'18 événements ce mois',type:'cat'},
+  {icon:'🏙️',main:'Pétionville',sub:'Haïti · 89 lieux',type:'lieu'},
+  {icon:'🎉',main:'Festival Rara 2026',sub:'Port-au-Prince · Sam 24 Mai',type:'lieu'},
+  {icon:'🛍️',main:'Boutique créole',sub:'62 boutiques répertoriées',type:'cat'},
+  {icon:'🌴',main:'Miami',sub:'Diaspora · 23 lieux haïtiens',type:'lieu'},
+  {icon:'🎨',main:'Galerie d\'art haïtien',sub:'Cap-Haïtien & Port-au-Prince',type:'lieu'},
+  {icon:'🍖',main:'Griot',sub:'Plat · 48 restos le servent',type:'plat'},
+];
+
+let recentSearches = ['Griot Pétionville','Soirée Kompa Paris','Lakay Lakay'];
+let currentQuery = '';
+let activeFilters = new Set();
+let viewMode = 'grid';
+let favs = new Set();
+let acIndex = -1;
+
+// ═══ INIT ═══
+function init(){
+  buildRecent();
+  buildTrending();
+  buildCats();
+}
+
+// ── RECENT ──
+function buildRecent(){
+  const list = document.getElementById('recentList');
+  if(!recentSearches.length){ document.getElementById('recentSection').style.display='none'; return; }
+  list.innerHTML = recentSearches.map((s,i)=>`
+    <div class="recent-chip" onclick="doSearch('${s}')">
+      <span>🕐</span> ${s}
+      <button class="recent-del" onclick="event.stopPropagation();removeRecent(${i})">✕</button>
+    </div>`).join('');
+}
+function removeRecent(i){
+  recentSearches.splice(i,1);
+  buildRecent();
+  showToast('🗑️ Recherche supprimée');
+}
+
+// ── TRENDING ──
+function buildTrending(){
+  document.getElementById('trendingGrid').innerHTML = TRENDING.map(t=>`
+    <div class="trend-card" onclick="doSearch('${t.name}')">
+      <div class="trend-rank">${t.rank}</div>
+      <div class="trend-icon">${t.emoji}</div>
+      <div class="trend-info">
+        <div class="trend-name">${t.name}</div>
+        <div class="trend-meta">${t.meta}</div>
+      </div>
+      <div class="trend-up">${t.up}</div>
+    </div>`).join('');
+}
+
+// ── CATS ──
+function buildCats(){
+  document.getElementById('catGrid').innerHTML = CATS.map(c=>`
+    <div class="trend-card" onclick="doSearch('${c.name}')" style="background:${c.bg};border-color:rgba(255,255,255,.06)">
+      <div style="font-size:1.3rem">${c.emoji}</div>
+      <div class="trend-info">
+        <div class="trend-name">${c.name}</div>
+        <div class="trend-meta">${c.count}</div>
+      </div>
+      <div class="trend-up">→</div>
+    </div>`).join('');
+}
+
+// ═══ SEARCH ═══
+function handleInput(el){
+  const q = el.value.trim();
+  document.getElementById('clearBtn').classList.toggle('show', q.length>0);
+  document.getElementById('searchBar').classList.add('focused');
+  if(q.length>0){
+    showAutocomplete(q);
+  } else {
+    hideAutocomplete();
+    showDefault();
+  }
+}
+
+function onFocus(){
+  document.getElementById('searchBar').classList.add('focused');
+  if(document.getElementById('searchInput').value.length>0) showAutocomplete(document.getElementById('searchInput').value);
+}
+function onBlur(){ setTimeout(()=>{ document.getElementById('searchBar').classList.remove('focused'); hideAutocomplete(); },200); }
+
+function handleKey(e){
+  const ac = document.getElementById('autocomplete');
+  const items = ac.querySelectorAll('.ac-item');
+  if(e.key==='ArrowDown'){ e.preventDefault(); acIndex=Math.min(acIndex+1,items.length-1); highlightAC(items); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); acIndex=Math.max(acIndex-1,-1); highlightAC(items); }
+  else if(e.key==='Enter'){
+    e.preventDefault();
+    if(acIndex>=0 && items[acIndex]) items[acIndex].click();
+    else doSearch(document.getElementById('searchInput').value.trim());
+  }
+  else if(e.key==='Escape'){ hideAutocomplete(); document.getElementById('searchInput').blur(); }
+}
+
+function highlightAC(items){
+  items.forEach((it,i)=>it.classList.toggle('highlighted',i===acIndex));
+}
+
+// ── AUTOCOMPLETE ──
+function showAutocomplete(q){
+  const ac = document.getElementById('autocomplete');
+  const low = q.toLowerCase();
+  const matched = PLACES.filter(p=>p.name.toLowerCase().includes(low)||p.city.toLowerCase().includes(low)).slice(0,4);
+  const suggs = AUTOCOMPLETE_SUGGESTIONS.filter(s=>s.main.toLowerCase().includes(low)).slice(0,3);
+
+  let html='';
+
+  // Recent matching
+  const matchedRecent = recentSearches.filter(r=>r.toLowerCase().includes(low));
+  if(matchedRecent.length){
+    html+=`<div class="ac-section"><div class="ac-section-label">Récent</div>`;
+    matchedRecent.slice(0,2).forEach(r=>{
+      html+=`<div class="ac-item" onclick="doSearch('${r}')">
+        <div class="ac-icon ai-history">🕐</div>
+        <div class="ac-text"><div class="ac-main">${highlight(r,q)}</div></div>
+        <div class="ac-arrow">→</div>
+      </div>`;
+    });
+    html+=`</div><div class="ac-divider"></div>`;
+  }
+
+  // Lieux
+  if(matched.length){
+    html+=`<div class="ac-section"><div class="ac-section-label">Lieux</div>`;
+    matched.forEach(p=>{
+      html+=`<div class="ac-item" onclick="doSearch('${p.name}')">
+        <div class="ac-icon ai-lieu">${p.emoji}</div>
+        <div class="ac-text">
+          <div class="ac-main">${highlight(p.name,q)}</div>
+          <div class="ac-sub">📍 ${p.city} · ${p.label}</div>
+        </div>
+        ${p.rating?`<div class="ac-right">⭐ ${p.rating}</div>`:''}
+        <div class="ac-arrow">→</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // Suggestions
+  if(suggs.length){
+    if(matched.length) html+=`<div class="ac-divider"></div>`;
+    html+=`<div class="ac-section"><div class="ac-section-label">Suggestions</div>`;
+    suggs.forEach(s=>{
+      html+=`<div class="ac-item" onclick="doSearch('${s.main}')">
+        <div class="ac-icon ai-cat">${s.icon}</div>
+        <div class="ac-text">
+          <div class="ac-main">${highlight(s.main,q)}</div>
+          <div class="ac-sub">${s.sub}</div>
+        </div>
+        <div class="ac-arrow">→</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(!html) html=`<div class="ac-section"><div class="ac-item"><div class="ac-icon ai-cat">🔍</div><div class="ac-text"><div class="ac-main">Rechercher "${q}"</div><div class="ac-sub">Voir tous les résultats</div></div></div></div>`;
+
+  ac.innerHTML=html;
+  ac.classList.add('open');
+  acIndex=-1;
+}
+
+function hideAutocomplete(){ document.getElementById('autocomplete').classList.remove('open'); acIndex=-1; }
+
+function highlight(text, q){
+  if(!q) return text;
+  const re = new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  return text.replace(re,'<mark>$1</mark>');
+}
+
+// ── DO SEARCH ──
+function doSearch(q){
+  if(!q.trim()) return;
+  document.getElementById('searchInput').value = q;
+  document.getElementById('clearBtn').classList.add('show');
+  currentQuery = q.trim();
+  hideAutocomplete();
+
+  // Save to recent
+  recentSearches = [q,...recentSearches.filter(r=>r!==q)].slice(0,6);
+
+  showResults(q);
+}
+
+function showResults(q){
+  document.getElementById('defaultState').style.display='none';
+  document.getElementById('resultsState').style.display='block';
+
+  const low = q.toLowerCase();
+  let filtered = PLACES.filter(p=>
+    p.name.toLowerCase().includes(low)||
+    p.city.toLowerCase().includes(low)||
+    p.cat.toLowerCase().includes(low)||
+    p.label.toLowerCase().includes(low)||
+    p.desc.toLowerCase().includes(low)
+  );
+
+  // Apply filters
+  if(activeFilters.has('open')) filtered=filtered.filter(p=>p.open);
+  const catFilter=[...activeFilters].find(f=>['restaurant','evenement','boutique','soiree','art'].includes(f));
+  if(catFilter) filtered=filtered.filter(p=>p.cat===catFilter||p.label.toLowerCase()===catFilter);
+
+  document.getElementById('countNum').textContent=filtered.length;
+  document.getElementById('queryLabel').textContent=filtered.length?`pour "${q}"`:'';
+
+  renderResults(filtered, q);
+}
+
+function renderResults(places, q){
+  const c = document.getElementById('resultsContainer');
+  const empty = document.getElementById('emptyState');
+  c.className = viewMode==='grid'?'results-grid':'results-list';
+
+  if(!places.length){
+    c.innerHTML='';
+    empty.classList.add('show');
+    document.getElementById('emptySuggestions').innerHTML=
+      ['Griot','Kompa','PAP','Miami','Boutique'].map(s=>`<div class="empty-sug" onclick="doSearch('${s}')">${s}</div>`).join('');
+    return;
+  }
+  empty.classList.remove('show');
+
+  if(viewMode==='grid'){
+    c.innerHTML=places.map(p=>`
+      <div class="r-card" onclick="showToast('📍 ${p.name} →')">
+        <div class="r-img" style="">
+          <div class="r-img-bg" style="background:${p.bg}"></div>
+          <div style="position:absolute;font-size:2.2rem;opacity:.28;z-index:1">${p.emoji}</div>
+          <div class="r-overlay"></div>
+          <span class="r-cat-tag ${p.tag}">${p.label}</span>
+          <button class="r-fav ${favs.has(p.id)?'saved':''}" onclick="event.stopPropagation();toggleFav(${p.id},this)">${favs.has(p.id)?'❤️':'🤍'}</button>
+          <span class="r-open ${p.open?'ro-open':'ro-closed'}">${p.open?'● Ouvert':'● Fermé'}</span>
+        </div>
+        <div class="r-body">
+          <div class="r-name">${highlight(p.name,q)}</div>
+          <div class="r-meta">
+            ${p.rating?`<span class="r-stars">${'★'.repeat(Math.floor(p.rating))}</span><span class="r-rating">${p.rating}</span><span class="r-reviews">(${p.reviews})</span>`:'<span class="r-reviews" style="color:var(--or)">Nouveau</span>'}
+          </div>
+          <div class="r-loc">📍 ${p.city}<span class="r-dist">~5 km</span></div>
+        </div>
+      </div>`).join('');
+  } else {
+    c.innerHTML=places.map(p=>`
+      <div class="r-card-list" onclick="showToast('📍 ${p.name} →')">
+        <div class="r-list-img" style="background:${p.bg}">${p.emoji}</div>
+        <div class="r-list-body">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="r-list-name">${highlight(p.name,q)}</div>
+            <button class="r-fav ${favs.has(p.id)?'saved':''}" style="position:static;width:24px;height:24px;font-size:.7rem;background:none;border:none;cursor:pointer" onclick="event.stopPropagation();toggleFav(${p.id},this)">${favs.has(p.id)?'❤️':'🤍'}</button>
+          </div>
+          <div class="r-list-meta">
+            ${p.rating?`<span class="r-stars" style="font-size:.65rem">${'★'.repeat(Math.floor(p.rating))}</span><span class="r-rating" style="font-size:.65rem">${p.rating}</span><span class="r-reviews">(${p.reviews})</span>`:''}
+            <span class="r-open ${p.open?'ro-open':'ro-closed'}" style="font-size:.44rem;padding:.12rem .38rem">${p.open?'Ouvert':'Fermé'}</span>
+            <span class="r-dist" style="margin-left:auto">📍 ${p.city}</span>
+          </div>
+          <div class="r-list-desc">${p.desc}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function showDefault(){
+  document.getElementById('defaultState').style.display='block';
+  document.getElementById('resultsState').style.display='none';
+}
+
+// ── FILTERS ──
+function toggleFilter(btn){
+  const f = btn.dataset.f;
+  if(f==='all'){
+    document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('on'));
+    btn.classList.add('on');
+    activeFilters.clear();
+  } else {
+    document.querySelector('[data-f="all"]').classList.remove('on');
+    btn.classList.toggle('on');
+    if(btn.classList.contains('on')) activeFilters.add(f);
+    else activeFilters.delete(f);
+    if(!activeFilters.size) document.querySelector('[data-f="all"]').classList.add('on');
+  }
+  buildActiveFilterChips();
+  if(currentQuery) showResults(currentQuery);
+}
+
+function buildActiveFilterChips(){
+  const bar = document.getElementById('activeFiltersBar');
+  if(!activeFilters.size){ bar.innerHTML=''; return; }
+  bar.innerHTML=[...activeFilters].map(f=>`
+    <div class="af-chip">${f} <button class="af-x" onclick="removeFilter('${f}')">✕</button></div>`).join('');
+}
+function removeFilter(f){
+  activeFilters.delete(f);
+  document.querySelectorAll('.filter-pill').forEach(p=>{ if(p.dataset.f===f) p.classList.remove('on'); });
+  if(!activeFilters.size) document.querySelector('[data-f="all"]').classList.add('on');
+  buildActiveFilterChips();
+  if(currentQuery) showResults(currentQuery);
+}
+
+// ── VIEW ──
+function setView(v){
+  viewMode=v;
+  document.getElementById('vGrid').classList.toggle('on',v==='grid');
+  document.getElementById('vList').classList.toggle('on',v==='list');
+  if(currentQuery) showResults(currentQuery);
+}
+
+// ── FAV ──
+function toggleFav(id,btn){
+  if(favs.has(id)){ favs.delete(id); btn.textContent='🤍'; btn.classList.remove('saved'); showToast('💔 Retiré des favoris'); }
+  else { favs.add(id); btn.textContent='❤️'; btn.classList.add('saved'); showToast('❤️ Ajouté aux favoris !'); }
+}
+
+// ── CLEAR ──
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('clearBtn').classList.remove('show');
+  currentQuery='';
+  hideAutocomplete();
+  showDefault();
+}
+
+// ── VOICE ──
+let voiceActive=false;
+function toggleVoice(){
+  voiceActive=!voiceActive;
+  const btn=document.getElementById('voiceBtn');
+  btn.classList.toggle('listening',voiceActive);
+  if(voiceActive){
+    showToast('🎤 Parle maintenant...');
+    setTimeout(()=>{
+      voiceActive=false;
+      btn.classList.remove('listening');
+      doSearch('Griot Pétionville');
+    },2000);
+  }
+}
+
+// ── TOAST ──
+let _tt;
+function showToast(msg){
+  const parts=msg.split(' ');
+  document.getElementById('ti').textContent=parts[0];
+  document.getElementById('tm').textContent=parts.slice(1).join(' ');
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script>
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>

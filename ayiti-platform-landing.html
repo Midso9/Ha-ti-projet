@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYITI — La culture haïtienne, répertoriée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #0a0603;
+    --rouge: #C8102E;
+    --bleu: #00209F;
+    --or: #F5A623;
+    --creme: #F9F3E8;
+    --blanc: #ffffff;
+    --gris: #8a8170;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--noir);
+    color: var(--creme);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(10,6,3,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(245,166,35,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--blanc);
+  }
+  .nav-logo span { color: var(--or); }
+
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--creme);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--or); }
+
+  .nav-cta {
+    display: flex; gap: 1rem;
+  }
+  .btn-outline {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid rgba(245,166,35,0.5);
+    background: transparent;
+    color: var(--or);
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .btn-outline:hover { background: var(--or); color: var(--noir); }
+
+  .btn-solid {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    background: var(--rouge);
+    border: 1px solid var(--rouge);
+    color: var(--blanc);
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .btn-solid:hover { background: #a50d25; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(0,32,159,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 20% 80%, rgba(200,16,46,0.12) 0%, transparent 60%);
+  }
+
+  /* Haitian flag diagonal stripe */
+  .hero-stripe {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 48%,
+      rgba(200,16,46,0.04) 48%,
+      rgba(200,16,46,0.04) 52%,
+      transparent 52%
+    );
+    pointer-events: none;
+  }
+
+  .hero-left {
+    z-index: 1;
+    padding: 14rem 3rem 5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 1.8rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block; width: 32px; height: 1px;
+    background: var(--or);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 6vw, 6rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--blanc);
+    margin-bottom: 1.5rem;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--or);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: rgba(249,243,232,0.65);
+    line-height: 1.7;
+    max-width: 460px;
+    margin-bottom: 3rem;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+  .hero-btn-primary {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem 2.2rem;
+    background: var(--rouge);
+    color: var(--blanc);
+    border: none; cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .hero-btn-primary:hover {
+    background: var(--or); color: var(--noir);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(245,166,35,0.3);
+  }
+  .hero-btn-secondary {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem 2.2rem;
+    background: transparent;
+    color: var(--creme);
+    border: 1px solid rgba(249,243,232,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .hero-btn-secondary:hover {
+    border-color: var(--or);
+    color: var(--or);
+  }
+
+  .hero-stats {
+    margin-top: 4rem;
+    display: flex; gap: 3rem;
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--blanc);
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin-top: 0.2rem;
+  }
+
+  /* ── HERO RIGHT ── */
+  .hero-right {
+    z-index: 1;
+    padding: 10rem 3rem 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .phone-mockup {
+    width: 260px;
+    height: 520px;
+    background: #141008;
+    border-radius: 36px;
+    border: 1.5px solid rgba(245,166,35,0.3);
+    box-shadow:
+      0 0 0 6px rgba(10,6,3,0.8),
+      0 0 60px rgba(200,16,46,0.2),
+      0 60px 120px rgba(0,0,0,0.7);
+    position: relative;
+    overflow: hidden;
+    transform: rotate(-3deg);
+  }
+
+  .phone-notch {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 22px;
+    background: #141008;
+    border-radius: 20px;
+    z-index: 10;
+    box-shadow: 0 0 0 1.5px rgba(245,166,35,0.2);
+  }
+
+  .phone-screen {
+    width: 100%; height: 100%;
+    background: linear-gradient(160deg, #1a1208 0%, #0f0a05 100%);
+    display: flex; flex-direction: column;
+    padding-top: 50px;
+  }
+
+  .app-bar {
+    padding: 0.5rem 1rem 0.8rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .app-bar-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 900;
+    color: var(--blanc);
+  }
+  .app-bar-logo span { color: var(--or); }
+
+  .app-search {
+    margin: 0 1rem 0.8rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(245,166,35,0.15);
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.62rem;
+    color: rgba(249,243,232,0.4);
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  .app-cats {
+    display: flex; gap: 0.4rem;
+    padding: 0 1rem 0.8rem;
+    overflow-x: hidden;
+  }
+  .cat-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .cat-pill.active {
+    background: var(--rouge);
+    color: var(--blanc);
+  }
+  .cat-pill.inactive {
+    background: rgba(255,255,255,0.06);
+    color: rgba(249,243,232,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .app-section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--or);
+    padding: 0 1rem 0.5rem;
+  }
+
+  .app-card {
+    margin: 0 1rem 0.6rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-img {
+    height: 70px;
+    background: linear-gradient(135deg, var(--rouge) 0%, #6d0a17 100%);
+    position: relative;
+    display: flex; align-items: flex-end;
+    padding: 0.4rem;
+  }
+  .card-img-2 {
+    background: linear-gradient(135deg, var(--bleu) 0%, #00104f 100%);
+  }
+  .card-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--or);
+    color: var(--noir);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+  }
+  .card-body { padding: 0.5rem 0.6rem; }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.68rem;
+    color: var(--blanc);
+    margin-bottom: 0.15rem;
+  }
+  .card-meta {
+    font-size: 0.52rem;
+    color: rgba(249,243,232,0.4);
+    display: flex; gap: 0.4rem; align-items: center;
+  }
+  .card-stars { color: var(--or); font-size: 0.5rem; }
+
+  .app-card-sm {
+    margin: 0 1rem 0.5rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .sm-dot {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--or), #c47e00);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+  }
+  .sm-dot-2 { background: linear-gradient(135deg, #00209F, #001060); }
+  .sm-info {}
+  .sm-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.6rem;
+    color: var(--blanc);
+  }
+  .sm-sub {
+    font-size: 0.48rem;
+    color: rgba(249,243,232,0.4);
+    margin-top: 0.05rem;
+  }
+  .sm-arrow {
+    margin-left: auto;
+    color: var(--or); font-size: 0.55rem;
+    opacity: 0.6;
+  }
+
+  .phone-float {
+    position: absolute;
+    width: 180px;
+    height: 380px;
+    background: #1a1208;
+    border-radius: 28px;
+    border: 1.5px solid rgba(0,32,159,0.4);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    right: -20px;
+    top: 50%;
+    transform: translateY(-40%) rotate(5deg);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    padding-top: 30px;
+  }
+
+  /* ── CATEGORIES ── */
+  .section {
+    padding: 8rem 4rem;
+    position: relative;
+  }
+
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 4rem;
+  }
+  .section-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--rouge);
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 900;
+    color: var(--blanc);
+    line-height: 1;
+  }
+  .section-title em { color: var(--or); font-style: italic; }
+  .see-all {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--or);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 0.5rem;
+    transition: gap 0.2s;
+  }
+  .see-all:hover { gap: 0.8rem; }
+
+  /* CATEGORY GRID */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.5rem;
+  }
+
+  .cat-card {
+    aspect-ratio: 3/4;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .cat-card:hover { transform: translateY(-6px); }
+
+  .cat-card-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .cat-card:hover .cat-card-bg { transform: scale(1.05); }
+
+  .cat-card-bg.restaurant {
+    background: linear-gradient(160deg, #C8102E 0%, #6d0613 50%, #1a0408 100%);
+  }
+  .cat-card-bg.evenement {
+    background: linear-gradient(160deg, #00209F 0%, #001060 50%, #000820 100%);
+  }
+  .cat-card-bg.boutique {
+    background: linear-gradient(160deg, #F5A623 0%, #c47e00 50%, #3d2700 100%);
+  }
+  .cat-card-bg.soiree {
+    background: linear-gradient(160deg, #1a1208 0%, #2d1f0a 50%, #4a3015 100%);
+    border: 1px solid rgba(245,166,35,0.2);
+  }
+  .cat-card-bg.art {
+    background: linear-gradient(160deg, #2d0a3a 0%, #1a0622 50%, #0a0310 100%);
+  }
+  .cat-card-bg.musique {
+    background: linear-gradient(160deg, #0a2a1a 0%, #061a10 50%, #020a06 100%);
+  }
+
+  .cat-pattern {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06) 0%, transparent 50%);
+  }
+
+  .cat-icon {
+    position: absolute; top: 1.2rem; left: 1.2rem;
+    font-size: 2rem;
+    filter: drop-shadow(0 0 12px rgba(0,0,0,0.5));
+  }
+
+  .cat-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 2rem 1rem 1rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  }
+  .cat-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--blanc);
+  }
+  .cat-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.2rem;
+  }
+
+  /* ── FEATURED SECTION ── */
+  .featured-section {
+    padding: 6rem 4rem;
+    background: rgba(245,166,35,0.03);
+    border-top: 1px solid rgba(245,166,35,0.08);
+    border-bottom: 1px solid rgba(245,166,35,0.08);
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .feat-card {
+    border-radius: 6px;
+    overflow: hidden;
+    background: #141008;
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    transition: all 0.35s;
+  }
+  .feat-card:hover {
+    border-color: rgba(245,166,35,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .feat-img {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+  .feat-img.tall { height: 280px; }
+  .feat-img-bg {
+    width: 100%; height: 100%;
+    transition: transform 0.5s;
+  }
+  .feat-card:hover .feat-img-bg { transform: scale(1.04); }
+
+  .feat-img-bg.r1 {
+    background: linear-gradient(135deg, #7a0d1f 0%, #C8102E 40%, #2d0a0f 100%);
+  }
+  .feat-img-bg.r2 {
+    background: linear-gradient(135deg, #001260 0%, #00209F 40%, #000820 100%);
+  }
+  .feat-img-bg.r3 {
+    background: linear-gradient(135deg, #3d2700 0%, #F5A623 40%, #1a1000 100%);
+  }
+
+  .feat-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(transparent 30%, rgba(10,6,3,0.85));
+  }
+
+  .feat-tag {
+    position: absolute; top: 1rem; left: 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--rouge);
+    color: var(--blanc);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+  }
+  .feat-tag.blue { background: var(--bleu); }
+  .feat-tag.gold { background: var(--or); color: var(--noir); }
+
+  .feat-body { padding: 1.2rem; }
+  .feat-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .feat-rating { color: var(--or); }
+  .feat-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--blanc);
+    line-height: 1.2;
+    margin-bottom: 0.6rem;
+  }
+  .feat-name.sm { font-size: 0.95rem; }
+  .feat-desc {
+    font-size: 0.8rem;
+    color: rgba(249,243,232,0.5);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .feat-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .feat-loc {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    color: var(--gris);
+    display: flex; align-items: center; gap: 0.3rem;
+  }
+  .feat-action {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--or);
+    text-decoration: none;
+    transition: letter-spacing 0.2s;
+  }
+  .feat-action:hover { letter-spacing: 0.14em; }
+
+  /* ── HOW IT WORKS ── */
+  .how-section {
+    padding: 8rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .how-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(200,16,46,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 5rem;
+    position: relative;
+  }
+
+  .how-grid::before {
+    content: '';
+    position: absolute;
+    top: 3rem; left: 2rem; right: 2rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,166,35,0.3), rgba(245,166,35,0.3), transparent);
+  }
+
+  .how-step {
+    padding: 0 2rem;
+    position: relative;
+  }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(245,166,35,0.12);
+    line-height: 1;
+    margin-bottom: 2rem;
+  }
+  .step-dot {
+    width: 12px; height: 12px;
+    background: var(--or);
+    border-radius: 50%;
+    position: absolute;
+    top: 2.7rem; left: 2rem;
+    box-shadow: 0 0 0 4px rgba(245,166,35,0.15), 0 0 12px rgba(245,166,35,0.4);
+  }
+
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--blanc);
+    margin-bottom: 0.7rem;
+    margin-top: 1.5rem;
+  }
+  .step-desc {
+    font-size: 0.82rem;
+    color: rgba(249,243,232,0.5);
+    line-height: 1.7;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    margin: 0 4rem 6rem;
+    background: linear-gradient(135deg, var(--rouge) 0%, #7a0d1f 50%, #1a0305 100%);
+    border-radius: 6px;
+    padding: 6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.02) 0px,
+        rgba(255,255,255,0.02) 1px,
+        transparent 1px,
+        transparent 30px
+      );
+  }
+
+  .cta-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 1.5rem;
+  }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 900;
+    color: var(--blanc);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+  .cta-title em { font-style: italic; color: var(--or); }
+  .cta-sub {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 3rem;
+    max-width: 500px;
+    margin-left: auto; margin-right: auto;
+    line-height: 1.7;
+  }
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .cta-btn-white {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem 2.5rem;
+    background: var(--blanc);
+    color: var(--rouge);
+    border: none; cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .cta-btn-white:hover { background: var(--or); color: var(--noir); }
+  .cta-btn-ghost {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem 2.5rem;
+    background: transparent;
+    color: var(--blanc);
+    border: 1px solid rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .cta-btn-ghost:hover { border-color: var(--blanc); background: rgba(255,255,255,0.1); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(245,166,35,0.1);
+    padding: 4rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--blanc);
+    margin-bottom: 1rem;
+  }
+  .footer-logo span { color: var(--or); }
+  .footer-tagline {
+    font-size: 0.82rem;
+    color: rgba(249,243,232,0.45);
+    line-height: 1.7;
+    max-width: 300px;
+    margin-bottom: 2rem;
+  }
+
+  .footer-flag {
+    display: flex; gap: 0;
+    width: 60px; height: 36px;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .flag-half {
+    flex: 1; height: 100%;
+  }
+  .flag-half.blue { background: var(--bleu); }
+  .flag-half.red { background: var(--rouge); }
+
+  .footer-col-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 1.5rem;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+  .footer-links a {
+    font-size: 0.82rem;
+    color: rgba(249,243,232,0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--blanc); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 1.5rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    color: rgba(249,243,232,0.25);
+  }
+
+  
+/* ── LIGHT MODE ── */
+body.light {
+  --noir: #f5f0e8;
+  --surface: #ffffff;
+  --surface2: #f0ebe0;
+  --creme: #1a1208;
+  --blanc: #0a0603;
+  --gris: #6b6050;
+  --border: rgba(200,16,46,.15);
+  --border2: rgba(10,6,3,.08);
+  background: #f5f0e8;
+  color: #1a1208;
+}
+body.light nav {
+  background: rgba(245,240,232,.92);
+  border-bottom-color: rgba(200,16,46,.12);
+}
+body.light .nav-links a { color: #3a2e1a; }
+body.light .hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 50%, rgba(0,32,159,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 80% at 20% 80%, rgba(200,16,46,.06) 0%, transparent 60%);
+}
+body.light .hero-title { color: #0a0603; }
+body.light .hero-sub { color: rgba(26,18,8,.55); }
+body.light .stat-num { color: #0a0603; }
+body.light .section-title { color: #0a0603; }
+body.light .cat-card-bg.restaurant { background: linear-gradient(160deg,#C8102E 0%,#8a0d1f 50%,#3a0a10 100%); }
+body.light .featured-section { background: rgba(200,16,46,.03); border-color: rgba(200,16,46,.08); }
+body.light .feat-card { background: #fff; border-color: rgba(10,6,3,.08); }
+body.light .feat-name { color: #0a0603; }
+body.light .feat-desc { color: rgba(26,18,8,.55); }
+body.light .feat-loc { color: #6b6050; }
+body.light .how-section { background: transparent; }
+body.light .step-title { color: #0a0603; }
+body.light .step-desc { color: rgba(26,18,8,.55); }
+body.light .step-num { color: rgba(200,16,46,.15); }
+body.light footer { border-top-color: rgba(10,6,3,.08); }
+body.light .footer-logo { color: #0a0603; }
+body.light .footer-tagline { color: rgba(26,18,8,.5); }
+body.light .footer-links a { color: rgba(26,18,8,.5); }
+body.light .footer-links a:hover { color: #0a0603; }
+body.light .footer-copy { color: rgba(26,18,8,.3); }
+body.light .footer-bottom { border-top-color: rgba(10,6,3,.06); }
+body.light .btn-outline { border-color: rgba(200,16,46,.4); color: var(--rouge); }
+body.light .btn-solid { background: var(--rouge); }
+body.light .toast { background: #fff; border-color: rgba(200,16,46,.2); }
+body.light .toast-title { color: #0a0603; }
+body.light .toast-sub { color: rgba(26,18,8,.5); }
+
+/* ── THEME TOGGLE BUTTON ── */
+.theme-toggle {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  background: var(--surface2,#1c1610);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  transition: all .3s;
+  position: relative; overflow: hidden;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  border-color: rgba(245,166,35,.4);
+  transform: rotate(20deg) scale(1.05);
+  box-shadow: 0 0 12px rgba(245,166,35,.2);
+}
+body.light .theme-toggle {
+  background: #fff;
+  border-color: rgba(10,6,3,.1);
+}
+body.light .theme-toggle:hover {
+  border-color: var(--rouge);
+  box-shadow: 0 0 12px rgba(200,16,46,.15);
+}
+.toggle-icon { transition: transform .4s, opacity .3s; display: block; }
+
+/* ── SCROLL ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity:.3; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity:.3; }
+    to { opacity: 1; }
+  }
+  @keyframes float {
+    0%, 100% { transform: rotate(-3deg) translateY(0); }
+    50% { transform: rotate(-3deg) translateY(-12px); }
+  }
+
+  .hero-left { animation: fadeUp 0.9s ease forwards; }
+  .hero-right { animation: fadeIn 1.2s ease forwards; }
+  .phone-mockup { animation: float 6s ease-in-out infinite; }
+
+  .animate-up {
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  /* Stagger delays */
+  .cat-card:nth-child(1) { animation-delay: 0.05s; }
+  .cat-card:nth-child(2) { animation-delay: 0.1s; }
+  .cat-card:nth-child(3) { animation-delay: 0.15s; }
+  .cat-card:nth-child(4) { animation-delay: 0.2s; }
+  .cat-card:nth-child(5) { animation-delay: 0.25s; }
+  .cat-card:nth-child(6) { animation-delay: 0.3s; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: #1a1208;
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    z-index: 999;
+    animation: toastIn 0.5s ease forwards;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .toast-icon { font-size: 1.4rem; }
+  .toast-text {}
+  .toast-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    color: var(--blanc);
+  }
+  .toast-sub {
+    font-size: 0.72rem;
+    color: rgba(249,243,232,0.5);
+    margin-top: 0.15rem;
+  }
+
+
+/* ══════════════════════════════════════
+   AYITI — MICRO-INTERACTIONS GLOBALES
+══════════════════════════════════════ */
+
+/* Base: toutes les transitions plus fluides */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── BOUTONS PRINCIPAUX ── */
+button, .btn-solid, .btn-outline,
+.hero-btn-primary, .hero-btn-secondary,
+.btn-next, .btn-back, .action-btn,
+.action-primary, .action-fav, .action-notif, .action-share,
+.modal-confirm, .modal-cancel,
+.submit-review, .reply-send,
+.tb-btn, .ann-btn, .r-act,
+.success-cta, .cta-btn-white, .cta-btn-ghost,
+.cat-pill, .tbl-filter-btn, .chart-tab,
+.gerant-edit, .pag-btn, .page-btn {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1),
+              background .2s ease,
+              border-color .2s ease,
+              color .2s ease,
+              box-shadow .2s ease !important;
+  cursor: pointer;
+}
+
+/* Boutons primaires — grossissent et brillent */
+.btn-next:not(:disabled):hover,
+.action-primary:hover,
+.hero-btn-primary:hover,
+.modal-confirm:hover,
+.submit-review:hover,
+.reply-send:hover,
+.tb-btn.primary:hover,
+.success-cta:hover,
+.cta-btn-white:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 8px 24px rgba(200,16,46,.35) !important;
+}
+
+/* Boutons secondaires — légère montée */
+.btn-back:hover,
+.action-fav:hover,
+.action-notif:hover,
+.action-share:hover,
+.modal-cancel:hover,
+.btn-outline:hover,
+.hero-btn-secondary:hover,
+.cta-btn-ghost:hover,
+.gerant-edit:hover,
+.ann-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+/* Boutons icônes / ronds — grossissement */
+.act-btn:hover,
+.card-fav-btn:hover,
+.three-dot-btn:hover,
+.theme-toggle:hover,
+.pw-eye:hover,
+.nav-av:hover,
+.sb-etab-arrow,
+.pag-btn:hover,
+.page-btn:hover {
+  transform: scale(1.12) !important;
+}
+
+/* Pills et filtres */
+.cat-pill:hover,
+.tbl-filter-btn:hover,
+.chart-tab:hover,
+.km-preset:hover,
+.droit-pill {
+  transform: translateY(-1px) scale(1.04) !important;
+}
+
+/* Active — enfoncement */
+button:active,
+.btn-next:active,
+.action-btn:active,
+.modal-confirm:active,
+.cat-pill:active,
+.act-btn:active {
+  transform: scale(.96) !important;
+  box-shadow: none !important;
+}
+
+/* ── CARTES / LIENS ── */
+.place-card,
+.feat-card,
+.cat-card,
+.feat-mini,
+.annonce-card,
+.avis-item,
+.report-card,
+.gerant-card,
+.role-card,
+.stat-card,
+.sidebar-card,
+.info-card,
+.app-card,
+.app-card-sm {
+  transition: transform .3s cubic-bezier(.23,1,.32,1),
+              border-color .25s ease,
+              box-shadow .3s ease !important;
+}
+
+.place-card:hover    { transform: translateY(-5px) scale(1.01) !important; box-shadow: 0 20px 50px rgba(0,0,0,.45) !important; }
+.feat-card:hover     { transform: translateY(-4px) !important; box-shadow: 0 16px 40px rgba(0,0,0,.35) !important; }
+.cat-card:hover      { transform: translateY(-7px) scale(1.02) !important; }
+.feat-mini:hover     { transform: translateY(-4px) scale(1.02) !important; }
+.annonce-card:hover  { transform: translateX(3px) !important; }
+.avis-item:hover     { transform: translateX(3px) !important; }
+.gerant-card:hover   { transform: translateX(4px) !important; }
+.role-card:hover     { transform: translateY(-3px) scale(1.01) !important; }
+.stat-card:hover     { transform: translateY(-3px) !important; box-shadow: 0 12px 32px rgba(0,0,0,.3) !important; }
+.link-card:hover     { transform: translateX(5px) !important; }
+.sb-item:hover       { transform: translateX(3px) !important; }
+.sb-etablissement:hover { transform: translateY(-1px) !important; }
+
+/* ── INPUTS — FOCUS GLOW ── */
+.field-input:focus,
+.modal-input:focus,
+.review-input:focus,
+.reply-input:focus,
+.table-search:focus,
+.city-select:focus,
+.sort-select:focus,
+.settings-input:focus,
+.t-inp:focus,
+.t-input:focus,
+.time-input:focus {
+  transform: scale(1.01) !important;
+  box-shadow: 0 0 0 3px rgba(245,166,35,.12), 0 2px 8px rgba(0,0,0,.2) !important;
+}
+
+/* ── NAV LINKS — UNDERLINE SLIDE ── */
+.nav-links a {
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 50%; right: 50%;
+  height: 1.5px;
+  background: var(--or, #F5A623);
+  transition: left .25s ease, right .25s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  left: 0; right: 0;
+}
+
+/* ── SEE-ALL / FEAT-ACTION — FLÈCHE SLIDE ── */
+.see-all, .feat-action {
+  display: inline-flex; align-items: center; gap: .4rem;
+  transition: gap .25s ease, color .2s ease !important;
+}
+.see-all:hover { gap: .9rem !important; }
+.feat-action:hover { gap: .7rem !important; }
+
+/* ── AVATARS ── */
+.comment-avatar:hover,
+.owner-avatar:hover,
+.nav-avatar:hover,
+.nav-av:hover,
+.avis-av:hover,
+.gerant-av:hover {
+  transform: scale(1.1) rotate(-3deg) !important;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+}
+
+/* ── STAR RATING ── */
+.star-btn {
+  transition: transform .15s cubic-bezier(.34,1.56,.64,1), opacity .15s ease !important;
+}
+.star-btn:hover, .star-btn.active {
+  transform: scale(1.25) !important;
+  opacity: 1 !important;
+}
+
+/* ── TOGGLES ── */
+.toggle-sw,
+.h-tog,
+.h-toggle,
+.horaire-toggle {
+  transition: background .25s ease, border-color .25s ease !important;
+  cursor: pointer;
+}
+.toggle-sw:hover, .h-tog:hover, .h-toggle:hover {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+
+/* ── DROIT CHECKBOXES ── */
+.droit-check {
+  transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
+}
+.droit-check:hover { transform: scale(1.03) !important; }
+.droit-check.on { transform: scale(1.02) !important; }
+
+/* ── PHOTO SLOTS ── */
+.photo-slot {
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), 
+              border-color .2s ease, opacity .2s ease !important;
+}
+.photo-slot:hover { transform: scale(1.05) !important; z-index: 2; }
+
+/* ── BADGE COUNTS (pulse si nb > 0) ── */
+.sb-badge-count:not(.ok),
+.stat-delta.d-down {
+  animation: subtle-pulse 2.5s ease-in-out infinite;
+}
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .65; }
+}
+
+/* ── MAP PIN ── */
+.map-pin-item {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1) !important;
+  cursor: pointer;
+}
+.map-pin-item:hover { transform: scale(1.4) translateY(-4px) !important; }
+
+/* ── GALLERY ── */
+.hero-gallery > div {
+  transition: filter .3s ease !important;
+  cursor: pointer;
+}
+.hero-gallery > div:hover { filter: brightness(1.1); }
+
+/* ── CHIP REMOVE ── */
+.chip-x {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), color .15s ease !important;
+}
+.chip-x:hover { transform: scale(1.3) rotate(90deg) !important; }
+
+/* ── ANNONCE ACTIONS ── */
+.annonce-action:hover {
+  transform: translateY(-1px) scale(1.05) !important;
+}
+
+/* ── MODAL IN ── */
+.modal-overlay.open .modal {
+  animation: modalPop .35s cubic-bezier(.34,1.3,.64,1) forwards !important;
+}
+@keyframes modalPop {
+  from { opacity:0; transform: scale(.9) translateY(16px); }
+  to   { opacity:1; transform: scale(1)  translateY(0); }
+}
+
+/* ── SCROLL APPEAR ── */
+@keyframes slideInLeft {
+  from { opacity:0; transform: translateX(-20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity:0; transform: translateX(20px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+.how-step:nth-child(odd)  { animation: slideInLeft  .6s ease forwards; }
+.how-step:nth-child(even) { animation: slideInRight .6s ease forwards; }
+.how-step:nth-child(2) { animation-delay: .1s; }
+.how-step:nth-child(3) { animation-delay: .2s; }
+.how-step:nth-child(4) { animation-delay: .3s; }
+
+/* ── RESPONSIVE BASE ── */
+@media (max-width: 768px) {
+  .place-card:hover    { transform: translateY(-3px) !important; }
+  .cat-card:hover      { transform: translateY(-4px) !important; }
+  .btn-next:hover      { transform: translateY(-1px) scale(1.02) !important; }
+}
+/* ════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════
+   AYITI — RESPONSIVE GLOBAL
+   Couvre : mobile (360px+), tablet (768px+),
+            desktop (1024px+), large (1280px+)
+══════════════════════════════════════════ */
+
+/* ── BASE TOUCH ── */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+button, [role="button"] { touch-action: manipulation; }
+
+/* ── NAV RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: .75rem 1.2rem !important;
+    gap: .6rem !important;
+  }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 1.15rem !important; }
+  .nav-cta { gap: .4rem !important; }
+  .btn-outline, .btn-solid,
+  .nav-btn, .nav-share {
+    padding: .45rem .85rem !important;
+    font-size: .58rem !important;
+  }
+}
+
+/* ── HERO RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .hero-right { display: none !important; }
+  .hero-left { padding: 7rem 1.5rem 4rem !important; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; }
+  .hero-stats { gap: 1.5rem !important; }
+  .hero-actions { flex-direction: column !important; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100% !important; text-align: center !important; }
+}
+
+/* ── SECTIONS PADDING ── */
+@media (max-width: 768px) {
+  .section, .featured-section, .how-section { padding: 3.5rem 1.2rem !important; }
+  .cta-section { margin: 0 1rem 3rem !important; padding: 2.5rem 1.2rem !important; }
+  footer { grid-template-columns: 1fr !important; padding: 2.5rem 1.2rem !important; gap: 2rem !important; }
+  .footer-bottom { padding: 1rem 1.2rem !important; flex-direction: column !important; gap: .5rem !important; text-align: center !important; }
+}
+
+/* ── CAT GRID ── */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: .8rem !important; }
+}
+@media (max-width: 400px) {
+  .cat-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── FEATURED GRID ── */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── HOW GRID ── */
+@media (max-width: 768px) {
+  .how-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .how-grid::before { display: none !important; }
+  .step-dot { top: auto !important; left: 0 !important; }
+}
+
+/* ── PAGE LAYOUT (fiche, profil…) ── */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr !important; padding: 1.2rem 1rem !important; gap: 1.5rem !important; }
+  .sidebar { position: static !important; }
+}
+
+/* ── LAYOUT ADMIN / DASHBOARD ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .sidebar, .filters-panel, .conv-panel { display: none !important; }
+  .main, .main-content, .chat-panel { grid-column: 1 !important; }
+}
+
+/* ── STATS GRID ── */
+@media (max-width: 768px) {
+  .stats-grid, .stats-row, .hero-stats { grid-template-columns: repeat(2, 1fr) !important; gap: .7rem !important; }
+}
+@media (max-width: 400px) {
+  .stats-grid, .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* ── TWO COL ── */
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr !important; }
+  .info-grid { grid-template-columns: 1fr !important; }
+  .fields-grid { grid-template-columns: 1fr !important; }
+  .social-btns { grid-template-columns: 1fr !important; }
+}
+
+/* ── TABLES → cards sur mobile ── */
+@media (max-width: 768px) {
+  .table-wrap table { display: none !important; }
+  .table-wrap::after {
+    content: 'Ouvrez sur un écran plus large pour voir le tableau complet.';
+    display: block;
+    padding: 1.5rem;
+    font-size: .8rem;
+    color: var(--gris, #8a8170);
+    text-align: center;
+    font-style: italic;
+  }
+  .table-header { flex-direction: column !important; gap: .7rem !important; }
+  .table-search { width: 100% !important; }
+}
+
+/* ── TABS ── */
+@media (max-width: 600px) {
+  .tabs { overflow-x: auto !important; scrollbar-width: none !important; flex-wrap: nowrap !important; }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tab { white-space: nowrap !important; padding: .65rem .9rem !important; font-size: .54rem !important; }
+}
+
+/* ── FORM PAGES ── */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr !important; }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel { padding: 2rem 1.5rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── COLLECTIONS GRID ── */
+@media (max-width: 768px) {
+  .collections-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .fav-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .collections-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── EVENEMENT HERO ── */
+@media (max-width: 768px) {
+  .hero-content { padding: 0 1.2rem 3rem !important; }
+  .countdown-wrap { gap: .8rem !important; padding: .9rem 1rem !important; }
+  .countdown-num { font-size: 1.5rem !important; }
+  .countdown-lbl { font-size: .42rem !important; }
+  .rsvp-btn, .hero-btn-sec { width: 100% !important; text-align: center !important; }
+  .hero-actions { flex-direction: column !important; }
+  .galerie-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: repeat(3, 130px) !important; }
+  .galerie-grid .gal-item:first-child { grid-row: 1/2 !important; grid-column: 1/3 !important; }
+  .ticket-card { margin-bottom: 1rem !important; }
+}
+
+/* ── ONBOARDING ── */
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .city-item { padding: .6rem .4rem !important; }
+  .city-emoji { font-size: 1.2rem !important; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: .45rem !important; }
+  .cat-item { padding: .7rem .4rem !important; }
+  .role-cards { flex-direction: column !important; }
+  .splash-logo { font-size: clamp(3rem, 18vw, 5rem) !important; }
+  .bottom-cta { padding: 0 1rem !important; }
+}
+
+/* ── RECHERCHE ── */
+@media (max-width: 768px) {
+  .main { padding: 1rem !important; }
+  .results-grid { grid-template-columns: 1fr !important; }
+  .trending-grid { grid-template-columns: 1fr 1fr !important; gap: .5rem !important; }
+  .filter-row { gap: .4rem !important; }
+  .results-header { flex-direction: column !important; align-items: flex-start !important; gap: .6rem !important; }
+  .results-right { width: 100% !important; justify-content: space-between !important; }
+  nav { flex-wrap: wrap !important; }
+  .search-container { order: 3 !important; width: 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 480px) {
+  .trending-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── MESSAGERIE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr !important; }
+  .conv-panel { display: flex !important; position: fixed !important; inset: 0 !important; z-index: 300 !important; transform: translateX(-100%) !important; transition: transform .3s ease !important; }
+  .conv-panel.open { transform: translateX(0) !important; }
+  .chat-panel { grid-column: 1 !important; }
+  .input-area { padding: .7rem 1rem !important; }
+  .messages { padding: 1rem !important; }
+}
+
+/* ── NOTIF PAGE ── */
+@media (max-width: 600px) {
+  .page { padding: 1rem !important; }
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: .7rem !important; }
+  .filter-tabs { gap: .3rem !important; }
+  .ftab { font-size: .5rem !important; padding: .3rem .65rem !important; }
+  .notif-card { padding: .8rem !important; }
+}
+
+/* ── PROFIL ── */
+@media (max-width: 768px) {
+  .cover { height: 160px !important; }
+  .avatar { width: 78px !important; height: 78px !important; font-size: 2rem !important; }
+  .profile-name { font-size: 1.3rem !important; flex-wrap: wrap !important; }
+  .stats-bar { gap: 1.2rem !important; overflow-x: auto !important; }
+  .fav-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── GLOBAL TOUCH TARGETS ── */
+@media (max-width: 768px) {
+  .act-btn, .view-btn, .pag-btn, .page-btn,
+  .tab, .ftab, .cat-pill, .filter-pill,
+  .km-preset, .ann-btn {
+    min-height: 38px !important;
+    min-width: 38px !important;
+  }
+  .send-btn { width: 44px !important; height: 44px !important; }
+  .msg-input { font-size: 16px !important; } /* prevents zoom on iOS */
+  .field-input, .modal-input, .ep-input,
+  .search-input, .conv-search {
+    font-size: 16px !important; /* prevents zoom on iOS */
+  }
+}
+
+/* ── MODAL ── */
+@media (max-width: 600px) {
+  .modal { padding: 1.4rem 1.2rem !important; border-radius: 10px !important; }
+  .modal-title { font-size: 1.15rem !important; }
+  .droits-grid { grid-template-columns: 1fr !important; }
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; max-height: 90vh !important; }
+}
+
+/* ── TOAST MOBILE ── */
+@media (max-width: 600px) {
+  .toast {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── VISITED LIST ── */
+@media (max-width: 600px) {
+  .visited-card { grid-template-columns: 50px 1fr auto !important; }
+  .visited-img { height: 60px !important; font-size: 1.1rem !important; }
+  .visited-header { flex-direction: column !important; align-items: flex-start !important; gap: .5rem !important; }
+}
+
+/* ── PROGRAMME TIMELINE ── */
+@media (max-width: 600px) {
+  .prog-time-col { width: 55px !important; }
+  .prog-time { font-size: .58rem !important; }
+}
+
+/* ── TICKET CARD ── */
+@media (max-width: 600px) {
+  .ticket-options { gap: .5rem !important; }
+  .ticket-opt { padding: .6rem .7rem !important; }
+  .to-price { font-size: .95rem !important; }
+}
+
+/* ══ FIN RESPONSIVE ══ */
+
+
+/* ══ ANIMATION FIX — CONTENT ALWAYS VISIBLE ══ */
+/* Prevent animation from hiding content if CSS animations fail */
+.hero-left, .hero-right,
+.fade-up, .fade-in, .animate-up,
+.perk, .how-step,
+.form-section.active,
+.tab-content.active,
+.tab-page.active,
+.screen.active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Force base visibility on key elements */
+body { visibility: visible !important; }
+.hero-left { opacity: 1 !important; }
+.hero-title, .hero-sub, .hero-stats,
+.hero-actions, .hero-eyebrow { opacity: 1 !important; }
+
+/* Fix hero on mobile — force single column */
+@media (max-width: 900px) {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+  .hero-left {
+    padding: 6rem 1.4rem 3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+  }
+  .hero-right { display: none !important; }
+}
+
+/* Fix z-index layering */
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index: 0 !important; }
+.hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
+nav { z-index: 200 !important; }
+.ayiti-bottom-nav { z-index: 500 !important; }
+
+/* Fix sections hiding on mobile */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column !important; align-items: flex-start !important; gap: .8rem !important; }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+  .cat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .how-grid { grid-template-columns: 1fr !important; }
+  .stats-grid, .hero-stats { grid-template-columns: repeat(2,1fr) !important; }
+  .page-layout { grid-template-columns: 1fr !important; }
+}
+
+/* Fix fonts fallback */
+body, button, input, textarea, select {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+h1, h2, h3, .hero-title, .place-name, .feat-name,
+.form-heading, .page-title, .modal-title,
+.nav-logo, .brand, .splash-logo {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+}
+.tab, .field-label, .modal-label, .stat-label,
+.badge, .hero-eyebrow, .section-eyebrow,
+.abn-item, .countdown-lbl {
+  font-family: 'Space Mono', 'Courier New', monospace !important;
+}
+/* ══ FIN ANIMATION FIX ══ */
+
+</style>
+</head>
+<body style="visibility:visible">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AY<span>I</span>TI</div>
+  <ul class="nav-links">
+    <li><a href="#">Explorer</a></li>
+    <li><a href="#">Restaurants</a></li>
+    <li><a href="#">Événements</a></li>
+    <li><a href="#">Boutiques</a></li>
+    <li><a href="#">Soirées</a></li>
+  </ul>
+  <div class="nav-cta">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Changer le thème" aria-label="Mode clair/sombre">
+      <span class="toggle-icon" id="toggleIcon">🌙</span>
+    </button>
+    <a href="ayiti-connexion.html" class="btn-outline">Connexion</a>
+    <a href="ayiti-inscription.html" class="btn-solid">S'inscrire</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-stripe"></div>
+
+  <div class="hero-left">
+    <div class="hero-eyebrow">Plateforme culturelle haïtienne</div>
+    <h1 class="hero-title">
+      La culture<br>
+      haïtienne,<br>
+      <em>répertoriée.</em>
+    </h1>
+    <p class="hero-sub">
+      Restaurants, soirées, événements, boutiques — tout ce qui est 100% Haïti, 
+      rassemblé en un seul endroit. Découvrez, notez, partagez.
+    </p>
+    <div class="hero-actions">
+      <a href="ayiti-exploration.html" class="hero-btn-primary">Explorer maintenant</a>
+      <a href="ayiti-inscription.html" class="hero-btn-secondary">Inscrire mon établissement →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">340+</div>
+        <div class="stat-label">Lieux répertoriés</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">12k</div>
+        <div class="stat-label">Utilisateurs actifs</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Culture haïtienne</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="phone-mockup">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-bar">
+          <div class="app-bar-logo">AY<span>I</span>TI</div>
+          <div style="font-size:0.7rem">🔔</div>
+        </div>
+        <div class="app-search">
+          <span>🔍</span> Rechercher un lieu...
+        </div>
+        <div class="app-cats">
+          <div class="cat-pill active">Tous</div>
+          <div class="cat-pill inactive">Restos</div>
+          <div class="cat-pill inactive">Soirées</div>
+          <div class="cat-pill inactive">Boutique</div>
+        </div>
+        <div class="app-section-label">⭐ À la une</div>
+        <div class="app-card">
+          <div class="card-img">
+            <div class="card-badge">Restaurant</div>
+          </div>
+          <div class="card-body">
+            <div class="card-name">Lakay Lakay</div>
+            <div class="card-meta">
+              <span class="card-stars">★★★★★</span>
+              <span>Port-au-Prince</span>
+            </div>
+          </div>
+        </div>
+        <div class="app-section-label" style="margin-top:0.3rem">📅 Cette semaine</div>
+        <div class="app-card-sm">
+          <div class="sm-dot">🎵</div>
+          <div class="sm-info">
+            <div class="sm-name">Soirée Rara</div>
+            <div class="sm-sub">Sam 24 Mai · Pétionville</div>
+          </div>
+          <div class="sm-arrow">→</div>
+        </div>
+        <div class="app-card-sm">
+          <div class="sm-dot sm-dot-2">🎨</div>
+          <div class="sm-info">
+            <div class="sm-name">Expo Haïti Art</div>
+            <div class="sm-sub">Dim 25 Mai · PAP</div>
+          </div>
+          <div class="sm-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">Parcourir par catégorie</div>
+      <h2 class="section-title">Tout ce qui est<br><em>100% Haïti</em></h2>
+    </div>
+    <a href="ayiti-exploration.html" class="see-all">Voir tout →</a>
+  </div>
+
+  <div class="cat-grid">
+    <div class="cat-card animate-up">
+      <div class="cat-card-bg restaurant"></div>
+      <div class="cat-pattern"></div>
+      <div class="cat-icon">🍽️</div>
+      <div class="cat-label">
+        <div class="cat-name">Restaurants</div>
+        <div class="cat-count">148 lieux</div>
+      </div>
+    </div>
+    <div class="cat-card animate-up">
+      <div class="cat-card-bg evenement"></div>
+      <div class="cat-pattern"></div>
+      <div class="cat-icon">🎉</div>
+      <div class="cat-label">
+        <div class="cat-name">Événements</div>
+        <div class="cat-count">34 à venir</div>
+      </div>
+    </div>
+    <div class="cat-card animate-up">
+      <div class="cat-card-bg boutique"></div>
+      <div class="cat-pattern"></div>
+      <div class="cat-icon">🛍️</div>
+      <div class="cat-label">
+        <div class="cat-name">Boutiques</div>
+        <div class="cat-count">62 lieux</div>
+      </div>
+    </div>
+    <div class="cat-card animate-up">
+      <div class="cat-card-bg soiree"></div>
+      <div class="cat-pattern"></div>
+      <div class="cat-icon">🎶</div>
+      <div class="cat-label">
+        <div class="cat-name">Soirées</div>
+        <div class="cat-count">18 ce mois</div>
+      </div>
+    </div>
+    <div class="cat-card animate-up">
+      <div class="cat-card-bg art"></div>
+      <div class="cat-pattern"></div>
+      <div class="cat-icon">🎨</div>
+      <div class="cat-label">
+        <div class="cat-name">Art & Culture</div>
+        <div class="cat-count">29 lieux</div>
+      </div>
+    </div>
+    <div class="cat-card animate-up">
+      <div class="cat-card-bg musique"></div>
+      <div class="cat-pattern"></div>
+      <div class="cat-icon">🎵</div>
+      <div class="cat-label">
+        <div class="cat-name">Musique</div>
+        <div class="cat-count">41 artistes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED -->
+<section class="featured-section">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">Sélection de la semaine</div>
+      <h2 class="section-title">Les <em>incontournables</em></h2>
+    </div>
+    <a href="#" class="see-all">Voir tout →</a>
+  </div>
+
+  <div class="featured-grid">
+    <!-- Big card -->
+    <div class="feat-card">
+      <div class="feat-img tall">
+        <div class="feat-img-bg r1"></div>
+        <div class="feat-img-overlay"></div>
+        <span class="feat-tag">Restaurant</span>
+      </div>
+      <div class="feat-body">
+        <div class="feat-meta">
+          <span class="feat-rating">★★★★★</span>
+          <span>4.9 · 214 avis</span>
+        </div>
+        <div class="feat-name">Lakay Lakay Restaurant</div>
+        <p class="feat-desc">Cuisine traditionnelle haïtienne dans un cadre chaleureux. Griot, pikliz, diri kole — une expérience authentique à chaque plat.</p>
+        <div class="feat-footer">
+          <div class="feat-loc">📍 Pétionville</div>
+          <a href="#" class="feat-action">Voir →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stack right -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="feat-card">
+        <div class="feat-img">
+          <div class="feat-img-bg r2"></div>
+          <div class="feat-img-overlay"></div>
+          <span class="feat-tag blue">Événement</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-meta"><span class="feat-rating">⭐ Populaire</span><span>Sam 24 Mai</span></div>
+          <div class="feat-name sm">Festival Rara 2026</div>
+          <div class="feat-footer">
+            <div class="feat-loc">📍 Port-au-Prince</div>
+            <a href="#" class="feat-action">Voir →</a>
+          </div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-img">
+          <div class="feat-img-bg r3"></div>
+          <div class="feat-img-overlay"></div>
+          <span class="feat-tag gold">Boutique</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-meta"><span class="feat-rating">★★★★☆</span><span>4.7 · 89 avis</span></div>
+          <div class="feat-name sm">Bèl Ayiti Shop</div>
+          <div class="feat-footer">
+            <div class="feat-loc">📍 Miami, FL</div>
+            <a href="#" class="feat-action">Voir →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Third column -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="feat-card">
+        <div class="feat-img">
+          <div class="feat-img-bg r2" style="background:linear-gradient(135deg,#2d0a3a 0%,#7b1fa2 40%,#0a0310 100%)"></div>
+          <div class="feat-img-overlay"></div>
+          <span class="feat-tag" style="background:#7b1fa2">Soirée</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-meta"><span class="feat-rating">🔥 Tendance</span><span>Ven 23 Mai</span></div>
+          <div class="feat-name sm">Nuit Kompa Vibes</div>
+          <div class="feat-footer">
+            <div class="feat-loc">📍 Paris, FR</div>
+            <a href="#" class="feat-action">Voir →</a>
+          </div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-img">
+          <div class="feat-img-bg r1" style="background:linear-gradient(135deg,#0a2a1a 0%,#2e7d32 40%,#020a06 100%)"></div>
+          <div class="feat-img-overlay"></div>
+          <span class="feat-tag" style="background:#2e7d32">Art</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-meta"><span class="feat-rating">★★★★★</span><span>5.0 · 12 avis</span></div>
+          <div class="feat-name sm">Galerie Nan Zile</div>
+          <div class="feat-footer">
+            <div class="feat-loc">📍 Cap-Haïtien</div>
+            <a href="#" class="feat-action">Voir →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-bg"></div>
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">Simple et intuitif</div>
+      <h2 class="section-title">Comment ça<br><em>fonctionne</em></h2>
+    </div>
+  </div>
+
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="step-dot"></div>
+      <div class="step-num">01</div>
+      <div class="step-title">Créez votre compte</div>
+      <p class="step-desc">Visiteur ou professionnel, choisissez votre profil et personnalisez votre expérience en quelques secondes.</p>
+    </div>
+    <div class="how-step">
+      <div class="step-dot"></div>
+      <div class="step-num">02</div>
+      <div class="step-title">Explorez la carte</div>
+      <p class="step-desc">Recherchez par catégorie, ville ou proximité. Filtrez par note, horaires ou type d'établissement.</p>
+    </div>
+    <div class="how-step">
+      <div class="step-dot"></div>
+      <div class="step-num">03</div>
+      <div class="step-title">Notez & commentez</div>
+      <p class="step-desc">Partagez votre expérience avec photos et vidéos. Aidez la communauté à découvrir les meilleurs endroits.</p>
+    </div>
+    <div class="how-step">
+      <div class="step-dot"></div>
+      <div class="step-num">04</div>
+      <div class="step-title">Sauvegardez vos favoris</div>
+      <p class="step-desc">Activez les notifications pour suivre vos lieux préférés et ne manquer aucune annonce ou événement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-pattern"></div>
+  <div class="cta-eyebrow">Vous êtes propriétaire ?</div>
+  <h2 class="cta-title">Mettez votre<br>établissement <em>en lumière</em></h2>
+  <p class="cta-sub">Rejoignez des centaines de restaurants, boutiques et organisateurs d'événements qui font rayonner la culture haïtienne à travers le monde.</p>
+  <div class="cta-btns">
+    <a href="ayiti-inscription.html" class="cta-btn-white">Inscrire mon établissement</a>
+    <a href="#" class="cta-btn-ghost">En savoir plus →</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">AY<span>I</span>TI</div>
+    <p class="footer-tagline">La première plateforme dédiée à la culture haïtienne. Restaurants, événements, boutiques — tout ce qui célèbre Haïti.</p>
+    <div class="footer-flag">
+      <div class="flag-half blue"></div>
+      <div class="flag-half red"></div>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Explorer</div>
+    <ul class="footer-links">
+      <li><a href="#">Restaurants</a></li>
+      <li><a href="#">Événements</a></li>
+      <li><a href="#">Boutiques</a></li>
+      <li><a href="#">Soirées</a></li>
+      <li><a href="#">Art & Culture</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">Compte</div>
+    <ul class="footer-links">
+      <li><a href="#">Créer un compte</a></li>
+      <li><a href="#">Connexion</a></li>
+      <li><a href="#">Espace Pro</a></li>
+      <li><a href="#">Mon profil</a></li>
+      <li><a href="#">Mes favoris</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">Support</div>
+    <ul class="footer-links">
+      <li><a href="#">Aide & FAQ</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">Signaler un problème</a></li>
+      <li><a href="#">Politique de confidentialité</a></li>
+      <li><a href="#">Conditions d'utilisation</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <div class="footer-copy">© 2026 AYITI · Fait avec ❤️ pour la diaspora haïtienne</div>
+  <div class="footer-copy">🇭🇹 Tout ce qui est 100% Haïti</div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon">🔔</div>
+  <div class="toast-text">
+    <div class="toast-title" id="toastTitle">Lakay Lakay a posté</div>
+    <div class="toast-sub" id="toastSub">Nouveau menu spécial dimanche 🍽️</div>
+  </div>
+  <button class="toast-close" onclick="hideToast()" title="Fermer">✕</button>
+</div>
+
+
+<script>
+(function(){
+  // Load saved preference
+  const saved = localStorage.getItem('ayiti-theme');
+  if(saved === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('toggleIcon').textContent = '☀️';
+  }
+})();
+
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light');
+  const icon = document.getElementById('toggleIcon');
+
+  // Animate icon swap
+  icon.style.transform = 'rotate(180deg) scale(0)';
+  icon.style.opacity = '0';
+  setTimeout(() => {
+    icon.textContent = isLight ? '☀️' : '🌙';
+    icon.style.transform = 'rotate(0deg) scale(1)';
+    icon.style.opacity = '1';
+  }, 200);
+
+  localStorage.setItem('ayiti-theme', isLight ? 'light' : 'dark');
+
+  // Toast feedback
+  showModeToast(isLight);
+}
+
+function showModeToast(isLight){
+  showToast(isLight ? '☀️' : '🌙',
+    isLight ? 'Mode clair activé' : 'Mode sombre activé',
+    isLight ? 'Reposant pour les yeux le jour' : 'Parfait pour la nuit');
+}
+</script>
+
+
+<!-- ── AYITI BOTTOM NAV (mobile) ── -->
+<style>
+.ayiti-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,6,3,.96);
+  backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+}
+@media(max-width:768px){ .ayiti-bottom-nav{ display:flex !important; } }
+.abn-items{display:flex;width:100%;justify-content:space-around;align-items:center}
+.abn-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;
+  padding:.3rem .5rem;cursor:pointer;transition:all .2s;
+  font-family:'Space Mono',monospace;font-size:.42rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(249,243,232,.4);
+  border:none;background:none;flex:1;text-decoration:none;}
+.abn-item:hover,.abn-item.active{color:var(--or,#F5A623)}
+.abn-icon{font-size:1.2rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.abn-item:hover .abn-icon,.abn-item.active .abn-icon{transform:translateY(-2px) scale(1.15)}
+.abn-item.active .abn-icon{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+/* Push content up on mobile so bottom nav doesn't cover it */
+@media(max-width:768px){
+  body{ padding-bottom: 70px !important; }
+}
+</style>
+<nav class="ayiti-bottom-nav" id="ayitiBottomNav">
+  <div class="abn-items">
+    <a class="abn-item" href="ayiti-platform-landing.html" data-page="landing">
+      <span class="abn-icon">🏠</span>Accueil
+    </a>
+    <a class="abn-item" href="ayiti-exploration.html" data-page="exploration">
+      <span class="abn-icon">🗺️</span>Explorer
+    </a>
+    <a class="abn-item" href="ayiti-recherche.html" data-page="recherche">
+      <span class="abn-icon">🔍</span>Recherche
+    </a>
+    <a class="abn-item" href="ayiti-notifications.html" data-page="notifications">
+      <span class="abn-icon">🔔</span>Notifs
+    </a>
+    <a class="abn-item" href="ayiti-profil.html" data-page="profil">
+      <span class="abn-icon">👤</span>Profil
+    </a>
+  </div>
+</nav>
+<script>
+(function(){
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.abn-item').forEach(item => {
+    const page = item.dataset.page;
+    if(path.includes(page)) item.classList.add('active');
+  });
+})();
+</script>
+
+
+<script id="ayiti-nav">
+// ── AYITI NAVIGATION ──
+const AYITI_PAGES = {
+  landing:       'ayiti-platform-landing.html',
+  onboarding:    'ayiti-onboarding.html',
+  connexion:     'ayiti-connexion.html',
+  inscription:   'ayiti-inscription.html',
+  exploration:   'ayiti-exploration.html',
+  recherche:     'ayiti-recherche.html',
+  fiche:         'ayiti-fiche-lieu.html',
+  evenement:     'ayiti-evenement.html',
+  profil:        'ayiti-profil.html',
+  collections:   'ayiti-collections.html',
+  notifications: 'ayiti-notifications.html',
+  messagerie:    'ayiti-messagerie.html',
+  dashboard:     'ayiti-dashboard-pro.html',
+  admin:         'ayiti-admin.html',
+};
+function ayitiGo(page){ window.location.href = AYITI_PAGES[page] || '#'; }
+
+// Wire all nav links automatically
+document.addEventListener('DOMContentLoaded', () => {
+  // Logo → landing
+  document.querySelectorAll('.nav-logo, .brand, .sb-brand').forEach(el => {
+    if(el.tagName === 'A') el.href = AYITI_PAGES.landing;
+  });
+
+  // "← Retour" back buttons
+  document.querySelectorAll('.nav-back').forEach(el => {
+    if(el.href && (el.href.endsWith('#') || el.getAttribute('href')==='#')) {
+      el.addEventListener('click', e => { e.preventDefault(); history.back(); });
+    }
+  });
+
+  // Connexion buttons
+  document.querySelectorAll('[onclick*="connexion"],[onclick*="Connexion"],[onclick*="connecter"]').forEach(el => {
+    el.onclick = () => ayitiGo('connexion');
+  });
+
+  // Inscription buttons
+  document.querySelectorAll('[onclick*="inscrire"],[onclick*="inscription"],[onclick*="Inscrire"]').forEach(el => {
+    el.onclick = () => ayitiGo('inscription');
+  });
+
+  // Search icon / recherche
+  document.querySelectorAll('[onclick*="recherche"],[onclick*="Recherche"]').forEach(el => {
+    el.onclick = () => ayitiGo('recherche');
+  });
+
+  // Explorer
+  document.querySelectorAll('[onclick*="explorer"],[onclick*="Explorer"]').forEach(el => {
+    el.onclick = () => ayitiGo('exploration');
+  });
+});
+</script>
+
+</body>
+</html>
