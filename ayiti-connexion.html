@@ -1,6 +1,106 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<style id="ayiti-bg-fix">
+/* ══════════════════════════════════════
+   AYITI — BACKGROUND FIX DÉFINITIF
+   Empêche le fond de passer par-dessus
+   le contenu sur Android / mobile
+══════════════════════════════════════ */
+
+/* Tous les éléments de fond → derrière tout */
+.bg, .bg-grid, .bg-wrap, .bg-ambiance,
+.bg-layer, .bg-layer.active,
+.bg-0,.bg-1,.bg-2,.bg-3,.bg-4,
+.bg-glow, .left-bg, .left-glow,
+.hero-bg, .hero-stripe, .hero-bg-color,
+.hero-pattern, .hero-overlay, .hero-emoji-bg,
+.bg-layer.bg-0, .bg-layer.bg-1,
+.flag-stripe, .cta-pattern,
+.cover-bg, .cover-pattern,
+.gallery-pattern, .gallery-overlay,
+.col-overlay, .feat-img-overlay,
+.card-img-overlay, .r-overlay,
+.gal-overlay, .map-bg-grid {
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+/* Body et html — fond de base garanti */
+html, body {
+  background-color: #0a0603 !important;
+  position: relative !important;
+  z-index: 0 !important;
+}
+
+/* Tout le contenu visible au-dessus */
+body > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Exceptions — éléments fixes qui doivent rester au-dessus */
+nav, .topbar, .screen-nav {
+  position: fixed !important;
+  z-index: 200 !important;
+}
+.ayiti-bottom-nav {
+  position: fixed !important;
+  z-index: 998 !important;
+}
+.modal-overlay {
+  position: fixed !important;
+  z-index: 500 !important;
+}
+.toast {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+.autocomplete {
+  position: absolute !important;
+  z-index: 300 !important;
+}
+.three-dot-menu {
+  position: absolute !important;
+  z-index: 50 !important;
+}
+
+/* Contenu hero toujours visible */
+.hero-left, .hero-content,
+.hero-title, .hero-sub,
+.hero-actions, .hero-stats,
+.hero-eyebrow, .hero-badges,
+.splash-logo, .splash-flag,
+.splash-tagline, .splash-sub,
+.splash-btn {
+  position: relative !important;
+  z-index: 5 !important;
+  opacity: 1 !important;
+}
+
+/* Sections et layouts */
+.page-layout, .layout, .page,
+.main, .main-col, .main-content,
+.content, .right, .right-panel,
+.left, .left-panel, .sidebar,
+.filters-panel, .conv-panel,
+.chat-panel, section, footer,
+.tab-content, .tab-page,
+.screen, .form-section {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Écrans onboarding */
+.screen.active {
+  position: fixed !important;
+  z-index: 10 !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+/* ══ FIN BG FIX ══ */
+</style>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connexion — AYITI</title>
@@ -19,11 +119,11 @@ html{scroll-behavior:smooth}
 body{background:var(--noir);color:var(--creme);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;display:flex;align-items:stretch}
 
 /* BG */
-.bg-ambiance{position:fixed;inset:0;z-index:0;pointer-events:none;
+.bg-ambiance{position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:radial-gradient(ellipse 55% 70% at 15% 50%,rgba(200,16,46,.09),transparent 60%),
   radial-gradient(ellipse 45% 60% at 90% 20%,rgba(0,32,159,.08),transparent 60%),
   radial-gradient(ellipse 60% 40% at 50% 100%,rgba(245,166,35,.04),transparent 60%)}
-.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+.bg-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;
   background-image:linear-gradient(rgba(245,166,35,.022) 1px,transparent 1px),
   linear-gradient(90deg,rgba(245,166,35,.022) 1px,transparent 1px);
   background-size:44px 44px}
@@ -446,7 +546,7 @@ body { visibility: visible !important; }
 }
 
 /* Fix z-index layering */
-.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index:0 !important; }
+.hero-bg, .bg-ambiance, .bg-layer, .bg-grid, .bg-wrap { z-index:-1 !important; }
 .hero-left, .hero-content, .hero-content * { position: relative; z-index: 2 !important; }
 nav { z-index: 200 !important; }
 .ayiti-bottom-nav { z-index: 500 !important; }
@@ -564,6 +664,86 @@ html { background: #0a0603 !important; }
   }
 }
 /* ══ FIN Z-INDEX FIX ══ */
+
+
+/* ══ TOAST FIX ══ */
+.toast {
+  position: fixed !important;
+  bottom: 5rem !important;
+  right: 1rem !important;
+  left: auto !important;
+  max-width: 240px !important;
+  padding: .6rem .9rem !important;
+  border-radius: 8px !important;
+  font-size: .78rem !important;
+  gap: .5rem !important;
+  z-index: 9999 !important;
+}
+.t-icon { font-size: .9rem !important; }
+.t-msg  { font-size: .76rem !important; line-height: 1.3 !important; }
+.toast-title { font-size: .82rem !important; }
+.toast-sub   { font-size: .68rem !important; }
+/* ══ FIN TOAST FIX ══ */
+
+/* ══ BOTTOM NAV FIX ══ */
+.ayiti-bottom-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 998 !important;
+  transform: none !important;
+  transition: none !important;
+  will-change: auto !important;
+  /* Empêche tout mouvement au scroll */
+  -webkit-transform: translateZ(0) !important;
+  transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+/* Push content above nav */
+@media (max-width: 768px) {
+  body { padding-bottom: 72px !important; }
+}
+/* ══ FIN BOTTOM NAV FIX ══ */
+
+/* ══ CONNEXION FIX ══ */
+@media (max-width: 768px) {
+  /* La page connexion s'affiche en pleine largeur */
+  .page { 
+    grid-template-columns: 1fr !important; 
+    display: block !important;
+  }
+  .left, .left-panel { display: none !important; }
+  .right, .right-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 2rem 1.4rem 5rem !important;
+    display: block !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+  /* Champs pleine largeur */
+  .field-input, .modal-input, .pw-wrap,
+  .social-btn, .submit-btn, .next-btn,
+  .social-btns { 
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* Role cards empilées */
+  .role-grid, .role-cards {
+    grid-template-columns: 1fr !important;
+    flex-direction: column !important;
+  }
+  /* Step dots */
+  .steps { 
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    padding-bottom: .3rem !important;
+  }
+}
+/* ══ FIN CONNEXION FIX ══ */
 
 </style>
 </head>
@@ -768,11 +948,13 @@ function shake(id){
 // ── TOAST ──
 let _tt;
 function showToast(msg){
+  if(typeof _tt!=="undefined") clearTimeout(_tt);
   const parts = msg.split(' ');
   document.getElementById('ti').textContent = parts[0];
   document.getElementById('tm').textContent = parts.slice(1).join(' ');
   const t = document.getElementById('toast');
   t.classList.add('show');
+  _tt=setTimeout(()=>t.classList.remove('show'),3500); //_toastAutoHide
   clearTimeout(_tt);
   _tt = setTimeout(()=>t.classList.remove('show'), 3500);
 }
